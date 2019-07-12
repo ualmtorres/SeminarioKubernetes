@@ -1,0 +1,286 @@
+////
+NO CAMBIAR!!
+Codificación, idioma, tabla de contenidos, tipo de documento
+////
+:encoding: utf-8
+:lang: es
+:toc: right
+:toc-title: Tabla de contenidos
+:doctype: book
+:imagesdir: ./images
+
+
+
+
+////
+Nombre y título del trabajo
+////
+# Kubernetes
+Cloud-DI Team - Departamento de Informática. UAL
+
+image::di.png[]
+
+// NO CAMBIAR!! (Entrar en modo no numerado de apartados)
+:numbered!: 
+
+
+[abstract]
+== Resumen
+////
+COLOCA A CONTINUACION EL RESUMEN
+////
+
+
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+.Objetivos
+* 
+
+[TIP]
+====
+Disponibles los repositorios usados en este seminario:
+
+* 
+====
+// Entrar en modo numerado de apartados
+:numbered:
+
+## Introducción
+
+La adopción de Docker sigue creciendo de forma imparable a medida que cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.
+
+Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo _dónde debe ir un contenedor, cómo se monitorizan esos contenedores_ o _cómo se reinician cuando tengan un problema_.
+
+## Conceptos básicos
+
+Kubernetes es una plataforma de código abierto para despliegue automático, escalado y gestión de aplicaciones contenedorizadas. Kubernetes ofrece una abstracción en la que permite el despliegue de aplicaciones en un cluster sin pensar en las máquinas que lo soportan. 
+
+### Cluster de Kubernetes
+
+Un cluster de Kubernetes está formado por dos tipos de recursos:
+
+* El *Master* coordina el cluster. Coordina todas las actividades del cluster como organizar las aplicaciones, mantener el estado deseado de las aplicaciones, escalado, despliegue de actualizaciones, y demás.
+* Los *Nodos* son _workers_ que ejecutan las aplicaciones. Cada nodo contiene un agente denominado _Kubelet_ que gestiona el nodo y mantiene la comunicación con el Máster. El nodo también tiene herramientas para trabajar con contenedores, como Docker.
+
+[NOTE]
+====
+Un cluster Kubernetes en producción debería tener al menos 3 nodos.
+====
+
+image::KubernetesCluster.svg[]
+
+Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-[API de Kubernetes]. La API es expuesta a través del nodo Master y es posible usarla para intectuar con el cluster.
+
+.Lista de pods usando la API de Kubernetes
+====
+[source, bash]
+----
+
+$ curl http://<kubernetes_home>/api/v1/namespaces/default/pods
+----
+
+[source, json]
+----
+{
+  "kind": "PodList",
+  "apiVersion": "v1",
+  "metadata": {
+    "selfLink": "/api/v1/namespaces/default/pods",
+    "resourceVersion": "10803"
+  },
+  "items": [
+    {
+      "metadata": {
+        "name": "hello-minikube-64c7df9db-ffwtn",
+        "generateName": "hello-minikube-64c7df9db-",
+        "namespace": "default",
+        "selfLink": "/api/v1/namespaces/default/pods/hello-minikube-64c7df9db-ffwtn",
+        "uid": "652c298a-6dc2-4aec-a72f-390669fed6d2",
+        "resourceVersion": "10608",
+        "creationTimestamp": "2019-07-08T18:02:23Z",
+        "labels": {
+          "pod-template-hash": "64c7df9db",
+          "run": "hello-minikube"
+        },
+....
+----
+====
+
+Los clusters de Kubernetes se pueden desplegar sobre máquinas físicas o virtuales. Para comenzar a practicar con Kubernetes o para tareas de desarrollo, https://github.com/kubernetes/minikube[Minikube] es una buena opción. En la sección <<Minikube>> se presenta más información sobre esta plataforma. Minikube está disponible para Windows, Linux y MacOS.
+
+### Objetos de Kubernetes
+
+Kubernetes ofrece una serie de objetos básicos y una serie de abstracciones de nivel superior llamadas Controladores. Los Controladores se basan en los objetos básicos y proporcionan funcionalidades adicionales sobre los objetos básicos
+
+Los objetos básicos de Kubernetes son:
+
+* Pod
+* Service
+* Volume
+* Namespace
+
+Los objetos de nivel superior o Controladores . Los Controladores se basan en los objetos básicos y que ofrecen funcionalidades adicionales sobre los objetos básicos son:
+
+* ReplicaSet
+* Deployment
+* StatefulSet
+* DaemonSet
+* Job
+
+[[Minikube]]
+## Minikube
+
+* Minikube es una implementación ligera de Kubernetes que crea una máquina virtual localmente y despliega un cluster sencillo formado por un solo nodo.
+
+* Minikube es una gran herramienta para el desarrollo de aplicaciones Kubernetes y permite características habituales como _LoadBalancer_, _NodePort_, volúmenes persistentes, _Ingress_, dashboard, reglas de acceso, y demás.
+
+En la https://github.com/kubernetes/minikube[página de GitHub de Minikube] se encuentra información sobre el proyecto, https://kubernetes.io/docs/tasks/tools/install-minikube/[instalación] y otros temas de interés.
+
+Una vez instalado, probaremos los comandos básicos:
+
+* Iniciar un cluster: `minikube start` (La primera vez que ejecutemos este comando descargará la ISO de Minikube, que son unos 130 MB, y creará la máquina virtual correspondiente)
+
+* Acceso al Dashboard de Kubernetes: `minikube dashboard`
+
+* Una vez iniciado, se podrá interactuar con el cluster usando `kubectl` como con cualquier cluster Kubernetes
+
+    - Iniciar un servidor: `kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080`
+
+    - Exponer un servicio como un _NodePort_: `kubectl expose deployment hello-minikube --type=NodePort`
+    
+    - Abrir el endpoint del servicio en el navegador: `minikube service hello-minikube`
+    
+El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un _NodePort_ el resultado tras mostrarlo con `minikube service hello-minikube` será algo similar al de la figura siguiente.
+
+image::SampleKubernetesService.png[]
+
+Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente:
+
+image::KubernetesDashboard.png[]
+    
+* Iniciar un segundo cluster local: `minikube start -p cluster2`
+
+* Detener el cluster local: `minikube stop`
+
+* Eliminar el cluster local: `minikube delete`
+
+### `kubectl` el CLI para Kubernetes
+
+Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubect`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. 
+
+Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página ofician de instalación y configuración de `kubectl`]
+
+Para interactuar con unos ejemplos sencillo con kubectl podemos
+
+* Obtener información de la versión
+
+* Obtener información del cluster
+
+[source, bash]
+----
+$ kubectl cluster-info
+Kubernetes master is running at https://192.168.99.100:8443
+KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+----
+
+* Obtener los nodos que forman el cluster
+
+[source, bash]
+----
+$ kubectl get nodes
+NAME       STATUS   ROLES    AGE     VERSION
+minikube   Ready    master   3d23h   v1.15.0
+----
+
+* kubectl describe - show detailed information about a resource
+* kubectl logs - print the logs from a container in a pod
+* kubectl exec - execute a command on a container in a pod
+
+## Deployments
+
+Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos del cluster.
+
+image::KubernetesDeployment.svg[]
+
+Una vez creadas las instancias de aplicación, el *Controlador de Deployment de Kubernetes* monitoriza continuamente las instancias. Si un nodo en el que está una instancia cae o es eliminado, el Controlador de Deployement de Kubernetes sustituye la instancia por otra instancia en otro nodo del cluster.
+
+Esta funcionalidad de _autocuración_ de las aplicaciones supone un cambio radical en la gestión de las aplicaciones. Esta característica de recuperación de fallos mediante la creación de nuevas instancias que reemplazan a las defectuosas o desaparecidas no existía antes de los orquestadores.
+
+Al crear un Deployment se especifica la imagen del contenedor que usará la aplicación y el número de réplicas que se quieren mantener en ejecución. El número de réplicas se puede modificar en cualquier momento actualizando el Deployment.
+
+### Despliegue de una aplicación
+
+Podemos ejecutar una aplicación con `kubectl run` indicando el nombre del Deployment y el nombre de la imagen de la aplicación.
+
+[source, bash]
+----
+$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 8080
+
+deployment.apps/jsonproducer created
+----
+
+Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para progrmar la ejecución de otra instancia cuando sea necesario.
+
+[NOTE]
+====
+Para imágenes que no estén en Docker Hub se pasa la URL completa del repositorio de imágenes.
+====
+
+Para obtener los Deployments disponibles
+
+[source, bash]
+----
+$ kubectl get deployments
+
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1         1         1            1           1m
+----
+
+export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+> echo Name of the Pod: $POD_NAME
+Name of the Pod: jsonproducer-76fc55fbcb-p8g98
+
+kubectl expose deployment jsonproducer --type=NodePort
+service/jsonproducer exposed
+
+## Pods
+
+Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar la instancia de la aplicación. Un Pod es una abstracción de Kubernetes que representa un grupo de uno o más contenedores de una aplicación y algunos recursos compartidos de esos contenedores (p.e. volúmenes, redes)
+
+[NOTE]
+====
+Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en contenedores que registran la actividad de un contenedor y la publican en una aplicación que monitoriza el cluster, o en un contenedor que le proporciona un certificado SSL para comunicación https.
+====
+
+Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo.
+
+image::KubernetesPod.svg[]
+
+Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster.
+
+## Nodos
+
+Los pods se ejecutan en un Nodo. Un nodo es una máquina worker (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.
+
+image::KubernetesNode.svg[]
+
+Cada Nodo ejecuta al menos:
+
+* Kubelet, un proceso que se encarga de la comunicación entre el nodo y el Master. Gestiona los pods y los contenedores que se están ejecutando en el nodo.
+* Un motor de contenedores, como Docker, que se encarga de la descarga de imágenes de un registro y de ejecutar la aplicación.
+
+
+## Apéndice. Cheat Sheet
+
+### Minikube
+
+* `minikube version`
+* `minikube start`
+
+### `kubectl`
+
+* `kubectl version`
+* `kubectl cluster-info`
+* `kubectl get nodes` 
