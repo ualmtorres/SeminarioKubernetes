@@ -194,9 +194,10 @@ NAME       STATUS   ROLES    AGE     VERSION
 minikube   Ready    master   3d23h   v1.15.0
 ----
 
-* kubectl describe - show detailed information about a resource
-* kubectl logs - print the logs from a container in a pod
-* kubectl exec - execute a command on a container in a pod
+* Otras operaciones de interés son: 
+    - `kubectl describe` - show detailed information about a resourc
+    - `kubectl logs <<pod>>` - print the logs from a container in a pod
+    - `kubectl exec <<pod>> <<command>>` - execute a command on a container in a pod
 
 ## Deployments
 
@@ -216,10 +217,11 @@ Podemos ejecutar una aplicación con `kubectl run` indicando el nombre del Deplo
 
 [source, bash]
 ----
-$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 8080
+$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80 <1>
 
 deployment.apps/jsonproducer created
 ----
+<1> El puerto hace referencia al puerto que usa la aplicación original para servir su contenido.
 
 Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para progrmar la ejecución de otra instancia cuando sea necesario.
 
@@ -234,16 +236,33 @@ Para obtener los Deployments disponibles
 ----
 $ kubectl get deployments
 
-NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-jsonproducer   1         1         1            1           1m
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1/1     1            1           8s
 ----
 
-export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-> echo Name of the Pod: $POD_NAME
-Name of the Pod: jsonproducer-76fc55fbcb-p8g98
+Para poder acceder a la aplicación deberemos primero exponerla en el cluster de Kubernetes. Más adelante veremos los detalles. Por ahora, basta con ejecutar el comando siguiente, el cual creará un _servicio_ para poder acceder a nuestra aplicación. 
 
-kubectl expose deployment jsonproducer --type=NodePort
+[source, bash]
+----
+$ kubectl expose deployment jsonproducer --type=NodePort
+
 service/jsonproducer exposed
+----
+
+Para ver la ejecución de la aplicación, pediremos a Minikube que nos muestre el servicio con el comando
+
+[source, bash]
+----
+$ minikube service jsonproducer
+----
+
+Esto abrirá un navegador y nos mostrará un JSON similar a este:
+
+[source, json]
+----
+{"nombre":"manolo"}
+----
+
 
 ## Pods
 
@@ -271,6 +290,320 @@ Cada Nodo ejecuta al menos:
 * Kubelet, un proceso que se encarga de la comunicación entre el nodo y el Master. Gestiona los pods y los contenedores que se están ejecutando en el nodo.
 * Un motor de contenedores, como Docker, que se encarga de la descarga de imágenes de un registro y de ejecutar la aplicación.
 
+## Servicios
+
+Se dice, que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en él también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
+
+Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. 
+
+Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:
+
+* ClusterIP: El servicio recibe una IP interna a nivel de cluster y hace que el servicio sólo sea accesible a nivel de cluster.
+* NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo y un número de puerto, que es el mismo en todos los nodos.
+* LoadBalancer: Crea en cloud, si es posible, un balanceador externo con una IP externa asignada.
+* ExternalName: Expone el servicio usando un nombre arbitrario (especificado en `externalName`)
+
+image::KubernetesService.svg[]
+
+Los servicios enrutan el tráfico entre los pods proporcionando una abstracción que permite que los pod mueran y se repliquen sin impactar en la aplicación. El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios.
+
+Los servicios agrupan a sus pods usando etiquetas y selectores. Las etiquetas son pares clave-valor y tienen usos muy variados:
+
+* Diferenciar entre objetos de desarrollo, prueba y producción
+* Distinguir entre versiones
+
+image::KubernetesLabels.svg[]
+
+Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.
+
+### Ejemplo. Creación de un servicio
+
+En la sección <<Despliegue de una aplicación>> creamos una aplicación de ejemplo que generaba un JSON de prueba. 
+
+A modo de recordatorio, hicimos lo siguiente:
+
+1. Crear un Deployment a partir de la imagen `ualmtorres/jsonproducer:v0` de Docker Hub con el comando 
+
++
+[source, bash]
+----
+$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80
+----
+
++
+Podemos consultar el Deployment existente con el comando siguiente. Si por cualquier motivo no se dispone del Deployment, basta con ejecutar el comando anterior para crearlo.
+
++
+[source, json]
+----
+$ kubectl get deployments
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1/1     1            1           17m
+----
+
++
+Este Deployment habrá creado un pod que estará ejecutando la aplicación disponible en la imagen utilizada. Podemos ver los pods disponibles con el comando 
+
++
+[source, bash]
+----
+$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-2nzt2   1/1     Running   0          23m
+----
+
+2. Crear un servicio para poder exponer la aplicación al exterior. Concretamente usamos un servicio de tipo NodePort, lo que nos sirve la aplicación concatenando la IP del nodo donde está el pod y un puerto aleatorio. El servicio lo creamos con  
+
++ 
+[source, bash]
+----
+$ kubectl expose deployment jsonproducer --type=NodePort
+----
+
++
+Podemos consultar el servicio existente con el comando siguiente. Si por cualquier motivo no se dispone del servicio, basta con ejecutar el comando anterior para crearlo.
+
++
+[source, bash]
+----
+$ kubectl get services
+NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+jsonproducer   NodePort    10.99.116.165   <none>        80:30737/TCP   25m <1>
+kubernetes     ClusterIP   10.96.0.1       <none>        443/TCP        34d <2>
+----
+<1> Este es nuestro servicio. En el caso del tutorial, el puerto aleatorio asignado es el 30737
+<2> Servicio `kubernetes` creado de forma predetermianda al iniciarse Minikube
+
+Podemos acceder el servicio creado con
+
+[source, bash]
+----
+$ minikube service jsonproducer
+----
+
+image::KubernetesRunningService.png[]
+
+La información del servicio creado nos la da la opción `describe` de `kubectl` 
+[source, bash]
+----
+$ kubectl describe services jsonproducer <1>
+
+Name:                     jsonproducer
+Namespace:                default
+Labels:                   run=jsonproducer <2>
+Annotations:              <none>
+Selector:                 run=jsonproducer
+Type:                     NodePort
+IP:                       10.99.116.165
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+NodePort:                 <unset>  30737/TCP
+Endpoints:                172.17.0.5:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+----
+<1> Pasamos el nombre de nuestro servicio como parámetro
+<2> Etiqueta añadida de forma predeterminada
+
+Si ahora consultamos la información del pod de la aplicación veremos que coincide la etiqueta. Recordemos que al introducir los servicios se indicó que era una abstracción para agrupar pods y que utilizaba etiquetas para poder reunirlos. He aquí la correspondencia entre la etiqueta del servicio y la etiqueta de los pods del servicio.
+
+[source, bash]
+----
+$ kubectl get pods <1> 
+
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-2nzt2   1/1     Running   0          49m
+
+$ kubectl describe pods jsonproducer-7769d76894-2nzt2 <2>
+
+Name:               jsonproducer-7769d76894-2nzt2
+Namespace:          default
+Priority:           0
+PriorityClassName:  <none>
+Node:               minikube/10.0.2.15
+Start Time:         Mon, 15 Jul 2019 18:56:20 +0200
+Labels:             pod-template-hash=7769d76894
+                    run=jsonproducer <3>
+Annotations:        <none>
+Status:             Running
+IP:                 172.17.0.5
+Controlled By:      ReplicaSet/jsonproducer-7769d76894 <4>
+Containers:
+  jsonproducer:
+    Container ID:   docker://52e290262984a94da4dd89102b93d80f59c0c4310c303dac67b02884d73fb545
+    Image:          ualmtorres/jsonproducer:v0 <5>
+...
+----
+<1> Obtener primero los pods disponibles para poder acceder al pod deseado
+<2> Obtener información del pod
+<3> Etiqueta coincidente con el selector (etiqueta) del Deployment
+<4> ReplicaSet encargado de mantener el número de pods deseados para el Deployment
+<5> Imagen base usada para crear el único contenedor de este pod
+
+## Escalado de una aplicación
+
+Hasta ahora hemos creado un Deployment que posteriomente fue expuesto mediante un Servicio. El Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.
+
+[NOTE]
+====
+Para escalar un Deployment durante la creación se usa el parámetro `--replicas`.
+====
+
+Al escalar una aplicación se crearán nuevos pods en los nodos con recursos disponibles e irá aumentando hasta llegar al número de pods deseados. La ejecución de varias instancias trae consigo la distribución del tráfico entre todos los pods del Deployment. De esta tarea se encarga un balanceador de carga que integra el propio Servicio.
+
+[NOTE]
+====
+Escalar a 0 terminará todos los pods de un Deployment.
+====
+
+Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (rolling updates) sin suspensión del servicio.
+
+### Ejemplo de escalado de una aplicación
+
+En primer lugar veremos cuáles eran las condiciones del despliegue de ejemplo que estamos usando.
+
+[source, bash]
+----
+$ kubectl get deployments
+
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1/1     1            1           68m
+----
+
+`READY` Indica el ratio entre los pods deseados y los que están en ejecución.
+`UP-TO-DATE` Indica el número de réplicas que están actualizadas para alcanzar el estado deseado.
+`AVAILABLE` Indica el número de réplicas disponibles actualmente para los usuarios.
+
+El comando siguiente escala a 4 réplicas el despliegue de ejemplo
+
+[source, bash]
+----
+$ kubectl scale deployments jsonproducer --replicas=4
+
+deployment.extensions/jsonproducer scaled
+----
+
+Unos instantes después podremos comprobar que el Deployment ya ha alcanzado el estado deseado.
+
+[source, bash]
+----
+$ kubectl get deployments
+
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   4/4     4            4           73m
+----
+
+La aplicación sigue disponible sin ningún cambio para el usuario final. Sin embargo, ahora hay 4 réplicas cuyo tráfico es gestionado por un balanceador de carga asociado al servicio.
+
+image::KubernetesRunningService.png[]
+
+La información de las réplicas la podemos obtener con el comando siguiente:
+
+[source, bash]
+----
+$ kubectl get pods
+
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-2nzt2   1/1     Running   0          74m
+jsonproducer-7769d76894-9xdqw   1/1     Running   0          38s
+jsonproducer-7769d76894-nhtl4   1/1     Running   0          38s
+jsonproducer-7769d76894-qbvzd   1/1     Running   0          38s
+----
+
+Si ahora, por cualquier motivo dejase de estar disponible alguno de los nodos en los que se encuentra desplegados los pods de la apliación, o bien dejase de funcionar alguno de los pods, el Controlador de despliegue de Kubernetes se encargaría de organizar la creación de nuevos pods para volver a alcanzar el estado deseado, en nuestro caso 4 réplicas.
+
+Probemos esta funcionalidad eliminando el último pod y comprobando como inmediatamente se organiza la creación de otro que lo sustituya.
+
+[source, bash]
+----
+$ kubectl delete pods jsonproducer-7769d76894-qbvzd
+pod "jsonproducer-7769d76894-qbvzd" deleted
+
+$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-2nzt2   1/1     Running   0          85m
+jsonproducer-7769d76894-9xdqw   1/1     Running   0          12m
+jsonproducer-7769d76894-gh7qk   1/1     Running   0          3s <1>
+jsonproducer-7769d76894-nhtl4   1/1     Running   0          12m
+----
+<1> Pod que sustituye al pod eliminado creado automáticamente para mantener el número de réplicas a 4
+
+Por último, si ahora queremos reducir el número de réplicas a 2 bastará con volver a indicarlo al Deployment y este será el nuevo estado a alcanzar.
+
+[source, bash]
+----
+$ kubectl scale deployments jsonproducer --replicas=2
+deployment.extensions/jsonproducer scaled
+
+$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-2nzt2   1/1     Running   0          92m
+jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m
+----
+
+## Actualización de aplicaciones
+
+Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización Kubernetes proporciona las _rolling updates_ que van actualizando los pods con las nuevas versiones.
+
+De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.
+
+Análogamente al escalado de aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.
+
+[source, bash]
+----
+$ kubectl set image deployments jsonproducer jsonproducer=ualmtorres/jsonproducer:v1
+----
+
+Al realizar la actualización de la imagen del Deployment tendrá que descargar la nueva imagen y organizar la creación de los pods en los nodos con recursos disponibles. Mientras se realiza la actualización podremos ver que hay nodos que se están terminando, otros que se están creando y otros que están disponibles.
+
+[source, bash]
+----
+$ kubectl get pods
+NAME                            READY   STATUS              RESTARTS   AGE
+jsonproducer-7769d76894-fr7cz   1/1     Running             0          25s
+jsonproducer-7769d76894-hfpr7   1/1     Terminating         0          24s
+jsonproducer-c76c87f-jwhxq      0/1     ContainerCreating   0          0s
+jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s
+----
+
+Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión.
+
+image::KubernetesUpdateImage.png[]
+
+Para deshacer una actualización de una aplicación volviendo a la versión anterior. El comando siguiente devuelve a la aplicación a la versión anterior
+
+[source, bash]
+----
+$ kubectl rollout undo deployments jsonproducer
+deployment.extensions/jsonproducer rolled back
+----
+
+Tras este comando, el contolador de despliegue irá reemplanzando los pods hasta alcanzar el estado deseado. A continuación se ve el estado intermedio mientras se vuelve a la versión anterior.
+
+[source, bash]
+----
+$ kubectl get pods 
+NAME                            READY   STATUS        RESTARTS   AGE
+jsonproducer-7769d76894-m22sv   1/1     Running       0          2s
+jsonproducer-7769d76894-v6hfv   1/1     Running       0          4s
+jsonproducer-c76c87f-jwhxq      0/1     Terminating   0          14m
+jsonproducer-c76c87f-tmbkk      0/1     Terminating   0          14m
+----
+
+Tras unos instantes, se alcanzará el estado deseado
+
+[source, bash]
+----
+Caligari:~ manolo$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-m22sv   1/1     Running   0          8s
+jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s
+----
+
+Y la aplicación volverá a mostrar el contenido anterior.
+
+image::KubernetesRunningService.png[]
 
 ## Apéndice. Cheat Sheet
 
