@@ -436,33 +436,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#trueobjetos-de-kubernetes">2.2. Objetos de Kubernetes</a></li>
 </ul>
 </li>
-<li><a href="#Minikube">3. Minikube</a>
+<li><a href="#Minikube">3. Minikube</a></li>
+<li><a href="#true-code-kubectl-code-el-cli-para-kubernetes">4. <code>kubectl</code> el CLI para Kubernetes</a></li>
+<li><a href="#truecomponentes-de-kubernetes-en-acci-n">5. Componentes de Kubernetes en acción</a>
 <ul class="sectlevel2">
-<li><a href="#true-code-kubectl-code-el-cli-para-kubernetes">3.1. <code>kubectl</code> el CLI para Kubernetes</a></li>
+<li><a href="#truedeployments">5.1. Deployments</a></li>
+<li><a href="#truepods">5.2. Pods</a></li>
+<li><a href="#truenodos">5.3. Nodos</a></li>
+<li><a href="#trueservicios">5.4. Servicios</a></li>
 </ul>
 </li>
-<li><a href="#truedeployments">4. Deployments</a>
+<li><a href="#trueescalado-de-una-aplicaci-n">6. Escalado de una aplicación</a>
 <ul class="sectlevel2">
-<li><a href="#truedespliegue-de-una-aplicaci-n">4.1. Despliegue de una aplicación</a></li>
+<li><a href="#trueejemplo-de-escalado-de-una-aplicaci-n">6.1. Ejemplo de escalado de una aplicación</a></li>
 </ul>
 </li>
-<li><a href="#truepods">5. Pods</a></li>
-<li><a href="#truenodos">6. Nodos</a></li>
-<li><a href="#trueservicios">7. Servicios</a>
+<li><a href="#trueactualizaci-n-de-aplicaciones">7. Actualización de aplicaciones</a></li>
+<li><a href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml">8. Despliegue de aplicaciones mediante archivos YAML</a>
 <ul class="sectlevel2">
-<li><a href="#trueejemplo-creaci-n-de-un-servicio">7.1. Ejemplo. Creación de un servicio</a></li>
+<li><a href="#truecreaci-n-del-archivo-de-deployment">8.1. Creación del archivo de Deployment</a></li>
+<li><a href="#truecreaci-n-del-archivo-de-servicio">8.2. Creación del archivo de Servicio</a></li>
 </ul>
 </li>
-<li><a href="#trueescalado-de-una-aplicaci-n">8. Escalado de una aplicación</a>
+<li><a href="#trueap-ndice-cheat-sheet">9. Apéndice. Cheat Sheet</a>
 <ul class="sectlevel2">
-<li><a href="#trueejemplo-de-escalado-de-una-aplicaci-n">8.1. Ejemplo de escalado de una aplicación</a></li>
-</ul>
-</li>
-<li><a href="#trueactualizaci-n-de-aplicaciones">9. Actualización de aplicaciones</a></li>
-<li><a href="#trueap-ndice-cheat-sheet">10. Apéndice. Cheat Sheet</a>
-<ul class="sectlevel2">
-<li><a href="#trueminikube">10.1. Minikube</a></li>
-<li><a href="#true-code-kubectl-code">10.2. <code>kubectl</code></a></li>
+<li><a href="#truecomandos-minikube">9.1. Comandos Minikube</a></li>
+<li><a href="#truecomandos-code-kubectl-code">9.2. Comandos <code>kubectl</code></a></li>
 </ul>
 </li>
 </ul>
@@ -495,9 +494,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 </table>
 </div>
-<div class="paragraph">
+<div class="ulist">
 <div class="title">Objetivos</div>
-<p>*</p>
+<ul>
+<li>
+<p>Conocer la importancia del uso de Kubernetes en el ciclo de vida de las aplicaciones actuales.</p>
+</li>
+<li>
+<p>Introducir los conceptos básicos de Kubernetes.</p>
+</li>
+<li>
+<p>Usar Minikube para el desarrollo y prueba en local.</p>
+</li>
+<li>
+<p>Usar <code>kubectl</code> para la administración básica de Kubernetes.</p>
+</li>
+<li>
+<p>Escalar aplicaciones.</p>
+</li>
+<li>
+<p>Realizar actualizaciones en caliente (<em>rolling updates</em>).</p>
+</li>
+<li>
+<p>Desplegar aplicaciones con archivos YAML.</p>
+</li>
+<li>
+<p>Aprender a usar Kubernetes Dashboard.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -509,8 +533,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Disponibles los repositorios usados en este seminario:</p>
 </div>
-<div class="paragraph">
-<p>*</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/ualmtorres/json-producer">Código fuente de JSON Producer</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ualmtorres/json-reader">Código fuente de JSON Reader</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ualmtorres/jsonproducerreader">Archivos YAML de JSON Producer y Reader</a></p>
+</li>
+</ul>
 </div>
 </td>
 </tr>
@@ -731,8 +765,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </div>
-<div class="sect2">
-<h3 id="true-code-kubectl-code-el-cli-para-kubernetes"><a class="anchor" href="#true-code-kubectl-code-el-cli-para-kubernetes"></a>3.1. <code>kubectl</code> el CLI para Kubernetes</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="true-code-kubectl-code-el-cli-para-kubernetes"><a class="anchor" href="#true-code-kubectl-code-el-cli-para-kubernetes"></a>4. <code>kubectl</code> el CLI para Kubernetes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa <code>kubectl</code>, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución.</p>
 </div>
@@ -772,25 +809,26 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><code>kubectl describe <a href="#resource">[resource]</a></code> para obtener información detallada sobre un recurso.</p>
+<p><code>kubectl describe &lt;resource&gt;</code> para obtener información detallada sobre un recurso.</p>
 </li>
 <li>
-<p><code>kubectl logs <a href="#pod">[pod]</a></code> para mostrar los logs de un contenedor en un pod.</p>
+<p><code>kubectl logs &lt;pod&gt;</code> para mostrar los logs de un contenedor en un pod.</p>
 </li>
 <li>
-<p><code>kubectl exec <a href="#pod">[pod]</a> <a href="#command">[command]</a></code> para ejecutar un comando en un contenedor de un pod.</p>
+<p><code>kubectl exec &lt;pod&gt; &lt;command&gt;</code> para ejecutar un comando en un contenedor de un pod.</p>
 </li>
 </ul>
 </div>
 </li>
 </ul>
-</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="truedeployments"><a class="anchor" href="#truedeployments"></a>4. Deployments</h2>
+<h2 id="truecomponentes-de-kubernetes-en-acci-n"><a class="anchor" href="#truecomponentes-de-kubernetes-en-acci-n"></a>5. Componentes de Kubernetes en acción</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="truedeployments"><a class="anchor" href="#truedeployments"></a>5.1. Deployments</h3>
 <div class="paragraph">
 <p>Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos disponibles del cluster.</p>
 </div>
@@ -808,8 +846,8 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 <div class="paragraph">
 <p>Al crear un Deployment se especifica la imagen del contenedor que usará la aplicación y el número de réplicas que se quieren mantener en ejecución. El número de réplicas se puede modificar en cualquier momento actualizando el Deployment.</p>
 </div>
-<div class="sect2">
-<h3 id="truedespliegue-de-una-aplicaci-n"><a class="anchor" href="#truedespliegue-de-una-aplicaci-n"></a>4.1. Despliegue de una aplicación</h3>
+<div class="sect3">
+<h4 id="truedespliegue-de-una-aplicaci-n"><a class="anchor" href="#truedespliegue-de-una-aplicaci-n"></a>5.1.1. Despliegue de una aplicación</h4>
 <div class="paragraph">
 <p>Podemos ejecutar una aplicación con <code>kubectl run</code> indicando el nombre que se dará al Deployment y el nombre de la imagen (Docker) usada para la aplicación.</p>
 </div>
@@ -884,10 +922,8 @@ service/jsonproducer exposed</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="truepods"><a class="anchor" href="#truepods"></a>5. Pods</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="truepods"><a class="anchor" href="#truepods"></a>5.2. Pods</h3>
 <div class="paragraph">
 <p>Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar la instancia de la aplicación. Un Pod es una abstracción de Kubernetes que representa un grupo de uno o más contenedores de una aplicación y algunos recursos compartidos de esos contenedores (p.e. volúmenes, redes)</p>
 </div>
@@ -917,10 +953,8 @@ service/jsonproducer exposed</code></pre>
 <p>Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="truenodos"><a class="anchor" href="#truenodos"></a>6. Nodos</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="truenodos"><a class="anchor" href="#truenodos"></a>5.3. Nodos</h3>
 <div class="paragraph">
 <p>Los pods se ejecutan en un Nodo. Un nodo es una máquina <em>worker</em> (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.</p>
 </div>
@@ -943,10 +977,8 @@ service/jsonproducer exposed</code></pre>
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="trueservicios"><a class="anchor" href="#trueservicios"></a>7. Servicios</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="trueservicios"><a class="anchor" href="#trueservicios"></a>5.4. Servicios</h3>
 <div class="paragraph">
 <p>Se dice que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
 </div>
@@ -1004,8 +1036,8 @@ service/jsonproducer exposed</code></pre>
 <div class="paragraph">
 <p>Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.</p>
 </div>
-<div class="sect2">
-<h3 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>7.1. Ejemplo. Creación de un servicio</h3>
+<div class="sect3">
+<h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.4.1. Ejemplo. Creación de un servicio</h4>
 <div class="paragraph">
 <p>Anteriormente, en la sección <a href="#truedespliegue-de-una-aplicaci-n">Despliegue de una aplicación</a> creamos una aplicación de ejemplo que generaba un JSON de prueba. A modo de recordatorio, hicimos lo siguiente:</p>
 </div>
@@ -1178,8 +1210,9 @@ Containers:
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="trueescalado-de-una-aplicaci-n"><a class="anchor" href="#trueescalado-de-una-aplicaci-n"></a>8. Escalado de una aplicación</h2>
+<h2 id="trueescalado-de-una-aplicaci-n"><a class="anchor" href="#trueescalado-de-una-aplicaci-n"></a>6. Escalado de una aplicación</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Hasta ahora hemos creado un Deployment que posteriomente ha sido expuesto mediante un Servicio. Como no indicamos número de réplicas, el Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.</p>
@@ -1192,7 +1225,7 @@ Containers:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Para escalar un Deployment durante la creación se usa el parámetro <code>--replicas=<a href="#numero-de-replicas">[numero-de-replicas]</a></code>.</p>
+<p>Para escalar un Deployment durante la creación se usa el parámetro <code>--replicas=&lt;numero-de-replicas&gt;</code>.</p>
 </div>
 </td>
 </tr>
@@ -1219,7 +1252,7 @@ Containers:
 <p>Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (<em>rolling updates</em>) sin suspensión del servicio. Esto lo veremos en la sección <a href="#trueactualizaci-n-de-aplicaciones">Actualización de aplicaciones</a>.</p>
 </div>
 <div class="sect2">
-<h3 id="trueejemplo-de-escalado-de-una-aplicaci-n"><a class="anchor" href="#trueejemplo-de-escalado-de-una-aplicaci-n"></a>8.1. Ejemplo de escalado de una aplicación</h3>
+<h3 id="trueejemplo-de-escalado-de-una-aplicaci-n"><a class="anchor" href="#trueejemplo-de-escalado-de-una-aplicaci-n"></a>6.1. Ejemplo de escalado de una aplicación</h3>
 <div class="paragraph">
 <p>En primer lugar veremos cuáles eran las condiciones del despliegue de ejemplo que estamos usando.</p>
 </div>
@@ -1332,7 +1365,7 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueactualizaci-n-de-aplicaciones"><a class="anchor" href="#trueactualizaci-n-de-aplicaciones"></a>9. Actualización de aplicaciones</h2>
+<h2 id="trueactualizaci-n-de-aplicaciones"><a class="anchor" href="#trueactualizaci-n-de-aplicaciones"></a>7. Actualización de aplicaciones</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización, Kubernetes proporciona las <em>rolling updates</em>, que van actualizando los pods con la nueva versión de la aplicación.</p>
@@ -1416,10 +1449,232 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>10. Apéndice. Cheat Sheet</h2>
+<h2 id="truedespliegue-de-aplicaciones-mediante-archivos-yaml"><a class="anchor" href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml"></a>8. Despliegue de aplicaciones mediante archivos YAML</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, se suelen crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, &#8230;&#8203;). Una vez creados estos archivos, se usará <code>kubectl</code> para cargarlos/desplegarlos en Kubernetes.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>El uso de archivos para despliegues Kubernetes nos permitirá someter nuestro proyecto a control de versiones y poder distribuirlo fácilmente.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio <code>jsonproducer</code> creado anteriormente. Este ejemplo es una versión muy sencilla de un entorno frontend-backend con un funcionamiento independiente lo que además de desacoplar la presetación del backendo, desde el punto de vista de la escalabilidad, permite un escalado independiente del backend y frontend.</p>
+</div>
+<div class="sect2">
+<h3 id="truecreaci-n-del-archivo-de-deployment"><a class="anchor" href="#truecreaci-n-del-archivo-de-deployment"></a>8.1. Creación del archivo de Deployment</h3>
+<div class="paragraph">
+<p>Vamos a crear un archivo de Deployment denominado <code>json-reader-deployment.yaml</code>. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment <i class="conum" data-value="1"></i><b>(1)</b>
+metadata:
+  name: jsonreader <i class="conum" data-value="2"></i><b>(2)</b>
+  namespace: default <i class="conum" data-value="3"></i><b>(3)</b>
+  labels:
+    app: jsonreader <i class="conum" data-value="4"></i><b>(4)</b>
+spec:
+  revisionHistoryLimit: 2 <i class="conum" data-value="5"></i><b>(5)</b>
+  strategy:
+    type: RollingUpdate <i class="conum" data-value="6"></i><b>(6)</b>
+  replicas: 2 <i class="conum" data-value="7"></i><b>(7)</b>
+  template:
+    metadata:
+      labels:
+        app: jsonreader
+    spec:
+      containers:
+      - image: ualmtorres/jsonreader:latest <i class="conum" data-value="8"></i><b>(8)</b>
+        name: jsonreader <i class="conum" data-value="9"></i><b>(9)</b>
+        ports:
+        - name: http
+          containerPort: 80 <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Tipo de recurso a desplegar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Nombre del despliegue</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Namespace de despliegue</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Selector usado para agrupar a los pods del servicio asociado</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Número de versiones almacenadas para poder deshacer despliegues fallidos</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Tipo de estrategia de actualización</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Número de réplicas del despliegue</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Imagen base para los contenedores de la aplicación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Prefijo usado para los pods</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Puerto por el que la aplicación sirve originalmente sus datos</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>El despliegue se realiza con <code>kubectl</code> con el comando siguiente</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl create -f json-reader-deployment.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez creado el despliegue, se descargará la imagen y se pasarán a crear los dos pods indicados para este despliegue. Podemos ver los pods creados con el comando siguiente comprobando que efectivamente se creado los dos pods <code>jsonreader</code> que exigía el despliegue.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+jsonproducer-7769d76894-ss5qh   1/1     Running   0          106s
+jsonreader-86699d9f94-khfzh     1/1     Running   0          28s
+jsonreader-86699d9f94-lrvpt     1/1     Running   0          28s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truecreaci-n-del-archivo-de-servicio"><a class="anchor" href="#truecreaci-n-del-archivo-de-servicio"></a>8.2. Creación del archivo de Servicio</h3>
+<div class="paragraph">
+<p>Vamos a crear un archivo de Servicio denominado <code>json-reader-service.yaml</code>. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Service <i class="conum" data-value="1"></i><b>(1)</b>
+metadata:
+  name: jsonreader <i class="conum" data-value="2"></i><b>(2)</b>
+  namespace: default <i class="conum" data-value="3"></i><b>(3)</b>
+spec:
+  type: NodePort <i class="conum" data-value="4"></i><b>(4)</b>
+  ports:
+  - name: http
+    port: 80 <i class="conum" data-value="5"></i><b>(5)</b>
+    targetPort: http
+  selector:
+    app: jsonreader <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Tipo de recurso a desplegar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Nombre del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Namespace de despliegue</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Tipo de servivio. NodePort hará que el servicio esté disponible en la IP de los nodos en los que estén los pods y un puerto aleatorio entre 30000 y 32767</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Puerto en el que los pods están sirviendo su contenido</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Etiqueta que tiene que coincidir con la usada en el Deployment</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>El despliegue se realiza con <code>kubectl</code> con el comando siguiente</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl create -f json-reader-service.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>El despliegue nos permitirá acceder a la aplicación en un puerto en el rango 30000-32767. En este caso ha tocado el 31976</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
+NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+jsonproducer   NodePort    10.105.30.95   &lt;none&gt;        80:30228/TCP   2m37s
+jsonreader     NodePort    10.99.85.2     &lt;none&gt;        80:31976/TCP   18s
+kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        6m21s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para poder acceder al servicio pediremos a Minikube que nos lo muestre.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonreader</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto hará que se abra un navegador con la aplicación <code>jsonreader</code> que simplemente lee el JSON y presenta un saludo sencillo.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/KubernetesServiceReader.png" alt="KubernetesServiceReader.png">
+</div>
+</div>
+<div class="paragraph">
+<p>También podemos usar el Kubernetes Dashboard para mostrar información de interés sobre este despliegue, viendo como de Deployment de <code>jsonreader</code> se ha incorporado a la lista de despliegues disponibles en el cluster, así como los pods, ReplicaSets y servicios, como muestran las figuras siguientes.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/KubernetesDashboardJSON1.png" alt="KubernetesDashboardJSON1.png">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/KubernetesDashboardJSON2.png" alt="KubernetesDashboardJSON2.png">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>9. Apéndice. Cheat Sheet</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="trueminikube"><a class="anchor" href="#trueminikube"></a>10.1. Minikube</h3>
+<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>9.1. Comandos Minikube</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1428,11 +1683,20 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 <li>
 <p><code>minikube start</code></p>
 </li>
+<li>
+<p><code>minikube dashboard</code></p>
+</li>
+<li>
+<p><code>minikube service &lt;nombre-servicio&gt;</code></p>
+</li>
+<li>
+<p><code>minikube delete</code></p>
+</li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-kubectl-code"><a class="anchor" href="#true-code-kubectl-code"></a>10.2. <code>kubectl</code></h3>
+<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>9.2. Comandos <code>kubectl</code></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1444,6 +1708,39 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 <li>
 <p><code>kubectl get nodes</code></p>
 </li>
+<li>
+<p><code>kubectl run &lt;deployment&gt; --image=&lt;image&gt; --port=&lt;container-port&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl expose deployment &lt;deployment&gt;&gt; --type=NodePort</code></p>
+</li>
+<li>
+<p><code>kubectl get deployments</code></p>
+</li>
+<li>
+<p><code>kubectl get services</code></p>
+</li>
+<li>
+<p><code>kubectl describe pods|deployments|services &lt;resource&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl scale deployments &lt;deployment&gt; --replicas=&lt;number-of-replicas&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl delete pods|deployments|services &lt;resource&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl set image deployments &lt;deployment&gt; &lt;deployment&gt;=&lt;image&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl rollout undo deployments &lt;deployment&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl logs &lt;pod&gt;</code></p>
+</li>
+<li>
+<p><code>kubectl exec &lt;pod&gt; &lt;command&gt;</code></p>
+</li>
 </ul>
 </div>
 </div>
@@ -1452,7 +1749,7 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-16 18:31:36 CEST
+Last updated 2019-07-16 20:42:42 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
