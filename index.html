@@ -481,6 +481,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="trueresumen"><a class="anchor" href="#trueresumen"></a>Resumen</h2>
 <div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>TRABAJO EN CURSO</strong></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <div class="title">Objetivos</div>
 <p>*</p>
@@ -508,7 +522,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="trueintroducci-n"><a class="anchor" href="#trueintroducci-n"></a>1. Introducción</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>La adopción de Docker sigue creciendo de forma imparable a medida que cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.</p>
+<p>La adopción de Docker sigue creciendo de forma imparable y cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.</p>
 </div>
 <div class="paragraph">
 <p>Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo <em>dónde debe ir un contenedor, cómo se monitorizan esos contenedores</em> o <em>cómo se reinician cuando tengan un problema</em>.</p>
@@ -556,7 +570,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-">API de Kubernetes</a>. La API es expuesta a través del nodo Master y es posible usarla para intectuar con el cluster.</p>
+<p>Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-">API de Kubernetes</a>. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.</p>
 </div>
 <div class="exampleblock">
 <div class="title">Example 1. Lista de pods usando la API de Kubernetes</div>
@@ -623,7 +637,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </div>
 <div class="paragraph">
-<p>Los objetos de nivel superior o Controladores . Los Controladores se basan en los objetos básicos y que ofrecen funcionalidades adicionales sobre los objetos básicos son:</p>
+<p>Los objetos de nivel superior o Controladores se basan en los objetos básicos y ofrecen funcionalidades adicionales sobre los objetos básicos:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -675,7 +689,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Acceso al Dashboard de Kubernetes: <code>minikube dashboard</code></p>
 </li>
 <li>
-<p>Una vez iniciado, se podrá interactuar con el cluster usando <code>kubectl</code> como con cualquier cluster Kubernetes</p>
+<p>Una vez iniciado, se podrá interactuar con el cluster usando <code>kubectl</code> (que veremos en la sección <a href="#kubectl el CLI para Kubernetes">[kubectl el CLI para Kubernetes]</a>) como con cualquier cluster Kubernetes:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -686,14 +700,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li>
 <p>Abrir el endpoint del servicio en el navegador: <code>minikube service hello-minikube</code></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
 <div class="paragraph">
-<p>El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un <em>NodePort</em> el resultado tras mostrarlo con <code>minikube service hello-minikube</code> será algo similar al de la figura siguiente.</p>
+<p>El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un <em>NodePort</em>. El resultado tras mostrarlo con <code>minikube service hello-minikube</code> será algo similar al de la figura siguiente.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -701,15 +709,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente:</p>
+<p>Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente. En la figura se observa cómo ha sido creado el Deployment <code>hello-minikube</code>.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/KubernetesDashboard.png" alt="KubernetesDashboard.png">
 </div>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>Iniciar un segundo cluster local: <code>minikube start -p cluster2</code></p>
 </li>
@@ -724,13 +734,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="true-code-kubectl-code-el-cli-para-kubernetes"><a class="anchor" href="#true-code-kubectl-code-el-cli-para-kubernetes"></a>3.1. <code>kubectl</code> el CLI para Kubernetes</h3>
 <div class="paragraph">
-<p>Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa <code>kubect</code>, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución.</p>
+<p>Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa <code>kubectl</code>, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución.</p>
 </div>
 <div class="paragraph">
-<p>Consultar la <a href="https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl">página ofician de instalación y configuración de <code>kubectl</code></a></p>
+<p>Consultar la <a href="https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl">página oficial de instalación y configuración de <code>kubectl</code></a></p>
 </div>
 <div class="paragraph">
-<p>Para interactuar con unos ejemplos sencillo con kubectl podemos</p>
+<p>Para interactuar con unos ejemplos sencillo con <code>kubectl</code> podemos</p>
 </div>
 <div class="ulist">
 <ul>
@@ -739,9 +749,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li>
 <p>Obtener información del cluster</p>
-</li>
-</ul>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl cluster-info
@@ -749,13 +756,9 @@ Kubernetes master is running at https://192.168.99.100:8443
 KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>Obtener los nodos que forman el cluster</p>
-</li>
-</ul>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get nodes
@@ -763,20 +766,19 @@ NAME       STATUS   ROLES    AGE     VERSION
 minikube   Ready    master   3d23h   v1.15.0</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>Otras operaciones de interés son:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>kubectl describe</code> - show detailed information about a resourc</p>
+<p><code>kubectl describe <a href="#resource">[resource]</a></code> para obtener información detallada sobre un recurso.</p>
 </li>
 <li>
-<p><code>kubectl logs <a href="#pod">[pod]</a></code> - print the logs from a container in a pod</p>
+<p><code>kubectl logs <a href="#pod">[pod]</a></code> para mostrar los logs de un contenedor en un pod.</p>
 </li>
 <li>
-<p><code>kubectl exec <a href="#pod">[pod]</a> <a href="#command">[command]</a></code> - execute a command on a container in a pod</p>
+<p><code>kubectl exec <a href="#pod">[pod]</a> <a href="#command">[command]</a></code> para ejecutar un comando en un contenedor de un pod.</p>
 </li>
 </ul>
 </div>
@@ -790,7 +792,7 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 <h2 id="truedeployments"><a class="anchor" href="#truedeployments"></a>4. Deployments</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos del cluster.</p>
+<p>Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos disponibles del cluster.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -798,7 +800,7 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Una vez creadas las instancias de aplicación, el <strong>Controlador de Deployment de Kubernetes</strong> monitoriza continuamente las instancias. Si un nodo en el que está una instancia cae o es eliminado, el Controlador de Deployement de Kubernetes sustituye la instancia por otra instancia en otro nodo del cluster.</p>
+<p>Una vez creadas las instancias de aplicación, el <strong>Controlador de Deployment de Kubernetes</strong> monitoriza continuamente las instancias. Si un nodo en el que está una instancia cae o es eliminado, el Controlador de Deployment de Kubernetes sustituye la instancia por otra instancia en otro nodo disponible del cluster.</p>
 </div>
 <div class="paragraph">
 <p>Esta funcionalidad de <em>autocuración</em> de las aplicaciones supone un cambio radical en la gestión de las aplicaciones. Esta característica de recuperación de fallos mediante la creación de nuevas instancias que reemplazan a las defectuosas o desaparecidas no existía antes de los orquestadores.</p>
@@ -809,7 +811,7 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 <div class="sect2">
 <h3 id="truedespliegue-de-una-aplicaci-n"><a class="anchor" href="#truedespliegue-de-una-aplicaci-n"></a>4.1. Despliegue de una aplicación</h3>
 <div class="paragraph">
-<p>Podemos ejecutar una aplicación con <code>kubectl run</code> indicando el nombre del Deployment y el nombre de la imagen de la aplicación.</p>
+<p>Podemos ejecutar una aplicación con <code>kubectl run</code> indicando el nombre que se dará al Deployment y el nombre de la imagen (Docker) usada para la aplicación.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -827,7 +829,7 @@ deployment.apps/jsonproducer created</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para progrmar la ejecución de otra instancia cuando sea necesario.</p>
+<p>Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para programar la ejecución de otra instancia cuando sea necesario.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -855,7 +857,7 @@ jsonproducer   1/1     1            1           8s</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Para poder acceder a la aplicación deberemos primero exponerla en el cluster de Kubernetes. Más adelante veremos los detalles. Por ahora, basta con ejecutar el comando siguiente, el cual creará un <em>servicio</em> para poder acceder a nuestra aplicación.</p>
+<p>Para poder acceder a la aplicación deberemos primero exponerla en el cluster de Kubernetes. Más adelante veremos los detalles. Por ahora, basta con ejecutar el comando siguiente, el cual creará un <em>servicio</em> asociado a nuestro Deployment para poder acceder a la aplicación.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -865,7 +867,7 @@ service/jsonproducer exposed</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Para ver la ejecución de la aplicación, pediremos a Minikube que nos muestre el servicio con el comando</p>
+<p>Para ver la ejecución de la aplicación, pediremos a Minikube que nos muestre el <em>servicio</em> con el comando</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -873,7 +875,7 @@ service/jsonproducer exposed</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Esto abrirá un navegador y nos mostrará un JSON similar a este:</p>
+<p>Esto abrirá un navegador y el resultado del servicio es un JSON similar a este:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -897,7 +899,7 @@ service/jsonproducer exposed</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan <em>sidecars</em>. Ejemplos de sidecar los encontramos en contenedores que registran la actividad de un contenedor y la publican en una aplicación que monitoriza el cluster, o en un contenedor que le proporciona un certificado SSL para comunicación https.</p>
+<p>Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan <em>sidecars</em>. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación.</p>
 </div>
 </td>
 </tr>
@@ -920,7 +922,7 @@ service/jsonproducer exposed</code></pre>
 <h2 id="truenodos"><a class="anchor" href="#truenodos"></a>6. Nodos</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Los pods se ejecutan en un Nodo. Un nodo es una máquina worker (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.</p>
+<p>Los pods se ejecutan en un Nodo. Un nodo es una máquina <em>worker</em> (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -946,10 +948,10 @@ service/jsonproducer exposed</code></pre>
 <h2 id="trueservicios"><a class="anchor" href="#trueservicios"></a>7. Servicios</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Se dice, que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en él también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
+<p>Se dice que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
 </div>
 <div class="paragraph">
-<p>Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes.</p>
+<p>Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.</p>
 </div>
 <div class="paragraph">
 <p>Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:</p>
@@ -960,7 +962,7 @@ service/jsonproducer exposed</code></pre>
 <p>ClusterIP: El servicio recibe una IP interna a nivel de cluster y hace que el servicio sólo sea accesible a nivel de cluster.</p>
 </li>
 <li>
-<p>NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo y un número de puerto, que es el mismo en todos los nodos.</p>
+<p>NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo en el que está el pod y un número de puerto entre 30000 y 32767, que es el mismo en todos los nodos</p>
 </li>
 <li>
 <p>LoadBalancer: Crea en cloud, si es posible, un balanceador externo con una IP externa asignada.</p>
@@ -997,15 +999,15 @@ service/jsonproducer exposed</code></pre>
 </div>
 </div>
 <div class="paragraph">
+<p>En la figura se observa cómo el selector de etiquetas usado en los Deployment sirve para agrupar los pods que conforman un servicio, ya que cada pod contiene la misma etiqueta usada en el selector del Deployment al que pertenece.</p>
+</div>
+<div class="paragraph">
 <p>Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.</p>
 </div>
 <div class="sect2">
 <h3 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>7.1. Ejemplo. Creación de un servicio</h3>
 <div class="paragraph">
-<p>En la sección <a href="#truedespliegue-de-una-aplicaci-n">Despliegue de una aplicación</a> creamos una aplicación de ejemplo que generaba un JSON de prueba.</p>
-</div>
-<div class="paragraph">
-<p>A modo de recordatorio, hicimos lo siguiente:</p>
+<p>Anteriormente, en la sección <a href="#truedespliegue-de-una-aplicaci-n">Despliegue de una aplicación</a> creamos una aplicación de ejemplo que generaba un JSON de prueba. A modo de recordatorio, hicimos lo siguiente:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1027,7 +1029,7 @@ jsonproducer   1/1     1            1           17m</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Este Deployment habrá creado un pod que estará ejecutando la aplicación disponible en la imagen utilizada. Podemos ver los pods disponibles con el comando</p>
+<p>Este Deployment habrá creado un pod que estará ejecutando la aplicación disponible de la imagen utilizada. Podemos ver los pods disponibles con el comando</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1067,9 +1069,6 @@ kubernetes     ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        34
 </tr>
 </table>
 </div>
-</li>
-</ol>
-</div>
 <div class="paragraph">
 <p>Podemos acceder el servicio creado con</p>
 </div>
@@ -1084,7 +1083,7 @@ kubernetes     ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        34
 </div>
 </div>
 <div class="paragraph">
-<p>La información del servicio creado nos la da la opción <code>describe</code> de <code>kubectl</code></p>
+<p>Si queremos consultar la información del servicio creado usaremos la opción <code>describe</code> de <code>kubectl</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1119,7 +1118,10 @@ Events:                   &lt;none&gt;</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Si ahora consultamos la información del pod de la aplicación veremos que coincide la etiqueta. Recordemos que al introducir los servicios se indicó que era una abstracción para agrupar pods y que utilizaba etiquetas para poder reunirlos. He aquí la correspondencia entre la etiqueta del servicio y la etiqueta de los pods del servicio.</p>
+<p>Si ahora consultamos la información del pod de la aplicación veremos que coincide la etiqueta. Recordemos que al introducir el concepto de Servicio se indicó que era una abstracción para agrupar pods y que utilizaba etiquetas para poder reunirlos. He aquí la correspondencia entre la etiqueta del servicio y la etiqueta de los pods del servicio.</p>
+</div>
+</li>
+</ol>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1180,7 +1182,7 @@ Containers:
 <h2 id="trueescalado-de-una-aplicaci-n"><a class="anchor" href="#trueescalado-de-una-aplicaci-n"></a>8. Escalado de una aplicación</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Hasta ahora hemos creado un Deployment que posteriomente fue expuesto mediante un Servicio. El Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.</p>
+<p>Hasta ahora hemos creado un Deployment que posteriomente ha sido expuesto mediante un Servicio. Como no indicamos número de réplicas, el Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1190,7 +1192,7 @@ Containers:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Para escalar un Deployment durante la creación se usa el parámetro <code>--replicas</code>.</p>
+<p>Para escalar un Deployment durante la creación se usa el parámetro <code>--replicas=<a href="#numero-de-replicas">[numero-de-replicas]</a></code>.</p>
 </div>
 </td>
 </tr>
@@ -1214,7 +1216,7 @@ Containers:
 </table>
 </div>
 <div class="paragraph">
-<p>Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (rolling updates) sin suspensión del servicio.</p>
+<p>Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (<em>rolling updates</em>) sin suspensión del servicio. Esto lo veremos en la sección <a href="#trueactualizaci-n-de-aplicaciones">Actualización de aplicaciones</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="trueejemplo-de-escalado-de-una-aplicaci-n"><a class="anchor" href="#trueejemplo-de-escalado-de-una-aplicaci-n"></a>8.1. Ejemplo de escalado de una aplicación</h3>
@@ -1229,13 +1231,21 @@ NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           68m</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><code>READY</code> Indica el ratio entre los pods deseados y los que están en ejecución.
-<code>UP-TO-DATE</code> Indica el número de réplicas que están actualizadas para alcanzar el estado deseado.
-<code>AVAILABLE</code> Indica el número de réplicas disponibles actualmente para los usuarios.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>READY</code> indica el ratio entre los pods deseados y los que están en ejecución.</p>
+</li>
+<li>
+<p><code>UP-TO-DATE</code> indica el número de réplicas que están actualizadas para alcanzar el estado deseado.</p>
+</li>
+<li>
+<p><code>AVAILABLE</code> indica el número de réplicas disponibles actualmente para los usuarios.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>El comando siguiente escala a 4 réplicas el despliegue de ejemplo</p>
+<p>El comando siguiente escala a 4 réplicas el despliegue de ejemplo (<code>jsonproducer</code>)</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1264,7 +1274,7 @@ jsonproducer   4/4     4            4           73m</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>La información de las réplicas la podemos obtener con el comando siguiente:</p>
+<p>La información de las réplicas la podemos obtener consultando el número de pods con el comando siguiente:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1278,10 +1288,10 @@ jsonproducer-7769d76894-qbvzd   1/1     Running   0          38s</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Si ahora, por cualquier motivo dejase de estar disponible alguno de los nodos en los que se encuentra desplegados los pods de la apliación, o bien dejase de funcionar alguno de los pods, el Controlador de despliegue de Kubernetes se encargaría de organizar la creación de nuevos pods para volver a alcanzar el estado deseado, en nuestro caso 4 réplicas.</p>
+<p>Si ahora por cualquier motivo dejase de estar disponible alguno de los nodos en los que se encuentra desplegados los pods de la apliación, o bien dejase de funcionar alguno de los pods, el Controlador de Deployment de Kubernetes se encargaría de organizar la creación de nuevos pods para volver a alcanzar el estado deseado, en nuestro caso 4 réplicas.</p>
 </div>
 <div class="paragraph">
-<p>Probemos esta funcionalidad eliminando el último pod y comprobando como inmediatamente se organiza la creación de otro que lo sustituya.</p>
+<p>Probemos esta funcionalidad eliminando el último pod y comprobando como Kubernetes organiza inmediatamente la creación de otro pod que lo sustituya.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1305,7 +1315,7 @@ jsonproducer-7769d76894-nhtl4   1/1     Running   0          12m</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Por último, si ahora queremos reducir el número de réplicas a 2 bastará con volver a indicarlo al Deployment y este será el nuevo estado a alcanzar.</p>
+<p>Por último, si ahora queremos reducir el número de réplicas a 2 bastará con volver a indicarlo al Deployment en el parámetro <code>replicas</code> y este será el nuevo estado a alcanzar.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1325,13 +1335,16 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 <h2 id="trueactualizaci-n-de-aplicaciones"><a class="anchor" href="#trueactualizaci-n-de-aplicaciones"></a>9. Actualización de aplicaciones</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización Kubernetes proporciona las <em>rolling updates</em> que van actualizando los pods con las nuevas versiones.</p>
+<p>Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización, Kubernetes proporciona las <em>rolling updates</em>, que van actualizando los pods con la nueva versión de la aplicación.</p>
 </div>
 <div class="paragraph">
 <p>De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.</p>
 </div>
 <div class="paragraph">
-<p>Análogamente al escalado de aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
+<p>Al igual que ocurre al escalar las aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
+</div>
+<div class="paragraph">
+<p>A continuación se muestra cómo actualizar el Deployment de ejemplo <code>jsonproducer</code> con nuevo Deployment con el mismo nombre y una versión de la imagen.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1339,7 +1352,7 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Al realizar la actualización de la imagen del Deployment tendrá que descargar la nueva imagen y organizar la creación de los pods en los nodos con recursos disponibles. Mientras se realiza la actualización podremos ver que hay nodos que se están terminando, otros que se están creando y otros que están disponibles.</p>
+<p>Al realizar la actualización de la imagen del Deployment, Kubernetes tendrá que descargar la nueva imagen y organizar la creación de los pods en los nodos con recursos disponibles. Mientras se realiza la actualización podremos ver que hay nodos que se están terminando, otros que se están creando y otros que están disponibles.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1352,7 +1365,7 @@ jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s</code>
 </div>
 </div>
 <div class="paragraph">
-<p>Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión.</p>
+<p>Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación sirve <code>Manolo Torres</code> en lugar de <code>manolo</code> en el JSON.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1360,7 +1373,7 @@ jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s</code>
 </div>
 </div>
 <div class="paragraph">
-<p>Para deshacer una actualización de una aplicación volviendo a la versión anterior. El comando siguiente devuelve a la aplicación a la versión anterior</p>
+<p>Para deshacer una actualización de una aplicación volviendo a la versión anterior haremos un <code>rollout undo</code>. El comando siguiente devuelve a la aplicación a la versión anterior</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1369,7 +1382,7 @@ deployment.extensions/jsonproducer rolled back</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Tras este comando, el contolador de despliegue irá reemplanzando los pods hasta alcanzar el estado deseado. A continuación se ve el estado intermedio mientras se vuelve a la versión anterior.</p>
+<p>Tras este comando, el Controlador de Deployment de Kubernetes irá reemplanzando los pods hasta alcanzar el estado deseado. A continuación se ve el estado intermedio mientras se vuelve a la versión anterior.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1439,7 +1452,7 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-15 21:27:41 CEST
+Last updated 2019-07-16 18:31:36 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

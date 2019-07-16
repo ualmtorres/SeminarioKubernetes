@@ -23,14 +23,16 @@ image::di.png[]
 // NO CAMBIAR!! (Entrar en modo no numerado de apartados)
 :numbered!: 
 
-
 [abstract]
 == Resumen
 ////
 COLOCA A CONTINUACION EL RESUMEN
 ////
 
-
+[IMPORTANT]
+====
+*TRABAJO EN CURSO*
+====
 
 ////
 COLOCA A CONTINUACION LOS OBJETIVOS
@@ -49,7 +51,7 @@ Disponibles los repositorios usados en este seminario:
 
 ## Introducción
 
-La adopción de Docker sigue creciendo de forma imparable a medida que cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.
+La adopción de Docker sigue creciendo de forma imparable y cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.
 
 Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo _dónde debe ir un contenedor, cómo se monitorizan esos contenedores_ o _cómo se reinician cuando tengan un problema_.
 
@@ -71,7 +73,7 @@ Un cluster Kubernetes en producción debería tener al menos 3 nodos.
 
 image::KubernetesCluster.svg[]
 
-Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-[API de Kubernetes]. La API es expuesta a través del nodo Master y es posible usarla para intectuar con el cluster.
+Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-[API de Kubernetes]. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.
 
 .Lista de pods usando la API de Kubernetes
 ====
@@ -121,7 +123,7 @@ Los objetos básicos de Kubernetes son:
 * Volume
 * Namespace
 
-Los objetos de nivel superior o Controladores . Los Controladores se basan en los objetos básicos y que ofrecen funcionalidades adicionales sobre los objetos básicos son:
+Los objetos de nivel superior o Controladores se basan en los objetos básicos y ofrecen funcionalidades adicionales sobre los objetos básicos:
 
 * ReplicaSet
 * Deployment
@@ -144,20 +146,24 @@ Una vez instalado, probaremos los comandos básicos:
 
 * Acceso al Dashboard de Kubernetes: `minikube dashboard`
 
-* Una vez iniciado, se podrá interactuar con el cluster usando `kubectl` como con cualquier cluster Kubernetes
+* Una vez iniciado, se podrá interactuar con el cluster usando `kubectl` (que veremos en la sección <<kubectl el CLI para Kubernetes>>) como con cualquier cluster Kubernetes:
 
     - Iniciar un servidor: `kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080`
 
     - Exponer un servicio como un _NodePort_: `kubectl expose deployment hello-minikube --type=NodePort`
     
     - Abrir el endpoint del servicio en el navegador: `minikube service hello-minikube`
-    
-El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un _NodePort_ el resultado tras mostrarlo con `minikube service hello-minikube` será algo similar al de la figura siguiente.
 
++    
+El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un _NodePort_. El resultado tras mostrarlo con `minikube service hello-minikube` será algo similar al de la figura siguiente.
+
++
 image::SampleKubernetesService.png[]
 
-Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente:
++
+Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente. En la figura se observa cómo ha sido creado el Deployment `hello-minikube`.
 
++
 image::KubernetesDashboard.png[]
     
 * Iniciar un segundo cluster local: `minikube start -p cluster2`
@@ -168,16 +174,17 @@ image::KubernetesDashboard.png[]
 
 ### `kubectl` el CLI para Kubernetes
 
-Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubect`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. 
+Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubectl`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. 
 
-Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página ofician de instalación y configuración de `kubectl`]
+Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página oficial de instalación y configuración de `kubectl`]
 
-Para interactuar con unos ejemplos sencillo con kubectl podemos
+Para interactuar con unos ejemplos sencillo con `kubectl` podemos
 
 * Obtener información de la versión
 
 * Obtener información del cluster
 
++
 [source, bash]
 ----
 $ kubectl cluster-info
@@ -187,6 +194,7 @@ KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/
 
 * Obtener los nodos que forman el cluster
 
++
 [source, bash]
 ----
 $ kubectl get nodes
@@ -195,17 +203,17 @@ minikube   Ready    master   3d23h   v1.15.0
 ----
 
 * Otras operaciones de interés son: 
-    - `kubectl describe` - show detailed information about a resourc
-    - `kubectl logs <<pod>>` - print the logs from a container in a pod
-    - `kubectl exec <<pod>> <<command>>` - execute a command on a container in a pod
+    - `kubectl describe <<resource>>` para obtener información detallada sobre un recurso.
+    - `kubectl logs <<pod>>` para mostrar los logs de un contenedor en un pod.
+    - `kubectl exec <<pod>> <<command>>` para ejecutar un comando en un contenedor de un pod.
 
 ## Deployments
 
-Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos del cluster.
+Una configuración de Deployment pide a Kubernetes que cree y actualice las instancias de una aplicación. Tras crear el Deployment, el Master organiza las instancias de aplicación en los nodos disponibles del cluster.
 
 image::KubernetesDeployment.svg[]
 
-Una vez creadas las instancias de aplicación, el *Controlador de Deployment de Kubernetes* monitoriza continuamente las instancias. Si un nodo en el que está una instancia cae o es eliminado, el Controlador de Deployement de Kubernetes sustituye la instancia por otra instancia en otro nodo del cluster.
+Una vez creadas las instancias de aplicación, el *Controlador de Deployment de Kubernetes* monitoriza continuamente las instancias. Si un nodo en el que está una instancia cae o es eliminado, el Controlador de Deployment de Kubernetes sustituye la instancia por otra instancia en otro nodo disponible del cluster.
 
 Esta funcionalidad de _autocuración_ de las aplicaciones supone un cambio radical en la gestión de las aplicaciones. Esta característica de recuperación de fallos mediante la creación de nuevas instancias que reemplazan a las defectuosas o desaparecidas no existía antes de los orquestadores.
 
@@ -213,7 +221,7 @@ Al crear un Deployment se especifica la imagen del contenedor que usará la apli
 
 ### Despliegue de una aplicación
 
-Podemos ejecutar una aplicación con `kubectl run` indicando el nombre del Deployment y el nombre de la imagen de la aplicación.
+Podemos ejecutar una aplicación con `kubectl run` indicando el nombre que se dará al Deployment y el nombre de la imagen (Docker) usada para la aplicación.
 
 [source, bash]
 ----
@@ -223,7 +231,7 @@ deployment.apps/jsonproducer created
 ----
 <1> El puerto hace referencia al puerto que usa la aplicación original para servir su contenido.
 
-Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para progrmar la ejecución de otra instancia cuando sea necesario.
+Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para programar la ejecución de otra instancia cuando sea necesario.
 
 [NOTE]
 ====
@@ -240,7 +248,7 @@ NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           8s
 ----
 
-Para poder acceder a la aplicación deberemos primero exponerla en el cluster de Kubernetes. Más adelante veremos los detalles. Por ahora, basta con ejecutar el comando siguiente, el cual creará un _servicio_ para poder acceder a nuestra aplicación. 
+Para poder acceder a la aplicación deberemos primero exponerla en el cluster de Kubernetes. Más adelante veremos los detalles. Por ahora, basta con ejecutar el comando siguiente, el cual creará un _servicio_ asociado a nuestro Deployment para poder acceder a la aplicación. 
 
 [source, bash]
 ----
@@ -249,14 +257,14 @@ $ kubectl expose deployment jsonproducer --type=NodePort
 service/jsonproducer exposed
 ----
 
-Para ver la ejecución de la aplicación, pediremos a Minikube que nos muestre el servicio con el comando
+Para ver la ejecución de la aplicación, pediremos a Minikube que nos muestre el _servicio_ con el comando
 
 [source, bash]
 ----
 $ minikube service jsonproducer
 ----
 
-Esto abrirá un navegador y nos mostrará un JSON similar a este:
+Esto abrirá un navegador y el resultado del servicio es un JSON similar a este:
 
 [source, json]
 ----
@@ -270,7 +278,7 @@ Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar la instan
 
 [NOTE]
 ====
-Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en contenedores que registran la actividad de un contenedor y la publican en una aplicación que monitoriza el cluster, o en un contenedor que le proporciona un certificado SSL para comunicación https.
+Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación.
 ====
 
 Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo.
@@ -281,7 +289,7 @@ Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kuberne
 
 ## Nodos
 
-Los pods se ejecutan en un Nodo. Un nodo es una máquina worker (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.
+Los pods se ejecutan en un Nodo. Un nodo es una máquina _worker_ (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.
 
 image::KubernetesNode.svg[]
 
@@ -292,14 +300,14 @@ Cada Nodo ejecuta al menos:
 
 ## Servicios
 
-Se dice, que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en él también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
+Se dice que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
 
-Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. 
+Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.
 
 Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:
 
 * ClusterIP: El servicio recibe una IP interna a nivel de cluster y hace que el servicio sólo sea accesible a nivel de cluster.
-* NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo y un número de puerto, que es el mismo en todos los nodos.
+* NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo en el que está el pod y un número de puerto entre 30000 y 32767, que es el mismo en todos los nodos
 * LoadBalancer: Crea en cloud, si es posible, un balanceador externo con una IP externa asignada.
 * ExternalName: Expone el servicio usando un nombre arbitrario (especificado en `externalName`)
 
@@ -314,13 +322,13 @@ Los servicios agrupan a sus pods usando etiquetas y selectores. Las etiquetas so
 
 image::KubernetesLabels.svg[]
 
+En la figura se observa cómo el selector de etiquetas usado en los Deployment sirve para agrupar los pods que conforman un servicio, ya que cada pod contiene la misma etiqueta usada en el selector del Deployment al que pertenece.
+
 Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.
 
 ### Ejemplo. Creación de un servicio
 
-En la sección <<Despliegue de una aplicación>> creamos una aplicación de ejemplo que generaba un JSON de prueba. 
-
-A modo de recordatorio, hicimos lo siguiente:
+Anteriormente, en la sección <<Despliegue de una aplicación>> creamos una aplicación de ejemplo que generaba un JSON de prueba. A modo de recordatorio, hicimos lo siguiente:
 
 1. Crear un Deployment a partir de la imagen `ualmtorres/jsonproducer:v0` de Docker Hub con el comando 
 
@@ -342,7 +350,7 @@ jsonproducer   1/1     1            1           17m
 ----
 
 +
-Este Deployment habrá creado un pod que estará ejecutando la aplicación disponible en la imagen utilizada. Podemos ver los pods disponibles con el comando 
+Este Deployment habrá creado un pod que estará ejecutando la aplicación disponible de la imagen utilizada. Podemos ver los pods disponibles con el comando 
 
 +
 [source, bash]
@@ -374,16 +382,22 @@ kubernetes     ClusterIP   10.96.0.1       <none>        443/TCP        34d <2>
 <1> Este es nuestro servicio. En el caso del tutorial, el puerto aleatorio asignado es el 30737
 <2> Servicio `kubernetes` creado de forma predetermianda al iniciarse Minikube
 
++
 Podemos acceder el servicio creado con
 
++
 [source, bash]
 ----
 $ minikube service jsonproducer
 ----
 
++
 image::KubernetesRunningService.png[]
 
-La información del servicio creado nos la da la opción `describe` de `kubectl` 
++
+Si queremos consultar la información del servicio creado usaremos la opción `describe` de `kubectl` 
+
++
 [source, bash]
 ----
 $ kubectl describe services jsonproducer <1>
@@ -406,7 +420,8 @@ Events:                   <none>
 <1> Pasamos el nombre de nuestro servicio como parámetro
 <2> Etiqueta añadida de forma predeterminada
 
-Si ahora consultamos la información del pod de la aplicación veremos que coincide la etiqueta. Recordemos que al introducir los servicios se indicó que era una abstracción para agrupar pods y que utilizaba etiquetas para poder reunirlos. He aquí la correspondencia entre la etiqueta del servicio y la etiqueta de los pods del servicio.
++
+Si ahora consultamos la información del pod de la aplicación veremos que coincide la etiqueta. Recordemos que al introducir el concepto de Servicio se indicó que era una abstracción para agrupar pods y que utilizaba etiquetas para poder reunirlos. He aquí la correspondencia entre la etiqueta del servicio y la etiqueta de los pods del servicio.
 
 [source, bash]
 ----
@@ -443,11 +458,11 @@ Containers:
 
 ## Escalado de una aplicación
 
-Hasta ahora hemos creado un Deployment que posteriomente fue expuesto mediante un Servicio. El Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.
+Hasta ahora hemos creado un Deployment que posteriomente ha sido expuesto mediante un Servicio. Como no indicamos número de réplicas, el Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.
 
 [NOTE]
 ====
-Para escalar un Deployment durante la creación se usa el parámetro `--replicas`.
+Para escalar un Deployment durante la creación se usa el parámetro `--replicas=<<numero-de-replicas>>`.
 ====
 
 Al escalar una aplicación se crearán nuevos pods en los nodos con recursos disponibles e irá aumentando hasta llegar al número de pods deseados. La ejecución de varias instancias trae consigo la distribución del tráfico entre todos los pods del Deployment. De esta tarea se encarga un balanceador de carga que integra el propio Servicio.
@@ -457,7 +472,7 @@ Al escalar una aplicación se crearán nuevos pods en los nodos con recursos dis
 Escalar a 0 terminará todos los pods de un Deployment.
 ====
 
-Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (rolling updates) sin suspensión del servicio.
+Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (_rolling updates_) sin suspensión del servicio. Esto lo veremos en la sección <<Actualización de aplicaciones>>.
 
 ### Ejemplo de escalado de una aplicación
 
@@ -471,11 +486,11 @@ NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           68m
 ----
 
-`READY` Indica el ratio entre los pods deseados y los que están en ejecución.
-`UP-TO-DATE` Indica el número de réplicas que están actualizadas para alcanzar el estado deseado.
-`AVAILABLE` Indica el número de réplicas disponibles actualmente para los usuarios.
+* `READY` indica el ratio entre los pods deseados y los que están en ejecución.
+* `UP-TO-DATE` indica el número de réplicas que están actualizadas para alcanzar el estado deseado.
+* `AVAILABLE` indica el número de réplicas disponibles actualmente para los usuarios.
 
-El comando siguiente escala a 4 réplicas el despliegue de ejemplo
+El comando siguiente escala a 4 réplicas el despliegue de ejemplo (`jsonproducer`)
 
 [source, bash]
 ----
@@ -498,7 +513,7 @@ La aplicación sigue disponible sin ningún cambio para el usuario final. Sin em
 
 image::KubernetesRunningService.png[]
 
-La información de las réplicas la podemos obtener con el comando siguiente:
+La información de las réplicas la podemos obtener consultando el número de pods con el comando siguiente:
 
 [source, bash]
 ----
@@ -511,9 +526,9 @@ jsonproducer-7769d76894-nhtl4   1/1     Running   0          38s
 jsonproducer-7769d76894-qbvzd   1/1     Running   0          38s
 ----
 
-Si ahora, por cualquier motivo dejase de estar disponible alguno de los nodos en los que se encuentra desplegados los pods de la apliación, o bien dejase de funcionar alguno de los pods, el Controlador de despliegue de Kubernetes se encargaría de organizar la creación de nuevos pods para volver a alcanzar el estado deseado, en nuestro caso 4 réplicas.
+Si ahora por cualquier motivo dejase de estar disponible alguno de los nodos en los que se encuentra desplegados los pods de la apliación, o bien dejase de funcionar alguno de los pods, el Controlador de Deployment de Kubernetes se encargaría de organizar la creación de nuevos pods para volver a alcanzar el estado deseado, en nuestro caso 4 réplicas.
 
-Probemos esta funcionalidad eliminando el último pod y comprobando como inmediatamente se organiza la creación de otro que lo sustituya.
+Probemos esta funcionalidad eliminando el último pod y comprobando como Kubernetes organiza inmediatamente la creación de otro pod que lo sustituya.
 
 [source, bash]
 ----
@@ -529,7 +544,7 @@ jsonproducer-7769d76894-nhtl4   1/1     Running   0          12m
 ----
 <1> Pod que sustituye al pod eliminado creado automáticamente para mantener el número de réplicas a 4
 
-Por último, si ahora queremos reducir el número de réplicas a 2 bastará con volver a indicarlo al Deployment y este será el nuevo estado a alcanzar.
+Por último, si ahora queremos reducir el número de réplicas a 2 bastará con volver a indicarlo al Deployment en el parámetro `replicas` y este será el nuevo estado a alcanzar.
 
 [source, bash]
 ----
@@ -544,18 +559,20 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m
 
 ## Actualización de aplicaciones
 
-Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización Kubernetes proporciona las _rolling updates_ que van actualizando los pods con las nuevas versiones.
+Para poder realizar actualizaciones sin tener que suspender el servicio mientras se realiza la actualización, Kubernetes proporciona las _rolling updates_, que van actualizando los pods con la nueva versión de la aplicación.
 
 De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.
 
-Análogamente al escalado de aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.
+Al igual que ocurre al escalar las aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.
+
+A continuación se muestra cómo actualizar el Deployment de ejemplo `jsonproducer` con nuevo Deployment con el mismo nombre y una versión de la imagen. 
 
 [source, bash]
 ----
 $ kubectl set image deployments jsonproducer jsonproducer=ualmtorres/jsonproducer:v1
 ----
 
-Al realizar la actualización de la imagen del Deployment tendrá que descargar la nueva imagen y organizar la creación de los pods en los nodos con recursos disponibles. Mientras se realiza la actualización podremos ver que hay nodos que se están terminando, otros que se están creando y otros que están disponibles.
+Al realizar la actualización de la imagen del Deployment, Kubernetes tendrá que descargar la nueva imagen y organizar la creación de los pods en los nodos con recursos disponibles. Mientras se realiza la actualización podremos ver que hay nodos que se están terminando, otros que se están creando y otros que están disponibles.
 
 [source, bash]
 ----
@@ -567,11 +584,11 @@ jsonproducer-c76c87f-jwhxq      0/1     ContainerCreating   0          0s
 jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s
 ----
 
-Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión.
+Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación sirve `Manolo Torres` en lugar de `manolo` en el JSON.
 
 image::KubernetesUpdateImage.png[]
 
-Para deshacer una actualización de una aplicación volviendo a la versión anterior. El comando siguiente devuelve a la aplicación a la versión anterior
+Para deshacer una actualización de una aplicación volviendo a la versión anterior haremos un `rollout undo`. El comando siguiente devuelve a la aplicación a la versión anterior
 
 [source, bash]
 ----
@@ -579,7 +596,7 @@ $ kubectl rollout undo deployments jsonproducer
 deployment.extensions/jsonproducer rolled back
 ----
 
-Tras este comando, el contolador de despliegue irá reemplanzando los pods hasta alcanzar el estado deseado. A continuación se ve el estado intermedio mientras se vuelve a la versión anterior.
+Tras este comando, el Controlador de Deployment de Kubernetes irá reemplanzando los pods hasta alcanzar el estado deseado. A continuación se ve el estado intermedio mientras se vuelve a la versión anterior.
 
 [source, bash]
 ----
