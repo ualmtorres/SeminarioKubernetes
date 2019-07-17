@@ -1462,23 +1462,26 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>El uso de archivos para despliegues Kubernetes nos permitirá someter nuestro proyecto a control de versiones y poder distribuirlo fácilmente.</p>
+<p>El uso de archivos para despliegues Kubernetes nos permitirá admeás someter nuestros archivos de despligue de recursos Kubernetes a control de versiones y poder distribuirlos fácilmente.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio <code>jsonproducer</code> creado anteriormente. Este ejemplo es una versión muy sencilla de un entorno frontend-backend con un funcionamiento independiente lo que además de desacoplar la presetación del backendo, desde el punto de vista de la escalabilidad, permite un escalado independiente del backend y frontend.</p>
+<p>Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio <code>jsonproducer</code> creado anteriormente. Se trata de un ejemplo muy sencillo de un entorno frontend-backend con un funcionamiento independiente. Esto, además de desacoplar la presentación del backend, desde el punto de vista de la escalabilidad, permite escaladar backend y frontend de forma independiente.</p>
 </div>
 <div class="sect2">
 <h3 id="truecreaci-n-del-archivo-de-deployment"><a class="anchor" href="#truecreaci-n-del-archivo-de-deployment"></a>8.1. Creación del archivo de Deployment</h3>
+<div class="paragraph">
+<p>Un archivo de Deployment proporciona una forma declarativa de creación de Pods y ReplicaSets. En el archivo de Deployment se especifica el estado deseado.</p>
+</div>
 <div class="paragraph">
 <p>Vamos a crear un archivo de Deployment denominado <code>json-reader-deployment.yaml</code>. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: extensions/v1beta1
+<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
 kind: Deployment <i class="conum" data-value="1"></i><b>(1)</b>
 metadata:
   name: jsonreader <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1490,17 +1493,20 @@ spec:
   strategy:
     type: RollingUpdate <i class="conum" data-value="6"></i><b>(6)</b>
   replicas: 2 <i class="conum" data-value="7"></i><b>(7)</b>
+  selector:
+    matchLabels:
+      app: jsonreader <i class="conum" data-value="8"></i><b>(8)</b>
   template:
     metadata:
       labels:
         app: jsonreader
     spec:
       containers:
-      - image: ualmtorres/jsonreader:latest <i class="conum" data-value="8"></i><b>(8)</b>
-        name: jsonreader <i class="conum" data-value="9"></i><b>(9)</b>
+      - name: jsonreader <i class="conum" data-value="9"></i><b>(9)</b>
+        image: ualmtorres/jsonreader:latest <i class="conum" data-value="10"></i><b>(10)</b>
         ports:
         - name: http
-          containerPort: 80 <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
+          containerPort: 80 <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1535,7 +1541,7 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Imagen base para los contenedores de la aplicación</td>
+<td>Selector que define cómo el Deployment encuentra los Pods a gestionar, <strong>que coincide con el definido en la plantilla (template) del pod</strong></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -1543,7 +1549,25 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Imagen base para los contenedores de la aplicación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>Puerto por el que la aplicación sirve originalmente sus datos</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>La estrategia de despliegue (<code>spec.strategy.type</code>) puede ser <code>Recreate</code> o <code>RollingUpdate</code>, que es el valor predeterminado.</p>
+</div>
+</td>
 </tr>
 </table>
 </div>
@@ -1552,26 +1576,54 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl create -f json-reader-deployment.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f json-reader-deployment.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Una vez creado el despliegue, se descargará la imagen y se pasarán a crear los dos pods indicados para este despliegue. Podemos ver los pods creados con el comando siguiente comprobando que efectivamente se creado los dos pods <code>jsonreader</code> que exigía el despliegue.</p>
+<p>Al crear el despliegue, se procederá a descargar la imagen y se pasarán a crear los dos pods indicados para este despliegue. Podemos ver los pods creados con el comando siguiente comprobando que efectivamente se creado los dos pods <code>jsonreader</code> que exigía el despliegue.</p>
+</div>
+<div class="paragraph">
+<p>Podemos ver el despliegue con el comando siguiente</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
-NAME                            READY   STATUS    RESTARTS   AGE
-jsonproducer-7769d76894-ss5qh   1/1     Running   0          106s
-jsonreader-86699d9f94-khfzh     1/1     Running   0          28s
-jsonreader-86699d9f94-lrvpt     1/1     Running   0          28s</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1/1     1            1           22h
+jsonreader     2/2     2            2           21h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>También podemos ver los ReplicaSets creados por los despliegues</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get rs
+NAME                      DESIRED   CURRENT   READY   AGE
+jsonproducer-7769d76894   1         1         1       22h
+jsonreader-86699d9f94     2         2         2       22h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Los pods los podemos ver junto con sus etiquetas con el parámetro <code>--show-labels</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods --show-labels
+NAME                            READY   STATUS    RESTARTS   AGE   LABELS
+jsonproducer-7769d76894-ss5qh   1/1     Running   1          22h   pod-template-hash=7769d76894,run=jsonproducer
+jsonreader-86699d9f94-khfzh     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94
+jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="truecreaci-n-del-archivo-de-servicio"><a class="anchor" href="#truecreaci-n-del-archivo-de-servicio"></a>8.2. Creación del archivo de Servicio</h3>
 <div class="paragraph">
-<p>Vamos a crear un archivo de Servicio denominado <code>json-reader-service.yaml</code>. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
+<p>Un Servicio es una abstracción que define una agrupación de Pods y una política de acceso a ellos. El conjunto de Pods al que se dirige un Servicio están determinados por un <strong>selector</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Vamos a crear un archivo de Servicio denominado <code>json-reader-service.yaml</code>. Este archivo básicamente contiene entre otros el nombre de servicio, el tipo del servicio (ClusterIP, NodePort, &#8230;&#8203;), el puerto de acceso a los pods del desplieguw y el selector que identifica al despliegue con el que se corresponde el servicio creado.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1633,9 +1685,9 @@ spec:
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
 NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
-jsonproducer   NodePort    10.105.30.95   &lt;none&gt;        80:30228/TCP   2m37s
-jsonreader     NodePort    10.99.85.2     &lt;none&gt;        80:31976/TCP   18s
-kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        6m21s</code></pre>
+jsonproducer   NodePort    10.105.30.95   &lt;none&gt;        80:30228/TCP   22h
+jsonreader     NodePort    10.99.85.2     &lt;none&gt;        80:31976/TCP   22h
+kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1706,19 +1758,13 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        6m2
 <p><code>kubectl cluster-info</code></p>
 </li>
 <li>
-<p><code>kubectl get nodes</code></p>
+<p><code>kubectl get nodes|deployments|services|pods [--show-labels]</code></p>
 </li>
 <li>
 <p><code>kubectl run &lt;deployment&gt; --image=&lt;image&gt; --port=&lt;container-port&gt;</code></p>
 </li>
 <li>
 <p><code>kubectl expose deployment &lt;deployment&gt;&gt; --type=NodePort</code></p>
-</li>
-<li>
-<p><code>kubectl get deployments</code></p>
-</li>
-<li>
-<p><code>kubectl get services</code></p>
 </li>
 <li>
 <p><code>kubectl describe pods|deployments|services &lt;resource&gt;</code></p>
@@ -1736,6 +1782,9 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        6m2
 <p><code>kubectl rollout undo deployments &lt;deployment&gt;</code></p>
 </li>
 <li>
+<p><code>kubectl apply -f &lt;filename-or-URL&gt;</code></p>
+</li>
+<li>
 <p><code>kubectl logs &lt;pod&gt;</code></p>
 </li>
 <li>
@@ -1749,7 +1798,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        6m2
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-16 20:42:42 CEST
+Last updated 2019-07-17 20:46:10 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

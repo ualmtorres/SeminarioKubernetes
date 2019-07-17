@@ -639,18 +639,20 @@ Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, cre
 
 [NOTE]
 ====
-El uso de archivos para despliegues Kubernetes nos permitirá someter nuestro proyecto a control de versiones y poder distribuirlo fácilmente.
+El uso de archivos para despliegues Kubernetes nos permitirá admeás someter nuestros archivos de despligue de recursos Kubernetes a control de versiones y poder distribuirlos fácilmente.
 ====
 
-Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio `jsonproducer` creado anteriormente. Este ejemplo es una versión muy sencilla de un entorno frontend-backend con un funcionamiento independiente lo que además de desacoplar la presetación del backendo, desde el punto de vista de la escalabilidad, permite un escalado independiente del backend y frontend.
+Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio `jsonproducer` creado anteriormente. Se trata de un ejemplo muy sencillo de un entorno frontend-backend con un funcionamiento independiente. Esto, además de desacoplar la presentación del backend, desde el punto de vista de la escalabilidad, permite escaladar backend y frontend de forma independiente.
 
 ### Creación del archivo de Deployment 
+
+Un archivo de Deployment proporciona una forma declarativa de creación de Pods y ReplicaSets. En el archivo de Deployment se especifica el estado deseado.
 
 Vamos a crear un archivo de Deployment denominado `json-reader-deployment.yaml`. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.
 
 [source, yaml]
 ----
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment <1>
 metadata:
   name: jsonreader <2>
@@ -662,17 +664,20 @@ spec:
   strategy:
     type: RollingUpdate <6>
   replicas: 2 <7>
+  selector:
+    matchLabels:
+      app: jsonreader <8>
   template:
     metadata:
       labels:
         app: jsonreader
     spec:
       containers:
-      - image: ualmtorres/jsonreader:latest <8>
-        name: jsonreader <9>
+      - name: jsonreader <9>
+        image: ualmtorres/jsonreader:latest <10>
         ports:
         - name: http
-          containerPort: 80 <10>
+          containerPort: 80 <11>
 ----
 <1> Tipo de recurso a desplegar
 <2> Nombre del despliegue
@@ -681,31 +686,61 @@ spec:
 <5> Número de versiones almacenadas para poder deshacer despliegues fallidos
 <6> Tipo de estrategia de actualización
 <7> Número de réplicas del despliegue
-<8> Imagen base para los contenedores de la aplicación
-<9> Prefijo usado para los pods 
-<10> Puerto por el que la aplicación sirve originalmente sus datos
+<8> Selector que define cómo el Deployment encuentra los Pods a gestionar, *que coincide con el definido en la plantilla (template) del pod*
+<9> Prefijo usado para los pods
+<10> Imagen base para los contenedores de la aplicación
+<11> Puerto por el que la aplicación sirve originalmente sus datos
+
+[NOTE]
+====
+La estrategia de despliegue (`spec.strategy.type`) puede ser `Recreate` o `RollingUpdate`, que es el valor predeterminado.
+====
 
 El despliegue se realiza con `kubectl` con el comando siguiente
 
 [source, bash]
 ----
-$ kubectl create -f json-reader-deployment.yaml
+$ kubectl apply -f json-reader-deployment.yaml
 ----
 
-Una vez creado el despliegue, se descargará la imagen y se pasarán a crear los dos pods indicados para este despliegue. Podemos ver los pods creados con el comando siguiente comprobando que efectivamente se creado los dos pods `jsonreader` que exigía el despliegue.
+Al crear el despliegue, se procederá a descargar la imagen y se pasarán a crear los dos pods indicados para este despliegue. Podemos ver los pods creados con el comando siguiente comprobando que efectivamente se creado los dos pods `jsonreader` que exigía el despliegue.
+
+Podemos ver el despliegue con el comando siguiente
 
 [source, bash]
 ----
-$ kubectl get pods
-NAME                            READY   STATUS    RESTARTS   AGE
-jsonproducer-7769d76894-ss5qh   1/1     Running   0          106s
-jsonreader-86699d9f94-khfzh     1/1     Running   0          28s
-jsonreader-86699d9f94-lrvpt     1/1     Running   0          28s
+$ kubectl get deployments
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer   1/1     1            1           22h
+jsonreader     2/2     2            2           21h
+----
+
+También podemos ver los ReplicaSets creados por los despliegues
+
+[source, bash]
+----
+$ kubectl get rs
+NAME                      DESIRED   CURRENT   READY   AGE
+jsonproducer-7769d76894   1         1         1       22h
+jsonreader-86699d9f94     2         2         2       22h
+----
+
+Los pods los podemos ver junto con sus etiquetas con el parámetro `--show-labels`
+
+[source, bash]
+----
+$ kubectl get pods --show-labels
+NAME                            READY   STATUS    RESTARTS   AGE   LABELS
+jsonproducer-7769d76894-ss5qh   1/1     Running   1          22h   pod-template-hash=7769d76894,run=jsonproducer
+jsonreader-86699d9f94-khfzh     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94
+jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94
 ----
 
 ### Creación del archivo de Servicio
 
-Vamos a crear un archivo de Servicio denominado `json-reader-service.yaml`. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.
+Un Servicio es una abstracción que define una agrupación de Pods y una política de acceso a ellos. El conjunto de Pods al que se dirige un Servicio están determinados por un *selector*.
+
+Vamos a crear un archivo de Servicio denominado `json-reader-service.yaml`. Este archivo básicamente contiene entre otros el nombre de servicio, el tipo del servicio (ClusterIP, NodePort, ...), el puerto de acceso a los pods del desplieguw y el selector que identifica al despliegue con el que se corresponde el servicio creado.
 
 [source, yaml]
 ----
@@ -743,9 +778,9 @@ El despliegue nos permitirá acceder a la aplicación en un puerto en el rango 3
 ----
 $ kubectl get services
 NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
-jsonproducer   NodePort    10.105.30.95   <none>        80:30228/TCP   2m37s
-jsonreader     NodePort    10.99.85.2     <none>        80:31976/TCP   18s
-kubernetes     ClusterIP   10.96.0.1      <none>        443/TCP        6m21s
+jsonproducer   NodePort    10.105.30.95   <none>        80:30228/TCP   22h
+jsonreader     NodePort    10.99.85.2     <none>        80:31976/TCP   22h
+kubernetes     ClusterIP   10.96.0.1      <none>        443/TCP        22h
 ----
 
 
@@ -781,15 +816,16 @@ image::KubernetesDashboardJSON2.png[]
 
 * `kubectl version`
 * `kubectl cluster-info`
-* `kubectl get nodes` 
+* `kubectl get nodes|deployments|services|pods [--show-labels]` 
 * `kubectl run <deployment> --image=<image> --port=<container-port>`
 * `kubectl expose deployment <deployment>> --type=NodePort`
-* `kubectl get deployments` 
-* `kubectl get services` 
 * `kubectl describe pods|deployments|services <resource>`
 * `kubectl scale deployments <deployment> --replicas=<number-of-replicas>`
 * `kubectl delete pods|deployments|services <resource>`
 * `kubectl set image deployments <deployment> <deployment>=<image>`
 * `kubectl rollout undo deployments <deployment>`
+* `kubectl apply -f <filename-or-URL>`
 * `kubectl logs <pod>`
 * `kubectl exec <pod> <command>`
+
+
