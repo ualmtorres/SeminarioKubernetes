@@ -8,8 +8,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 :toc-title: Tabla de contenidos
 :doctype: book
 :imagesdir: ./images
-
-
+:icons: font
 
 
 ////
@@ -66,18 +65,28 @@ Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un p
 
 ## Conceptos básicos
 
-Kubernetes es una plataforma de código abierto para despliegue automático, escalado y gestión de aplicaciones contenedorizadas. Kubernetes ofrece una abstracción en la que permite el despliegue de aplicaciones en un cluster sin pensar en las máquinas que lo soportan. 
+Kubernetes es una plataforma de código abierto para despliegue automático, escalado y gestión de aplicaciones contenedorizadas. 
+
+[quote,Documentación oficial de Kubernetes (https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/)]
+____
+Kubernetes is a portable, extensible, open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a large, rapidly growing ecosystem. Kubernetes services, support, and tools are widely available.
+
+The name Kubernetes originates from Greek, meaning helmsman or pilot. Google open-sourced the Kubernetes project in 2014. Kubernetes builds upon a decade and a half of experience that Google has with running production workloads at scale, combined with best-of-breed ideas and practices from the community.
+
+
+____
+Kubernetes ofrece una abstracción en la que permite el despliegue de aplicaciones en un cluster sin pensar en las máquinas que lo soportan. 
 
 ### Cluster de Kubernetes
 
 Un cluster de Kubernetes está formado por dos tipos de recursos:
 
-* El *Master* coordina el cluster. Coordina todas las actividades del cluster como organizar las aplicaciones, mantener el estado deseado de las aplicaciones, escalado, despliegue de actualizaciones, y demás.
+* El *Master* coordina el cluster. Coordina todas las actividades del cluster como organizar (schedule) las aplicaciones, mantener el estado deseado de las aplicaciones, escalado, despliegue de actualizaciones, y demás. También recoge información de los nodos worker y Pods.
 * Los *Nodos* son _workers_ que ejecutan las aplicaciones. Cada nodo contiene un agente denominado _Kubelet_ que gestiona el nodo y mantiene la comunicación con el Máster. El nodo también tiene herramientas para trabajar con contenedores, como Docker.
 
 [NOTE]
 ====
-Un cluster Kubernetes en producción debería tener al menos 3 nodos.
+Un cluster Kubernetes en producción debería tener al menos 3 nodos. En entornos de producción se usan varios nodos máster para que los clusters sean tolerantes a fallos y ofrezcan alta disponibilidad.
 ====
 
 image::KubernetesCluster.svg[]
@@ -121,6 +130,36 @@ $ curl http://<kubernetes_home>/api/v1/namespaces/default/pods
 
 Los clusters de Kubernetes se pueden desplegar sobre máquinas físicas o virtuales. Para comenzar a practicar con Kubernetes o para tareas de desarrollo, https://github.com/kubernetes/minikube[Minikube] es una buena opción. En la sección <<Minikube>> se presenta más información sobre esta plataforma. Minikube está disponible para Windows, Linux y MacOS.
 
+### Arquitectura de Kubernetes
+
+Tal y como hemos introducido en el apartado anterior, un cluster de Kubernetes está formado por dos tipos de unidades, el nodo _Master_ y los nodos _Worker_ (o siemplemente _Nodos_).
+
+La figura siguiente ilustra estas dos unidades, así como algunos de los componentes más importantes en su interior.
+
+image::KubernetesArchitecture.png[]
+
+* Plugins de red: Permite la conexión entre pods de nodos diferentes y la integración de soluciones de red diferentes (overlay, L3, ...)
+* `etcd`: una base de datos clave-valor donde Kubernetes guarda todos los datos del cluster.
+* API server: Componente del Master que expone la API de Kubernetes. Es el front-end del plano de control de Kubernetes.
+* Control Manager: Se encarga de comprobar si el estado deseado coincide con la realidad (p.e. número de réplicas)
+* Scheduler: Componente del master que observa qué pods se han creado nuevos y no tienen nodo asignado, y les selecciona un nodo donde se puedan ejecutar.
+* `kubelet`: Agente que se se ejecuta en cada nodo worker del cluster y que asegura que los nodos están en ejecución y sanos. *`kubelet` no gestiona los pods que no han sido creados por Kubernetes.* 
+* `kube-proxy`: Mantiene las reglas de networking en los nodos para los pods que se ejecutan en él de acuerdo con las especificaciones de los manifiestos.
+* `cAdvisor`: Recoge datos de uso de los contenedores.
+* Plano de control o _Control plane_: Nivel de orquestación de contenedores que expone la API para definir, desplegar y gestionar el ciclo de vida de los contenedores.
+* Plano de datos o _Data Plane_: Nivel que proporciona los recursos, como CPU. memoria, red y almacenamiento, para que los pods se puedan ejecutar y conectar a la red.
+
+[TIP]
+====
+https://etcd.io/[etcd], es una base de datos clave-valor fiable y distribiuda para los datos más críticos de un un sistema distribuido. Dado que Kubernetes guarda todos los datos del cluster en ella, se deberían mantener copias de seguridad de esta base de datos y disponer de un plan de recuperación ante posibles desastres.
+====
+
+[NOTE]
+====
+Los componentes `kube-proxy`, `kube-scheduler`, `kube-controller-manager`, `etcd`, `kubelet`, así como los componentes de red se eejcutan como contenedores en cada uno de los nodos del cluster de Kubernetes. Basta con abrir un terminal en uno de los nodos del cluster y comprobarlo. Si lo hacemos, veremos como en los nodos worker están los contenedores de los componentes de Kubernetes junto con los contenedores de las aplicaciones que se están ejecutando en el nodo.
+
+Un ejercicio interesante es detener el contenedor `kubelet` y ver cómo el nodo pasa a estar inactivo. En caso de ser el único nodo de trabajo, los contenedores de los nuevos despliegues quedarán en el estado `Pending` mientras `kubelet` no vuelva a estar disponible.
+====
 ### Objetos de Kubernetes
 
 Kubernetes ofrece una serie de objetos básicos y una serie de abstracciones de nivel superior llamadas Controladores. Los Controladores se basan en los objetos básicos y proporcionan funcionalidades adicionales sobre los objetos básicos
@@ -183,7 +222,7 @@ image::KubernetesDashboard.png[]
 
 ## `kubectl` el CLI para Kubernetes
 
-Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubectl`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. 
+Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubectl`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. `kubectl` es el CLI para interactuar con el servidor de la API de Kubernetes.
 
 Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página oficial de instalación y configuración de `kubectl`]
 
@@ -285,18 +324,89 @@ Esto abrirá un navegador y el resultado del servicio es un JSON similar a este:
 
 ### Pods
 
-Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar la instancia de la aplicación. Un Pod es una abstracción de Kubernetes que representa un grupo de uno o más contenedores de una aplicación y algunos recursos compartidos de esos contenedores (p.e. volúmenes, redes)
+Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar una instancia de la aplicación. Un Pod es una abstracción de Kubernetes que representa un grupo de uno o más contenedores de una aplicación y algunos recursos compartidos de esos contenedores (p.e. volúmenes, redes)
 
 [NOTE]
 ====
 Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación.
 ====
 
-Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo.
+Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo. La figura siguiente ilustra varias configuraciones de pods: Un pod con un contenedor, un pod con un contenedor y un volumen, un pod con dos contenedores que comparten un volumen y un pod con varios contenedores y varios volúmenes.
 
 image::KubernetesPod.svg[]
 
-Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster.
+Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster. *Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod*. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.
+
+
+.Creación de un pod para MongoDB
+
+Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, ...) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis https://yaml.org/[YAML] y representan una forma declarativa de definir los recursos del cluster Kubernetes. 
+
+Para ilustrar cómo crear un pod, veremos cómo crear uno sencillo para MongoDB a partir de un archivo de manifiesto. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs, redirección de puertos
+
+. Creación del manifiesto YAML 
++
+Archivo `mongodb-basico.yaml`
++
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongodb 
+spec:
+  containers:
+  - image: mongo
+    name: mongodb
+----
+
++
+. Despliegue del manifiesto para crear el pod
++
+[source, bash]
+----
+$ kubectl apply -f mongodb-basico.yaml
+----
+
++
+. Inicio de sesión SSH en el pod
++
+[source, bash]
+----
+$ kubectl exec -it mongodb /bin/bash
+----
+
++
+. Mostrar información del pod
++
+[source, bash]
+----
+$ kubectl describe pod mongodb
+----
+
++
+. Mostrar los logs del pod
++
+[source, bash]
+----
+$ kubectl logs mongodb
+----
+
++
+. Redirección del puerto del pod a un puerto local (establece un túnel SSH entre nuestro equipo y el pod con los puertos indicados)
++
+[source, bash]
+----
+$ kubectl port-forward mongodb 27017:27017
+----
+
++
+. Eliminación del pod
++
+[source, bash]
+----
+$ kubectl delete -f mongodb-basico.yaml
+----
 
 ### Nodos
 
@@ -311,9 +421,9 @@ Cada Nodo ejecuta al menos:
 
 ### Servicios
 
-Se dice que en Kubernetes los pods son mortales. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
+Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
 
-Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.
+Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos estableciendo un nombre para acceder a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. El acceso puede ser interno o externo al cluster. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.
 
 Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:
 
@@ -466,6 +576,21 @@ Containers:
 <3> Etiqueta coincidente con el selector (etiqueta) del Deployment
 <4> ReplicaSet encargado de mantener el número de pods deseados para el Deployment
 <5> Imagen base usada para crear el único contenedor de este pod
+
+### Volúmenes
+
+Básicamente, uno volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.
+
+Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo `.spec.volumes`) y donde montarlo en los contenedores (el campo `.spec.containers.volumeMounts`).
+
+### Namespaces
+
+Abstracción de Kubernetes para soportar varios clusters virtuales en un mismo cluster físico. Los namspaces se usan para organizar objetos en un cluster y para proporcionar una forma de dividir los recursos del cluster. Los nombres de los recursos tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.
+
+[TIP]
+====
+En clusters con varios usuarios los namespaces proporcionan una forma de agrupar los recursos de cada usuario. Además, los administradores pueden establecer cuotas a nivel de namespace limitando a los usuarios la cantidad de objetos que pueden crear y la cantidad de recursos del cluster que pueden consumir (p.e. CPU, memoria).
+====
 
 ## Escalado de una aplicación
 
@@ -828,4 +953,400 @@ image::KubernetesDashboardJSON2.png[]
 * `kubectl logs <pod>`
 * `kubectl exec <pod> <command>`
 
+cloud_provider: 
+  name: "openstack"
+  openstackCloudProvider: 
+    block_storage: 
+      ignore-volume-az: true
+      trust-device-path: false
+    global: 
+      auth-url: "http://192.168.64.12:5000/v3/"
+      domain-name: "default"
+      tenant-name: "mtorres"
+      username: "mtorres"
+      password: "xxx"
+    load_balancer: 
+      create-monitor: false
+      manage-security-groups: false
+      monitor-max-retries: 0
+      use-octavia: false
+    metadata: 
+      request-timeout: 0
 
+### Contextos
+
+El archivo de contextos
+
+Disponible en `~/.kube/config`
+
+[source, bash]
+----
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /Users/manolo/.minikube/ca.crt
+    server: https://192.168.99.100:8443
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /Users/manolo/.minikube/client.crt
+    client-key: /Users/manolo/.minikube/client.key
+----
+
+Obtener los contextos
+
+[source, bash]
+----
+$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
+          minikube        minikube        minikube 
+----
+
+Añadir un contexto nuevo
+
+Obtener los datos de conexión a Rancher desde 
+
+image::RancherKubeconfig.png[]
+
+Ahí aparecen los datos de conexión al cluster. Ahí se encuentran los datos que tenemos que copiar en el archivo `~/.kube/config`
+
+
+image::KubeconfigCluster.png[]
+image::KubeconfigUser.png[]
+
+Editamos el archivo el archivo `~/.kube/config` y debería quedar algo así
+[source, bash]
+----
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /Users/manolo/.minikube/ca.crt
+    server: https://192.168.99.100:8443
+  name: minikube
+- cluster: <1>
+    certificate-authority-data: XXXXXXXXXXXXXXXXXXX
+  name: produccion-ci
+contexts:
+- context:
+    cluster: minikube
+    user: minikube
+  name: minikube
+- context: <2>
+    cluster: produccion-ci
+    namespace: mtorres
+    user: user-XXXXXX
+  name: produccion-ci
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /Users/manolo/.minikube/client.crt
+    client-key: /Users/manolo/.minikube/client.key
+- name: user-XXXXX <3>
+  user:
+    token: XXXXXXXXXXXXXXXXXXXXX
+----
+<1> Datos del cluster de Rancher
+<2> Datos del nuevo contexto
+<3> Datos del usuario
+
+Usar un contexto
+
+[source, bash]
+----
+$ kubectl config use-context produccion-ci
+
+Switched to context "produccion-ci".
+----
+
+Si ahora consultamos los contextos, veremos que el contexto activo es `produccion-ci`. Por tanto, todas las operaciones que hagamos con `kubectl` a partir de ahora se dirigirán contra ese contexto (cluster-usuario-namespace).
+
+[source, bash]
+----
+$ kubectl config get-contexts
+CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
+          minikube        minikube        minikube     
+*         produccion-ci   produccion-ci   user-mzmh8   mtorres
+----
+
+## Apéndice. Service Mesh con Istio
+
+Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. A diferencia de otras arquitecturas, los microservicios pueden ser creados por grupos de desarrollo pequeños creando sus propias herramientas y lenguajes de programación. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y pueden fallar de forma individual sin provocar una caída del funcionamiento de la aplicación completa.
+
+Sin embargo, el desarrollo y la utilización de microservicios supone nuevos desafíos e implica el desarrollo y gestión de comunicación entre servicios. Esta lógica podría ser codificada en cada servicio sin necesidad de un _service mesh_, pero a medida que la complejidad crece, se hace más necesario un _service mesh_.
+
+Un _service mesh_ es una capa complementaria responsable de la gestión del tráfico, políticas, certificados y seguridad de los servicios. Así, un _service mesh_ no añade nueva funcionalidad a las aplicaciones. Simplemente, se dedica a sacar fuera de los servicios la lógica de comunicación y la abstrae a una capa de infraestructura. Con un _service mesh_ los desarrolladores pueden centrarse en el desarrollo de la lógica de negocio y abstraerse de lo demás.
+
+Para ofrecer esta funcionalidad, un _service mesh_ introduce una colección de proxies de red. En un _service mesh_ las peticiones entre los servicios se enrutan a través de los proxies en su propio nivel de infraestructura. Estos proxies son implementados como sidecars que se situan en el mismo pod que el servicio al que _sirven_ (tráfico, seguridad, ...). Si vemos esta red de sidecars desacoplados de los servicios y los situamos en una capa aparte visualizaremos el _service mesh_.
+
+image::ServiceMesh.png[]
+
+La idea entonces es inyectar un contenedor sidecar especial en cada microservicio y enrutar todo el tráfico a través de los sidecars en lugar de a través de los microservicios. El controlador del _service mesh_ podrá filtrar tráfico, y aplicar políticas de balanceo, seguridad y limitación de tráfico.
+
+Sin un _service mesh_, cada microservicio debería incluir la lógica de gobierno y comunicación con otros servicios, lo que añade una complejidad extra al desarrollo del servicio. Además, el disponer de un _service mesh_ en entornos normalizados, permite tratar el problema del tráfico, políticas, seguridad y certificados entre servicios de forma estándar, independientemente de la plataforma en la que estén desplegadas nuestras aplicaciones.
+
+https://istio.io/[Istio] es un _service mesh_ que permite conectar, asegurar, controlar y observar servicios. 
+
+https://www.kiali.io/[Kiali] extiende estas características de gestión del tráfico incorporando observabilidad y visualización de servicios de la red para mejorar el trabajo con la red. Kiali ofrece una forma sencilla de ver la toplogía de un _service mesh_ y observar cómo interactúan los servicios.
+
+
+https://www.jaegertracing.io[Jaeger] se encarga del tracing y permite a los desarrolladores fragmentar una petición y ver cómo va avanzando entre los distintos servicios de princicio a fin.
+
+image::ServiceMeshKialiJaeger.png[]
+
+### Istio
+
+Istio viene a incorporarse al vocabulario marinero y ballenero del ecosistema de Docker y Kubernetes. Istio es una palabra griega que significa _navegar_.
+
+[NOTE]
+====
+Istio está disponible en Rancher desde la versión 2.3.0-alpha5. Basta activarlo en el menú `Tools`. Pedirá si se quiere realizar la inyección automática de sidecars en un _namespace_. Esto hará que se cree un sidecar en cada pod del _namespace_ para el `Istio-proxy`. *Este proxy intercepta todo el tráfico al microservicio del pod y asumirá la gestión del enrutado, la selección de versiones, el registro de actividad y tráfico, y el control de acceso*. Por tanto, en cada _namespace_ en el que quede activado Istio se tendrá configurada la etiqueta `istio-injection=enabled`. No obstante, también es posible activarlo de forma manual, lo que exigiría un reinicio de los servicios, despliegues y otros objetos Kubernetes para que se active el funcionamiento de Istio.
+
+====
+
+La figura siguiente ilustra una aplicación sin Istio. En ella cada microservicio es el responsable de implementar la funcionalidad de discovery, balanceo, resilencia, métricas y trazado.
+
+image::beforeIstio.jpg[]
+
+La figura siguiente ilustra como en as aplicaciones basadas en Istio los pods están formados por dos contenedores: el contenedor del microservicio y el sidecar. En el sidecar se delegan las tareas de discovery, balanceo, resilencia, métricas y trazado, lo que facilita el desarrollo de los microservicios.
+
+image::afterIstio.jpg[]
+
+Istio ofrece una forma declarativa, mediante la creación de manifiestos YAML, de gestión del tráfico, enrutado selectivo de peticiones (en lugar del round robin que ofrece Kubernetes), despliegues (_canary, A/B, blue/green_), resilencia a nivel de red (con opciones de _retry_, _timeout_), control de acceso, observación de microservicios distribuidos comprendiendo los flujos y trazas y pudiendo ver las métricas importantes de forma inmediata, inyección de caos para poner a prueba la resilencia de aplicaciones y servicios, por citar algunas de sus funcionalidades destacadas.
+
+Para activar el uso de Istio en un namespace se haría con 
+
+[source, bash]
+----
+`kubectl label namespace default istio-injection=enabled`
+----
+
+
+### Arquitectura de Istio
+
+Instio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que están en la arqutiectura de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales pueden ser configurados individualmente para enrutar, filtrar y aumentar el tráfico según sea necesario.
+
+image::istioArchitecture.jpg[]
+
+Además, Istio permite realizar deciciones de enrutado en función de las cabeceras HTTP (p.e. tipo de navegador, usuario, ...)
+
+image::istioCanary.jpg[]
+
+[NOTE]
+====
+Algo a tener en cuenta es que los componentes del plano de control son aplicaciones sin estado lo que permitan que puedan escalar horizontalmente. Todos los datos están almacenados en _etcd_ como descricpciones personalizadas de recursos Kubernetes.
+====
+
+Sin embrgo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cuando mayor sea el cluster mayor será la carga añadida al sistema. Cada sidecar consume mucha RAM (unos 350Mb). Además, añade una latencia de unos 10 ms a cada petición.
+
+
+### Control de tráfico y técnicas de despliegue 
+
+* Despliegue _canary_: Se despliega en producción una nueva versión del código pero sólo se dirige a él una parte del tráfico. Quizá sólo tengan acceso a él clientes de prueba, empleados, usuarios de iOS, etcétera. Una vez desplegado el canario, se monitoriza para comprobar la existencia de excepciones, comportamiento no satisfactorio, bajada del rendimiento, y demás. En cambio, si el canario no muestra indicios de que presente problemas se pueden ir aumentando paulatinamente el tráfico hacia él. Si presenta un comportamiento inaceptable, se puede retirar fácilmente de producción.
+
+* Control del tráfico: Se pueden especificar reglas de enrutado que controlen el tráfico a un conjunto de pods. En concreto, Istio usa los recursos `DestinationRule` y `VirtualService` en forma de manifiestos YAML para describir estas reglas.
+    - `DestinationRule`: Define grupos (_subsets_) de pods.
+    - `VirtualService` dirige el tráfico a un _subset_ basado en porcentajes, cabeceras, direcciones IP, por citar algunas. La selección de pods afectados es similar al modelo de selectores utilizado por Kubernetes para selección basada en etiquetas (_labels_).
+    
++
+Este comportamiento del enrutado no es sólo para el tráfico de entrada externo. Es para toda la comunicación inter-servicio en el _service mesh_. Así, si hubiese servicios desplegados en Kubernetes, pero que no sean parte del _mesh_ no estaría afectado por estas reglas y se regiría por las reglas de balanceo de Kubernetes (round-robin).
+
+* _Dark launch_: Despliegue a producción que no es visible a los clientes. En este caso Istio permite duplicar (_mirror_) el tráfico a una versión de la aplicación y ver cómo se comporta respecto a la versión del pod en producción. De esta forma se están realizando peticiones en las condiciones de producción al nuevo servicio sin afectar al tráfico de la versión en producción. No obstante, hay que tener una consideración especial con los servicios que traten con datos o estén vinculados a otros servicios, para no introducir duplicados, provocar inconsistencias y otros problemas derivados de la duplicación de peticiones.
+
+### Técnicas de resilencia
+
+* _Circuit breaker_: Determina el número máximo de peticiones que puede soportar un pod. Pasado ese valor no admite más hasta que se recupere.
+* _Pool ejection_: Saca de un nodo a un pod que esté dando fallos creando un nuevo pod que los sustituya en otro nodo.
+* _Retries_: Reenvía la petición a otro pod al encontrar un caso de circuit breaker o pool rejection 
+
+### Casos prácticos
+
+. Instalación del ejemplo
++
+[source, bash]
+----
+$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/platform/kube/bookinfo.yaml
+$ kubectl get services
+$ kubectl get pods
+$ kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/bookinfo-gateway.yaml
+$ kubectl get gateway
+----
+
+. Crear el Ingress en Rancher para el servicio `productpage`. 
+. Crear las reglas de acceso predeterminadas para los servicios de la aplicación
+
++
+[source, bash]
+----
+$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/destination-rule-all.yaml
+$ kubectl get destinationrules -o yaml
+----
+
+Archivo `destination-rule-all.yaml` que permite el tráfico de forma indistinta a cualquier versión de `ratings`, `reviews` y `details`
+[source, yaml]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: productpage
+spec:
+  host: productpage
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: reviews
+spec:
+  host: reviews
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  - name: v3
+    labels:
+      version: v3
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: ratings
+spec:
+  host: ratings
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  - name: v2-mysql
+    labels:
+      version: v2-mysql
+  - name: v2-mysql-vm
+    labels:
+      version: v2-mysql-vm
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: details
+spec:
+  host: details
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
+----
+
+Usar sólo la versión V1 de cada microservicio:
+
+[source, yaml]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: productpage
+spec:
+  hosts:
+  - productpage
+  http:
+  - route:
+    - destination:
+        host: productpage
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+spec:
+  hosts:
+  - ratings
+  http:
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: details
+spec:
+  hosts:
+  - details
+  http:
+  - route:
+    - destination:
+        host: details
+        subset: v1
+---
+----
+
+
+Aplicando ahora unas reglas para desviar el tráfico a V2 a los usuarios con sesión iniciada con el usuario `jason` y a V1 a los que no tienen sesión iniciada.
+
+[source, bash]
+----
+$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+----
+
+[source, yaml]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+    - reviews
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: reviews
+        subset: v2
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+----
