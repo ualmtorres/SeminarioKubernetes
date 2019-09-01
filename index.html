@@ -474,7 +474,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truearquitectura-de-istio">10.2. Arquitectura de Istio</a></li>
 <li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">10.3. Control de tráfico y técnicas de despliegue</a></li>
 <li><a href="#truet-cnicas-de-resilencia">10.4. Técnicas de resilencia</a></li>
-<li><a href="#truecasos-pr-cticos">10.5. Casos prácticos</a></li>
+<li><a href="#truecaso-pr-ctico">10.5. Caso práctico</a></li>
+<li><a href="#truecasos-pr-cticos">10.6. Casos prácticos</a></li>
 </ul>
 </li>
 </ul>
@@ -2339,7 +2340,311 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecasos-pr-cticos"><a class="anchor" href="#truecasos-pr-cticos"></a>10.5. Casos prácticos</h3>
+<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>10.5. Caso práctico</h3>
+<div class="paragraph">
+<p>Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.</p>
+</div>
+<div class="paragraph">
+<p>El servicio que genera datos se denomina <code>jsonproducer</code> y genera un documento JSON con un único elemento <code>nombre</code> y un valor aasociado (p.e. <code>{"nombre": "manolo"}</code>). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión devuelve el elemento JSON <code>{"nombre": "manolo"}</code>. La segunda versión devuelve el elemento JSON <code>{"nombre": "Manuel Torres"}</code></p>
+</div>
+<div class="paragraph">
+<p>El servicio que consume datos se denomina <code>jsonconsumer</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada.</p>
+</div>
+<div class="sect3">
+<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>10.5.1. Creación de todos los servicios</h4>
+<div class="paragraph">
+<p>Vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> que quedarán desplegadas en el cluster.</p>
+</div>
+<div class="paragraph">
+<p>Cada despliegue incorpora en los metadatos el nombre que le que queremos dar, así como unas etiquetas con su versión, que le permitirán ser seleccionado posteriormente cuando se definan los <em>servicios virtuales</em>. Además, en la <code>spec</code> del despliegue se usarán etiquetas en <code>matchLabels</code> que permitirán más adelante a Istio distinguir los pods correspondientes a cada despliegue.</p>
+</div>
+<div class="paragraph">
+<p>En este ejemplo usaremos dos versiones (dos recursos <code>Deployment</code>) del <code>jsonproducer</code>. La primera está basada en la imagen <code>ualmtorres/jsonproducer:v0</code> que devuelve <code>{"nombre": "manolo"}</code>. La segunda está basada en la imagen <code>ualmtorres/jsonproducer:v1</code> que devuelve <code>{"nombre": "Manuel Torres"}</code>. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#########################################################
+# jsonproducer service
+#########################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonproducer
+  labels:
+    app: jsonproducer
+    service: jsonproducer
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: jsonproducer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonproducer-v0 <i class="conum" data-value="1"></i><b>(1)</b>
+  labels:
+    app: jsonproducer
+    version: v0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonproducer
+      version: v0 <i class="conum" data-value="2"></i><b>(2)</b>
+  template:
+    metadata:
+      labels:
+        app: jsonproducer
+        version: v0
+    spec:
+      containers:
+      - name: jsonproducer
+        image: ualmtorres/jsonproducer:v0 <i class="conum" data-value="3"></i><b>(3)</b>
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonproducer-v1 <i class="conum" data-value="4"></i><b>(4)</b>
+  labels:
+    app: jsonproducer
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonproducer
+      version: v1 <i class="conum" data-value="5"></i><b>(5)</b>
+  template:
+    metadata:
+      labels:
+        app: jsonproducer
+        version: v1
+    spec:
+      containers:
+      - name: jsonproducer
+        image: ualmtorres/jsonproducer:v1 <i class="conum" data-value="6"></i><b>(6)</b>
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+###########################################################
+# jsonreader services
+###########################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonreaderpage
+  labels:
+    app: jsonreaderpage
+    service: jsonreaderpage
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: jsonreaderpage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonreaderpage-v0
+  labels:
+    app: jsonreaderpage
+    version: v0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonreaderpage
+      version: v0
+  template:
+    metadata:
+      labels:
+        app: jsonreaderpage
+        version: v0
+    spec:
+      containers:
+      - name: jsonreaderpage
+        image: ualmtorres/jsonreader:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Versión <code>v0</code> del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Selector para determinar los pods asociados a la versión <code>v0</code> del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Imagen <code>v0</code> del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Versión <code>v1</code> del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Selector para determinar los pods asociados a la versión <code>v1</code> del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Imagen <code>v1</code> del servicio</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"></a>10.5.2. Creación de los <em>subsets</em> mediante <code>DestionationRule</code></h4>
+<div class="paragraph">
+<p>Las <code>DestinatioRule</code> se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>metatada.name</code>: Nombre.</p>
+</li>
+<li>
+<p><code>spec.host</code>: Host contra el que se lanzará este servicio. Puede ser un nombre DNS (admite <em>wildcards</em>) o un nombre de servicio válido en nuestra aplicación.</p>
+</li>
+<li>
+<p><code>spec.subsets</code>: Lista de versiones de servicios a configurar. Cada versión tendrá su nombre (<code>name</code>) y usará una etiqueta (p.e. <code>labels.version: v0</code>) para emparejarse con los pods de su versión de acuerdo a lo definido en el selector <code>matchLabels</code> del objeto <code>Deployment</code> del manifiesto del apartado anterior.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jsonreaderpage
+spec:
+  host: jsonreaderpage
+  subsets:
+  - name: v0
+    labels:
+      version: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jsonproducer
+spec:
+  host: jsonproducer <i class="conum" data-value="1"></i><b>(1)</b>
+  subsets:
+  - name: v0
+    labels:
+      version: v0
+  - name: v1 <i class="conum" data-value="2"></i><b>(2)</b>
+    labels:
+      version: v1 <i class="conum" data-value="3"></i><b>(3)</b>
+---</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nombre que le damos a nuestro host y que luego será usado por los <em>servicios virtuales</em> para dirigir el tráfico a una versión concreta de las definidas en los <code>subsets</code>. Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Nombre dado a esta versión del servicio</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Etiqueta usada para seleccionar los pods a los que corresponde esta versión. Se emparejarán los pods que tengan <code>version: v1</code> en su <code>MatchingLabels</code></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico"></a>10.5.3. Creación de los servicios virtuales para el control del tráfico</h4>
+<div class="paragraph">
+<p>Por último, crearemos los <code>VirtualService</code> para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el <em>mesh</em>.</p>
+</div>
+<div class="paragraph">
+<p>Con los servicios virtuales conseguimos crear la capa complementaria a la aplicación que controlará su tráfico. Esto nos permite usar y cambiar a versiones concretas, derivar un porcentaje del tráfico a versiones concretas (despliegues <code>canary</code>), tener versiones diferentes para usuarios diferentes, control de tráfico basado en CIDR, y demás.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánima. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los <code>VirtualService</code> que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>El manifiesto siguiente define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión <code>v0</code> de los <code>Deployment</code> desplegados en el cluster.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonreaderpage
+spec:
+  hosts:
+  - jsonreaderpage
+  http:
+  - route:
+    - destination:
+        host: jsonreaderpage
+        subset: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonproducer
+spec:
+  hosts:
+  - jsonproducer <i class="conum" data-value="1"></i><b>(1)</b>
+  http:
+  - route:
+    - destination:
+        host: jsonproducer <i class="conum" data-value="2"></i><b>(2)</b>
+        subset: v0 <i class="conum" data-value="3"></i><b>(3)</b>
+---</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nombre DNS (admite prefijos <em>wildcard</em>) o nombres de servicios del <em>mesh</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Servicio al que se quiere dirigir el tráfico</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Versión a la que se quiere dirigir el tráfico</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truecasos-pr-cticos"><a class="anchor" href="#truecasos-pr-cticos"></a>10.6. Casos prácticos</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -2535,7 +2840,7 @@ spec:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-30 20:35:21 CEST
+Last updated 2019-09-01 08:09:18 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

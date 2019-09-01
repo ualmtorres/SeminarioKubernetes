@@ -1170,6 +1170,231 @@ Este comportamiento del enrutado no es sólo para el tráfico de entrada externo
 * _Pool ejection_: Saca de un nodo a un pod que esté dando fallos creando un nuevo pod que los sustituya en otro nodo.
 * _Retries_: Reenvía la petición a otro pod al encontrar un caso de circuit breaker o pool rejection 
 
+### Caso práctico
+
+Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.
+
+El servicio que genera datos se denomina `jsonproducer` y genera un documento JSON con un único elemento `nombre` y un valor aasociado (p.e. `{"nombre": "manolo"}`). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión devuelve el elemento JSON `{"nombre": "manolo"}`. La segunda versión devuelve el elemento JSON `{"nombre": "Manuel Torres"}`
+
+El servicio que consume datos se denomina `jsonconsumer` y usará los datos leídos de `jsonproducer` para presentarlos al usuario en forma de saludo, mostrando `Hola` seguido del nombre leído del JSON devuelto por la versión de `jsonproducer` usada.
+
+#### Creación de todos los servicios 
+
+Vamos a desplegar en el cluster de Kubernetes todos los recursos (`Service` y `Deployment`) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos `Deployment`, uno para cada una de las versiones del `jsonproducer` que quedarán desplegadas en el cluster.
+
+Cada despliegue incorpora en los metadatos el nombre que le que queremos dar, así como unas etiquetas con su versión, que le permitirán ser seleccionado posteriormente cuando se definan los _servicios virtuales_. Además, en la `spec` del despliegue se usarán etiquetas en `matchLabels` que permitirán más adelante a Istio distinguir los pods correspondientes a cada despliegue.
+
+En este ejemplo usaremos dos versiones (dos recursos `Deployment`) del `jsonproducer`. La primera está basada en la imagen `ualmtorres/jsonproducer:v0` que devuelve `{"nombre": "manolo"}`. La segunda está basada en la imagen `ualmtorres/jsonproducer:v1` que devuelve `{"nombre": "Manuel Torres"}`. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico. 
+
+[source, bash]
+----
+#########################################################
+# jsonproducer service
+#########################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonproducer
+  labels:
+    app: jsonproducer
+    service: jsonproducer
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: jsonproducer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonproducer-v0 <1>
+  labels:
+    app: jsonproducer
+    version: v0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonproducer
+      version: v0 <2>
+  template:
+    metadata:
+      labels:
+        app: jsonproducer
+        version: v0
+    spec:
+      containers:
+      - name: jsonproducer
+        image: ualmtorres/jsonproducer:v0 <3>
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonproducer-v1 <4>
+  labels:
+    app: jsonproducer
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonproducer
+      version: v1 <5>
+  template:
+    metadata:
+      labels:
+        app: jsonproducer
+        version: v1
+    spec:
+      containers:
+      - name: jsonproducer
+        image: ualmtorres/jsonproducer:v1 <6>
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+###########################################################
+# jsonreader services
+###########################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonreaderpage
+  labels:
+    app: jsonreaderpage
+    service: jsonreaderpage
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: jsonreaderpage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonreaderpage-v0
+  labels:
+    app: jsonreaderpage
+    version: v0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jsonreaderpage
+      version: v0
+  template:
+    metadata:
+      labels:
+        app: jsonreaderpage
+        version: v0
+    spec:
+      containers:
+      - name: jsonreaderpage
+        image: ualmtorres/jsonreader:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+----
+<1> Versión `v0` del servicio
+<2> Selector para determinar los pods asociados a la versión `v0` del servicio
+<3> Imagen `v0` del servicio
+<4> Versión `v1` del servicio
+<5> Selector para determinar los pods asociados a la versión `v1` del servicio
+<6> Imagen `v1` del servicio
+
+#### Creación de los _subsets_ mediante `DestionationRule`
+
+Las `DestinatioRule` se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su `DestinationRule` con lo siguiente:
+
+* `metatada.name`: Nombre.
+* `spec.host`: Host contra el que se lanzará este servicio. Puede ser un nombre DNS (admite _wildcards_) o un nombre de servicio válido en nuestra aplicación.
+* `spec.subsets`: Lista de versiones de servicios a configurar. Cada versión tendrá su nombre (`name`) y usará una etiqueta (p.e. `labels.version: v0`) para emparejarse con los pods de su versión de acuerdo a lo definido en el selector `matchLabels` del objeto `Deployment` del manifiesto del apartado anterior.
+
+[source, bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jsonreaderpage
+spec:
+  host: jsonreaderpage
+  subsets:
+  - name: v0
+    labels:
+      version: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jsonproducer
+spec:
+  host: jsonproducer <1>
+  subsets:
+  - name: v0
+    labels:
+      version: v0
+  - name: v1 <2>
+    labels:
+      version: v1 <3>
+---
+----
+<1> Nombre que le damos a nuestro host y que luego será usado por los _servicios virtuales_ para dirigir el tráfico a una versión concreta de las definidas en los `subsets`. Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación
+<2> Nombre dado a esta versión del servicio
+<3> Etiqueta usada para seleccionar los pods a los que corresponde esta versión. Se emparejarán los pods que tengan `version: v1` en su `MatchingLabels`
+
+#### Creación de los servicios virtuales para el control del tráfico
+
+Por último, crearemos los `VirtualService` para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el _mesh_.
+
+Con los servicios virtuales conseguimos crear la capa complementaria a la aplicación que controlará su tráfico. Esto nos permite usar y cambiar a versiones concretas, derivar un porcentaje del tráfico a versiones concretas (despliegues `canary`), tener versiones diferentes para usuarios diferentes, control de tráfico basado en CIDR, y demás. 
+
+
+[NOTE]
+====
+Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánima. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los `VirtualService` que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás.
+====
+
+El manifiesto siguiente define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión `v0` de los `Deployment` desplegados en el cluster.
+
+[source, bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonreaderpage
+spec:
+  hosts:
+  - jsonreaderpage
+  http:
+  - route:
+    - destination:
+        host: jsonreaderpage
+        subset: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonproducer
+spec:
+  hosts:
+  - jsonproducer <1> 
+  http:
+  - route:
+    - destination:
+        host: jsonproducer <2>
+        subset: v0 <3>
+---
+----
+<1> Nombre DNS (admite prefijos _wildcard_) o nombres de servicios del _mesh_
+<2> Servicio al que se quiere dirigir el tráfico
+<3> Versión a la que se quiere dirigir el tráfico
+
 ### Casos prácticos
 
 . Instalación del ejemplo
