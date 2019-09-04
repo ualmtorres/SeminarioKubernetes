@@ -1718,7 +1718,7 @@ spec:
     spec:
       containers:
       - name: jsonreader <i class="conum" data-value="9"></i><b>(9)</b>
-        image: ualmtorres/jsonreader:latest <i class="conum" data-value="10"></i><b>(10)</b>
+        image: ualmtorres/jsonreader:v0 <i class="conum" data-value="10"></i><b>(10)</b>
         ports:
         - name: http
           containerPort: 80 <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
@@ -2175,16 +2175,16 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>10. Apéndice. Service Mesh con Istio</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. A diferencia de otras arquitecturas, los microservicios pueden ser creados por grupos de desarrollo pequeños creando sus propias herramientas y lenguajes de programación. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y pueden fallar de forma individual sin provocar una caída del funcionamiento de la aplicación completa.</p>
+<p>Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. Esto permite que los microservicios pueden ser creados por grupos de desarrollo pequeños, creando sus propias herramientas y usando los lenguajes de programación más adecuados, lo que aumenta la productividad y velocidad del proyecto. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y permiten el fallo de forma individual sin provocar una caída del funcionamiento de la aplicación completa.</p>
 </div>
 <div class="paragraph">
-<p>Sin embargo, el desarrollo y la utilización de microservicios supone nuevos desafíos e implica el desarrollo y gestión de comunicación entre servicios. Esta lógica podría ser codificada en cada servicio sin necesidad de un <em>service mesh</em>, pero a medida que la complejidad crece, se hace más necesario un <em>service mesh</em>.</p>
+<p>Sin embargo, el desarrollo y la utilización de microservicios supone nuevos desafíos e implica la implementación y la gestión de la comunicación entre ellos. Esta lógica podría ser codificada en cada servicio, lo que aumenta su complejidad y dificultad, y a medida que el proyecto crece, se hace más necesario un <em>service mesh</em>.</p>
 </div>
 <div class="paragraph">
-<p>Un <em>service mesh</em> es una capa complementaria responsable de la gestión del tráfico, políticas, certificados y seguridad de los servicios. Así, un <em>service mesh</em> no añade nueva funcionalidad a las aplicaciones. Simplemente, se dedica a sacar fuera de los servicios la lógica de comunicación y la abstrae a una capa de infraestructura. Con un <em>service mesh</em> los desarrolladores pueden centrarse en el desarrollo de la lógica de negocio y abstraerse de lo demás.</p>
+<p>Un <em>service mesh</em> es una capa complementaria a la aplicación y es responsable de la gestión del tráfico, políticas, certificados y seguridad de los servicios. Así, un <em>service mesh</em> no añade nueva funcionalidad a las aplicaciones. Simplemente, se dedica a sacar fuera de los servicios la lógica de comunicación, abstrayéndola a una capa de infraestructura. Así, con un <em>service mesh</em> los desarrolladores pueden centrarse en el desarrollo de la lógica de negocio y abstraerse de lo demás.</p>
 </div>
 <div class="paragraph">
-<p>Para ofrecer esta funcionalidad, un <em>service mesh</em> introduce una colección de proxies de red. En un <em>service mesh</em> las peticiones entre los servicios se enrutan a través de los proxies en su propio nivel de infraestructura. Estos proxies son implementados como sidecars que se situan en el mismo pod que el servicio al que <em>sirven</em> (tráfico, seguridad, &#8230;&#8203;). Si vemos esta red de sidecars desacoplados de los servicios y los situamos en una capa aparte visualizaremos el <em>service mesh</em>.</p>
+<p>Para ofrecer esta funcionalidad, un <em>service mesh</em> introduce una colección de proxies de red. En un <em>service mesh</em> las peticiones entre los servicios se enrutan a través de estos proxies. Dichos proxies son implementados como sidecars, y se situan en el mismo pod que el servicio al que <em>sirven</em> (tráfico, seguridad, &#8230;&#8203;). Si imaginamos esta red de sidecars en una capa aparte visualizaremos el <em>service mesh</em>.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2192,19 +2192,29 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="paragraph">
-<p>La idea entonces es inyectar un contenedor sidecar especial en cada microservicio y enrutar todo el tráfico a través de los sidecars en lugar de a través de los microservicios. El controlador del <em>service mesh</em> podrá filtrar tráfico, y aplicar políticas de balanceo, seguridad y limitación de tráfico.</p>
+<p>La idea entonces es inyectar un contenedor sidecar especial en el pod de cada microservicio y enrutar todo el tráfico a través de estos sidecars en lugar de a través de los propios microservicios. El controlador del <em>service mesh</em> interactuará con estos proxies y podrá filtrar tráfico, así como aplicar políticas de balanceo, seguridad y limitación de tráfico.</p>
 </div>
 <div class="paragraph">
-<p>Sin un <em>service mesh</em>, cada microservicio debería incluir la lógica de gobierno y comunicación con otros servicios, lo que añade una complejidad extra al desarrollo del servicio. Además, el disponer de un <em>service mesh</em> en entornos normalizados, permite tratar el problema del tráfico, políticas, seguridad y certificados entre servicios de forma estándar, independientemente de la plataforma en la que estén desplegadas nuestras aplicaciones.</p>
+<p>Sin un <em>service mesh</em>, cada microservicio debería incluir la lógica de gobierno y de comunicación con otros servicios, lo que añade una complejidad extra al desarrollo del servicio. Además, el disponer de un <em>service mesh</em> en entornos normalizados permite tratar de forma estándar el problema del tráfico, así como la gestión de políticas, seguridad y certificados entre servicios, independientemente de la plataforma en la que estén desplegadas nuestras aplicaciones.</p>
 </div>
 <div class="paragraph">
-<p><a href="https://istio.io/">Istio</a> es un <em>service mesh</em> que permite conectar, asegurar, controlar y observar servicios.</p>
+<p>En el contexto de <em>service mesh</em> se suelen tratar con varias aplicaciones. Las más habituales son las siguientes:</p>
 </div>
-<div class="paragraph">
-<p><a href="https://www.kiali.io/">Kiali</a> extiende estas características de gestión del tráfico incorporando observabilidad y visualización de servicios de la red para mejorar el trabajo con la red. Kiali ofrece una forma sencilla de ver la toplogía de un <em>service mesh</em> y observar cómo interactúan los servicios.</p>
-</div>
-<div class="paragraph">
-<p><a href="https://www.jaegertracing.io">Jaeger</a> se encarga del tracing y permite a los desarrolladores fragmentar una petición y ver cómo va avanzando entre los distintos servicios de princicio a fin.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://istio.io/">Istio</a>: <em>Service mesh</em> que permite conectar, asegurar, controlar y observar servicios.</p>
+</li>
+<li>
+<p><a href="https://www.kiali.io/">Kiali</a>: Extiende estas características de gestión del tráfico incorporando observabilidad y visualización de servicios de la red. Kiali ofrece una forma sencilla de ver la topología de un <em>service mesh</em> y observar cómo interactúan los servicios.</p>
+</li>
+<li>
+<p><a href="https://www.jaegertracing.io">Jaeger</a>: Se encarga del tracing y permite fragmentar una petición y ver cómo qué tiempo se emplea en cada uno los componentes o partes de las que consta la petición inicial.</p>
+</li>
+<li>
+<p><a href="https://prometheus.io/">Prometheus</a>: Sistema de monitorización y alertas que almacena en forma de series temporales la actividad del <em>mesh</em> (peticiones, volumen de descarga, tiempos de resolución, errores, &#8230;&#8203;)</p>
+</li>
+</ul>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2231,7 +2241,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </table>
 </div>
 <div class="paragraph">
-<p>La figura siguiente ilustra una aplicación sin Istio. En ella cada microservicio es el responsable de implementar la funcionalidad de discovery, balanceo, resilencia, métricas y trazado.</p>
+<p>La figura siguiente ilustra una aplicación sin Istio. En ella cada microservicio es el responsable de implementar la funcionalidad de <em>discovery</em>, balanceo, resilencia, métricas y trazado.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2239,7 +2249,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="paragraph">
-<p>La figura siguiente ilustra como en as aplicaciones basadas en Istio los pods están formados por dos contenedores: el contenedor del microservicio y el sidecar. En el sidecar se delegan las tareas de discovery, balanceo, resilencia, métricas y trazado, lo que facilita el desarrollo de los microservicios.</p>
+<p>La figura siguiente ilustra como en las aplicaciones basadas en Istio los pods están formados por dos contenedores: el contenedor del microservicio y el sidecar. Al sidecar se le delegan las tareas de <em>discovery</em>, balanceo, resilencia, métricas y trazado, lo que facilita el desarrollo de los microservicios.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2247,21 +2257,21 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="paragraph">
-<p>Istio ofrece una forma declarativa, mediante la creación de manifiestos YAML, de gestión del tráfico, enrutado selectivo de peticiones (en lugar del round robin que ofrece Kubernetes), despliegues (<em>canary, A/B, blue/green</em>), resilencia a nivel de red (con opciones de <em>retry</em>, <em>timeout</em>), control de acceso, observación de microservicios distribuidos comprendiendo los flujos y trazas y pudiendo ver las métricas importantes de forma inmediata, inyección de caos para poner a prueba la resilencia de aplicaciones y servicios, por citar algunas de sus funcionalidades destacadas.</p>
+<p>Istio ofrece una forma declarativa, mediante la creación de manifiestos YAML, de gestión del tráfico, enrutado selectivo de peticiones (en lugar del round robin que ofrece Kubernetes), diferentes tipos de despliegue (<em>canary, A/B, blue/green</em>), resilencia a nivel de red (con opciones de <em>retry</em>, <em>timeout</em>), control de acceso, observación de microservicios distribuidos comprendiendo los flujos y trazas y pudiendo ver las métricas importantes de forma inmediata, inyección de caos para poner a prueba la resilencia de aplicaciones y servicios, por citar algunas de sus funcionalidades destacadas.</p>
 </div>
 <div class="paragraph">
 <p>Para activar el uso de Istio en un namespace se haría con</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">`kubectl label namespace default istio-injection=enabled`</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">kubectl label namespace default istio-injection=enabled</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>10.2. Arquitectura de Istio</h3>
 <div class="paragraph">
-<p>Instio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que están en la arqutiectura de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales pueden ser configurados individualmente para enrutar, filtrar y aumentar el tráfico según sea necesario.</p>
+<p>Istio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que se integran en los pods de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales son gestionados individualmente por Istio para enrutar, filtrar y aumentar el tráfico según sea necesario.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2284,14 +2294,14 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Algo a tener en cuenta es que los componentes del plano de control son aplicaciones sin estado lo que permitan que puedan escalar horizontalmente. Todos los datos están almacenados en <em>etcd</em> como descricpciones personalizadas de recursos Kubernetes.</p>
+<p>Algo a tener en cuenta es que los componentes del plano de control son aplicaciones sin estado, lo que favorece que puedan escalar horizontalmente. Todos los datos están almacenados en <em>etcd</em> como descricpciones personalizadas de recursos Kubernetes.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Sin embrgo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cuando mayor sea el cluster mayor será la carga añadida al sistema. Cada sidecar consume mucha RAM (unos 350Mb). Además, añade una latencia de unos 10 ms a cada petición.</p>
+<p>Sin embargo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cuando mayor sea el cluster, mayor será la carga añadida al sistema. Cada sidecar consume mucha RAM (unos 350Mb). Además, añade una latencia de unos 10 ms a cada petición.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2299,14 +2309,14 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <div class="ulist">
 <ul>
 <li>
-<p>Despliegue <em>canary</em>: Se despliega en producción una nueva versión del código pero sólo se dirige a él una parte del tráfico. Quizá sólo tengan acceso a él clientes de prueba, empleados, usuarios de iOS, etcétera. Una vez desplegado el canario, se monitoriza para comprobar la existencia de excepciones, comportamiento no satisfactorio, bajada del rendimiento, y demás. En cambio, si el canario no muestra indicios de que presente problemas se pueden ir aumentando paulatinamente el tráfico hacia él. Si presenta un comportamiento inaceptable, se puede retirar fácilmente de producción.</p>
+<p>Despliegue <em>canary</em>: Se despliega en producción una nueva versión del código, pero sólo se dirige a ella una parte del tráfico. A la nueva versión quizá sólo tengan acceso clientes de prueba, empleados, usuarios de iOS, etcétera. Una vez desplegado el canario, éste se monitoriza para comprobar la posible existencia de excepciones, comportamiento no satisfactorio, bajada del rendimiento, y demás. Si el canario no muestra indicios de que presente problemas, se puede ir aumentando paulatinamente el tráfico hacia él. En cambio, si presenta un comportamiento inaceptable, se puede retirar fácilmente de producción.</p>
 </li>
 <li>
 <p>Control del tráfico: Se pueden especificar reglas de enrutado que controlen el tráfico a un conjunto de pods. En concreto, Istio usa los recursos <code>DestinationRule</code> y <code>VirtualService</code> en forma de manifiestos YAML para describir estas reglas.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>DestinationRule</code>: Define grupos (<em>subsets</em>) de pods.</p>
+<p><code>DestinationRule</code>: Define grupos (<em>subsets</em>) de pods. Normalmente definiremos un <em>subset</em> para cada servicio y el <em>subset</em> estará formado por cada una de las versiones que se pueden utilizar del servicio.</p>
 </li>
 <li>
 <p><code>VirtualService</code> dirige el tráfico a un <em>subset</em> basado en porcentajes, cabeceras, direcciones IP, por citar algunas. La selección de pods afectados es similar al modelo de selectores utilizado por Kubernetes para selección basada en etiquetas (<em>labels</em>).</p>
@@ -2314,7 +2324,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </ul>
 </div>
 <div class="paragraph">
-<p>Este comportamiento del enrutado no es sólo para el tráfico de entrada externo. Es para toda la comunicación inter-servicio en el <em>service mesh</em>. Así, si hubiese servicios desplegados en Kubernetes, pero que no sean parte del <em>mesh</em> no estaría afectado por estas reglas y se regiría por las reglas de balanceo de Kubernetes (round-robin).</p>
+<p>Este comportamiento del enrutado no es sólo para el tráfico de entrada externo. Es para toda la comunicación inter-servicio en el <em>service mesh</em>. Así, si hubiese servicios desplegados en Kubernetes, pero que no sean parte del <em>mesh</em>, no estaría afectado por estas reglas y se regiría por las reglas de balanceo de Kubernetes (round-robin).</p>
 </div>
 </li>
 <li>
@@ -2334,7 +2344,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <p><em>Pool ejection</em>: Saca de un nodo a un pod que esté dando fallos creando un nuevo pod que los sustituya en otro nodo.</p>
 </li>
 <li>
-<p><em>Retries</em>: Reenvía la petición a otro pod al encontrar un caso de circuit breaker o pool rejection</p>
+<p><em>Retries</em>: Reenvía la petición a otro pod al encontrar un caso de <em>circuit breaker</em> o <em>pool rejection</em>.</p>
 </li>
 </ul>
 </div>
@@ -2345,21 +2355,32 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <p>Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.</p>
 </div>
 <div class="paragraph">
-<p>El servicio que genera datos se denomina <code>jsonproducer</code> y genera un documento JSON con un único elemento <code>nombre</code> y un valor aasociado (p.e. <code>{"nombre": "manolo"}</code>). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión devuelve el elemento JSON <code>{"nombre": "manolo"}</code>. La segunda versión devuelve el elemento JSON <code>{"nombre": "Manuel Torres"}</code></p>
+<p>El servicio que genera datos se denomina <code>jsonproducer</code> y genera un documento JSON con un único elemento <code>nombre</code> y un valor aasociado (p.e. <code>{"nombre": "manolo"}</code>). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión (<code>v0</code>) devuelve el elemento JSON <code>{"nombre": "manolo"}</code>. La segunda versión (<code>v1</code>) devuelve el elemento JSON <code>{"nombre": "Manuel Torres"}</code></p>
 </div>
 <div class="paragraph">
-<p>El servicio que consume datos se denomina <code>jsonconsumer</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada.</p>
+<p>El servicio que consume datos se denomina <code>jsonreader</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada (<code>Hola manolo</code> cuando use <code>v0</code> y <code>Hola Manuel Torres</code> cuando use <code>v1</code>).</p>
 </div>
 <div class="sect3">
 <h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>10.5.1. Creación de todos los servicios</h4>
 <div class="paragraph">
-<p>Vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> que quedarán desplegadas en el cluster.</p>
+<p>En primer lugar vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> (<code>v0</code> y <code>v1</code>) que quedarán desplegadas en el cluster.</p>
 </div>
 <div class="paragraph">
 <p>Cada despliegue incorpora en los metadatos el nombre que le que queremos dar, así como unas etiquetas con su versión, que le permitirán ser seleccionado posteriormente cuando se definan los <em>servicios virtuales</em>. Además, en la <code>spec</code> del despliegue se usarán etiquetas en <code>matchLabels</code> que permitirán más adelante a Istio distinguir los pods correspondientes a cada despliegue.</p>
 </div>
 <div class="paragraph">
 <p>En este ejemplo usaremos dos versiones (dos recursos <code>Deployment</code>) del <code>jsonproducer</code>. La primera está basada en la imagen <code>ualmtorres/jsonproducer:v0</code> que devuelve <code>{"nombre": "manolo"}</code>. La segunda está basada en la imagen <code>ualmtorres/jsonproducer:v1</code> que devuelve <code>{"nombre": "Manuel Torres"}</code>. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico.</p>
+</div>
+<div class="paragraph">
+<p>El manifiesto siguiente corresponde a los dos servicios (<code>jsonproducer</code>  y <code>jsonreader</code>), a los <code>Deployment</code> correspondientes a las dos versiones de <code>jsonproducer</code> (<code>jsonproducer-v0</code> y <code>jsonproducer-v1</code>) y al <code>Deployment</code> de <code>jsonreader</code> (<code>jsonreader-v0</code>).</p>
+</div>
+<div class="paragraph">
+<p>Lo aplicaremos en nuestro cluster con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2438,39 +2459,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jsonreaderpage
+  name: jsonreader
   labels:
-    app: jsonreaderpage
-    service: jsonreaderpage
+    app: jsonreader
+    service: jsonreader
 spec:
   ports:
   - port: 80
     name: http
   selector:
-    app: jsonreaderpage
+    app: jsonreader
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jsonreaderpage-v0
+  name: jsonreader-v0
   labels:
-    app: jsonreaderpage
+    app: jsonreader
     version: v0
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jsonreaderpage
+      app: jsonreader
       version: v0
   template:
     metadata:
       labels:
-        app: jsonreaderpage
+        app: jsonreader
         version: v0
     spec:
       containers:
-      - name: jsonreaderpage
-        image: ualmtorres/jsonreader:latest
+      - name: jsonreader
+        image: ualmtorres/jsonreader:v0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -2509,7 +2530,7 @@ spec:
 <div class="sect3">
 <h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"></a>10.5.2. Creación de los <em>subsets</em> mediante <code>DestionationRule</code></h4>
 <div class="paragraph">
-<p>Las <code>DestinatioRule</code> se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
+<p>A continación vamos a definir todas las versiones de un servicio. Las <code>DestinatioRule</code> se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2524,14 +2545,25 @@ spec:
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>El manifiesto siguiente corresponde a los dos recursos <code>DestiantionRule</code> que vamos a crear, uno para cada servicio, <code>jsonproducer</code>  y <code>jsonreader</code>, respectivamente. Cada <code>DestinationRule</code> incluye los <em>subsets</em> o versiones de recursos <code>Deployment</code> de cada servicio. En este caso, indicamos que <code>jsonreader</code> consta sólo de un <em>subset</em>  al que llegaremos a través de la versión <code>v0</code> del servicio (<em>host</em>) <code>jsonreader</code>. En cambio, <code>jsonproducer</code> consta de dos <em>subset</em> , a los que llegaremos a través de las versiones <code>v0</code> o <code>v1</code> del servicio (<em>host</em>) <code>jsonproducer</code>.</p>
+</div>
+<div class="paragraph">
+<p>Lo aplicaremos en nuestro cluster con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+</div>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: jsonreaderpage
+  name: jsonreader
 spec:
-  host: jsonreaderpage
+  host: jsonreader
   subsets:
   - name: v0
     labels:
@@ -2586,7 +2618,7 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánima. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los <code>VirtualService</code> que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás.</p>
+<p>Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánica. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los <code>VirtualService</code> que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás, y el <em>mesh</em> habrá cambiado de acuerdo a las nuevas especificaciones.</p>
 </div>
 </td>
 </tr>
@@ -2600,14 +2632,14 @@ spec:
 <pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: jsonreaderpage
+  name: jsonreader
 spec:
   hosts:
-  - jsonreaderpage
+  - jsonreader
   http:
   - route:
     - destination:
-        host: jsonreaderpage
+        host: jsonreader
         subset: v0
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -2640,6 +2672,14 @@ spec:
 <td>Versión a la que se quiere dirigir el tráfico</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Lo aplicaremos en nuestro cluster con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -2840,7 +2880,7 @@ spec:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-01 08:09:18 CEST
+Last updated 2019-09-04 06:43:11 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
