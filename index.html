@@ -2372,14 +2372,14 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <p>En este ejemplo usaremos dos versiones (dos recursos <code>Deployment</code>) del <code>jsonproducer</code>. La primera está basada en la imagen <code>ualmtorres/jsonproducer:v0</code> que devuelve <code>{"nombre": "manolo"}</code>. La segunda está basada en la imagen <code>ualmtorres/jsonproducer:v1</code> que devuelve <code>{"nombre": "Manuel Torres"}</code>. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico.</p>
 </div>
 <div class="paragraph">
-<p>El manifiesto siguiente corresponde a los dos servicios (<code>jsonproducer</code>  y <code>jsonreader</code>), a los <code>Deployment</code> correspondientes a las dos versiones de <code>jsonproducer</code> (<code>jsonproducer-v0</code> y <code>jsonproducer-v1</code>) y al <code>Deployment</code> de <code>jsonreader</code> (<code>jsonreader-v0</code>).</p>
+<p>El manifiesto siguiente (<a href="https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml"><code>greeter.yaml</code></a>) corresponde a los dos servicios (<code>jsonproducer</code>  y <code>jsonreader</code>), a los dos <code>Deployment</code> correspondientes a las dos versiones de <code>jsonproducer</code> (<code>jsonproducer-v0</code> y <code>jsonproducer-v1</code>) y al <code>Deployment</code> de <code>jsonreader</code> (<code>jsonreader-v0</code>).</p>
 </div>
 <div class="paragraph">
 <p>Lo aplicaremos en nuestro cluster con</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2530,7 +2530,7 @@ spec:
 <div class="sect3">
 <h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destionationrule-code"></a>10.5.2. Creación de los <em>subsets</em> mediante <code>DestionationRule</code></h4>
 <div class="paragraph">
-<p>A continación vamos a definir todas las versiones de un servicio. Las <code>DestinatioRule</code> se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
+<p>A continación vamos a definir todas las versiones de un servicio que vamos a tener disponibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las <code>DestinationRule</code> se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2546,14 +2546,14 @@ spec:
 </ul>
 </div>
 <div class="paragraph">
-<p>El manifiesto siguiente corresponde a los dos recursos <code>DestiantionRule</code> que vamos a crear, uno para cada servicio, <code>jsonproducer</code>  y <code>jsonreader</code>, respectivamente. Cada <code>DestinationRule</code> incluye los <em>subsets</em> o versiones de recursos <code>Deployment</code> de cada servicio. En este caso, indicamos que <code>jsonreader</code> consta sólo de un <em>subset</em>  al que llegaremos a través de la versión <code>v0</code> del servicio (<em>host</em>) <code>jsonreader</code>. En cambio, <code>jsonproducer</code> consta de dos <em>subset</em> , a los que llegaremos a través de las versiones <code>v0</code> o <code>v1</code> del servicio (<em>host</em>) <code>jsonproducer</code>.</p>
+<p>El manifiesto siguiente (<a href="https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml"><code>destination-rule-all.yaml</code></a>) corresponde a los dos recursos <code>DestinationRule</code> que vamos a crear, uno para cada servicio, <code>jsonproducer</code>  y <code>jsonreader</code>, respectivamente. Cada <code>DestinationRule</code> incluye los <em>subsets</em> o versiones de recursos <code>Deployment</code> de cada servicio. En este caso, indicamos que <code>jsonreader</code> consta sólo de un <em>subset</em>  al que llegaremos a través de la versión <code>v0</code> del servicio (<em>host</em>) <code>jsonreader</code>. En cambio, <code>jsonproducer</code> consta de dos <em>subset</em> , a los que llegaremos a través de las versiones <code>v0</code> o <code>v1</code> del servicio (<em>host</em>) <code>jsonproducer</code>.</p>
 </div>
 <div class="paragraph">
 <p>Lo aplicaremos en nuestro cluster con</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2589,7 +2589,7 @@ spec:
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Nombre que le damos a nuestro host y que luego será usado por los <em>servicios virtuales</em> para dirigir el tráfico a una versión concreta de las definidas en los <code>subsets</code>. Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación</td>
+<td>Nombre que le damos a nuestro host y que luego será usado por los <em>servicios virtuales</em> para dirigir el tráfico a una versión concreta de las definidas en los <code>subsets</code>. <strong>Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación</strong></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -2603,7 +2603,7 @@ spec:
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico"></a>10.5.3. Creación de los servicios virtuales para el control del tráfico</h4>
+<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>10.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
 <div class="paragraph">
 <p>Por último, crearemos los <code>VirtualService</code> para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el <em>mesh</em>.</p>
 </div>
@@ -2625,7 +2625,7 @@ spec:
 </table>
 </div>
 <div class="paragraph">
-<p>El manifiesto siguiente define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión <code>v0</code> de los <code>Deployment</code> desplegados en el cluster.</p>
+<p>El manifiesto siguiente (<a href="https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml"><code>all-v0.yaml</code></a>) define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión <code>v0</code> de los <code>Deployment</code> desplegados en el cluster.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2678,8 +2678,83 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f $$$$$$$$$$$$$</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>10.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
+<div class="paragraph">
+<p>Como comentamos, en los despliegues <em>canary</em> se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión <code>v0</code> de <code>jsonproducer</code> y el 20% del tráfico a la versión <code>v1</code> de <code>jsonproducer</code>.</p>
+</div>
+<div class="paragraph">
+<p>El manifiesto siguiente (<a href="https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml"><code>virtual-service-jsonproducer-20-v1.yaml</code></a>) define un servicio virtual para cada servicio de nuestra aplicación y modifica el original de <code>jsonproducer</code> para desviar el 80% del tráfico a <code>v0</code> y el 20% a <code>v1</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonreader
+spec:
+  hosts:
+  - jsonreader
+  http:
+  - route:
+    - destination:
+        host: jsonreader
+        subset: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonproducer
+spec:
+  hosts:
+  - jsonproducer
+  http:
+  - route:
+    - destination: <i class="conum" data-value="1"></i><b>(1)</b>
+        host: jsonproducer
+        subset: v0
+      weight: 80 <i class="conum" data-value="2"></i><b>(2)</b>
+    - destination: <i class="conum" data-value="3"></i><b>(3)</b>
+        host: jsonproducer
+        subset: v1
+      weight: 20 <i class="conum" data-value="4"></i><b>(4)</b>
+---</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configuración de la versión <code>v0</code> de <code>jsonproducer</code> como destino de tráfico del servicio virtual</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Porcentaje de tráfico que se dirigirá a la versión <code>v0</code> (80%)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Configuración de la versión <code>v1</code> de <code>jsonproducer</code> como destino de tráfico del servicio virtual</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Porcentaje de tráfico que se dirigirá a la versión <code>v1</code> (20%)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Lo aplicaremos en nuestro cluster con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si lanzamos ahora un gran número de peticiones contra <code>jsonreader</code> veremos como estadísticamente se tiene a que el 80% de las peticiones muestren los datos de la <code>v0</code> de <code>jsonproducer</code> y el 20% muestre los datos de la <code>v1</code> de <code>jsonproducer</code>.</p>
 </div>
 </div>
 </div>
@@ -2880,7 +2955,7 @@ spec:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-04 06:43:11 CEST
+Last updated 2019-09-05 06:41:46 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

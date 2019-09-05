@@ -1189,13 +1189,13 @@ Cada despliegue incorpora en los metadatos el nombre que le que queremos dar, as
 
 En este ejemplo usaremos dos versiones (dos recursos `Deployment`) del `jsonproducer`. La primera está basada en la imagen `ualmtorres/jsonproducer:v0` que devuelve `{"nombre": "manolo"}`. La segunda está basada en la imagen `ualmtorres/jsonproducer:v1` que devuelve `{"nombre": "Manuel Torres"}`. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico. 
 
-El manifiesto siguiente corresponde a los dos servicios (`jsonproducer`  y `jsonreader`), a los `Deployment` correspondientes a las dos versiones de `jsonproducer` (`jsonproducer-v0` y `jsonproducer-v1`) y al `Deployment` de `jsonreader` (`jsonreader-v0`).
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`greeter.yaml`]) corresponde a los dos servicios (`jsonproducer`  y `jsonreader`), a los dos `Deployment` correspondientes a las dos versiones de `jsonproducer` (`jsonproducer-v0` y `jsonproducer-v1`) y al `Deployment` de `jsonreader` (`jsonreader-v0`).
 
 Lo aplicaremos en nuestro cluster con 
 
 [source, bash]
 ----
-$ kubectl apply -f $$$$$$$$$$$$$
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml
 ----
 
 [source, bash]
@@ -1322,20 +1322,20 @@ spec:
 
 #### Creación de los _subsets_ mediante `DestionationRule`
 
-A continación vamos a definir todas las versiones de un servicio. Las `DestinatioRule` se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su `DestinationRule` con lo siguiente:
+A continación vamos a definir todas las versiones de un servicio que vamos a tener disponibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las `DestinationRule` se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su `DestinationRule` con lo siguiente:
 
 * `metatada.name`: Nombre.
 * `spec.host`: Host contra el que se lanzará este servicio. Puede ser un nombre DNS (admite _wildcards_) o un nombre de servicio válido en nuestra aplicación.
 * `spec.subsets`: Lista de versiones de servicios a configurar. Cada versión tendrá su nombre (`name`) y usará una etiqueta (p.e. `labels.version: v0`) para emparejarse con los pods de su versión de acuerdo a lo definido en el selector `matchLabels` del objeto `Deployment` del manifiesto del apartado anterior.
 
 
-El manifiesto siguiente corresponde a los dos recursos `DestiantionRule` que vamos a crear, uno para cada servicio, `jsonproducer`  y `jsonreader`, respectivamente. Cada `DestinationRule` incluye los _subsets_ o versiones de recursos `Deployment` de cada servicio. En este caso, indicamos que `jsonreader` consta sólo de un _subset_  al que llegaremos a través de la versión `v0` del servicio (_host_) `jsonreader`. En cambio, `jsonproducer` consta de dos _subset_ , a los que llegaremos a través de las versiones `v0` o `v1` del servicio (_host_) `jsonproducer`. 
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`destination-rule-all.yaml`]) corresponde a los dos recursos `DestinationRule` que vamos a crear, uno para cada servicio, `jsonproducer`  y `jsonreader`, respectivamente. Cada `DestinationRule` incluye los _subsets_ o versiones de recursos `Deployment` de cada servicio. En este caso, indicamos que `jsonreader` consta sólo de un _subset_  al que llegaremos a través de la versión `v0` del servicio (_host_) `jsonreader`. En cambio, `jsonproducer` consta de dos _subset_ , a los que llegaremos a través de las versiones `v0` o `v1` del servicio (_host_) `jsonproducer`. 
 
 Lo aplicaremos en nuestro cluster con 
 
 [source, bash]
 ----
-$ kubectl apply -f $$$$$$$$$$$$$
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml
 ----
 
 [source, bash]
@@ -1366,11 +1366,11 @@ spec:
       version: v1 <3>
 ---
 ----
-<1> Nombre que le damos a nuestro host y que luego será usado por los _servicios virtuales_ para dirigir el tráfico a una versión concreta de las definidas en los `subsets`. Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación
+<1> Nombre que le damos a nuestro host y que luego será usado por los _servicios virtuales_ para dirigir el tráfico a una versión concreta de las definidas en los `subsets`. *Este nombre debe coincidir con los nombres de servicio usados en el código de la aplicación*
 <2> Nombre dado a esta versión del servicio
 <3> Etiqueta usada para seleccionar los pods a los que corresponde esta versión. Se emparejarán los pods que tengan `version: v1` en su `MatchingLabels`
 
-#### Creación de los servicios virtuales para el control del tráfico
+#### Creación de los servicios virtuales para el control del tráfico a versiones específicas
 
 Por último, crearemos los `VirtualService` para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el _mesh_.
 
@@ -1382,7 +1382,7 @@ Con los servicios virtuales conseguimos crear la capa complementaria a la aplica
 Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánica. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los `VirtualService` que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás, y el _mesh_ habrá cambiado de acuerdo a las nuevas especificaciones.
 ====
 
-El manifiesto siguiente define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión `v0` de los `Deployment` desplegados en el cluster.
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml[`all-v0.yaml`]) define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión `v0` de los `Deployment` desplegados en el cluster.
 
 [source, bash]
 ----
@@ -1421,8 +1421,63 @@ Lo aplicaremos en nuestro cluster con
 
 [source, bash]
 ----
-$ kubectl apply -f $$$$$$$$$$$$$
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml
 ----
+
+#### Desvío de una fracción del tráfico a una nueva versión
+
+Como comentamos, en los despliegues _canary_ se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión `v0` de `jsonproducer` y el 20% del tráfico a la versión `v1` de `jsonproducer`. 
+
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml[`virtual-service-jsonproducer-20-v1.yaml`]) define un servicio virtual para cada servicio de nuestra aplicación y modifica el original de `jsonproducer` para desviar el 80% del tráfico a `v0` y el 20% a `v1`.
+
+[source, bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonreader
+spec:
+  hosts:
+  - jsonreader
+  http:
+  - route:
+    - destination:
+        host: jsonreader
+        subset: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonproducer
+spec:
+  hosts:
+  - jsonproducer
+  http:
+  - route:
+    - destination: <1>
+        host: jsonproducer
+        subset: v0
+      weight: 80 <2>
+    - destination: <3>
+        host: jsonproducer
+        subset: v1
+      weight: 20 <4>
+---
+----
+<1> Configuración de la versión `v0` de `jsonproducer` como destino de tráfico del servicio virtual
+<2> Porcentaje de tráfico que se dirigirá a la versión `v0` (80%)
+<3> Configuración de la versión `v1` de `jsonproducer` como destino de tráfico del servicio virtual
+<4> Porcentaje de tráfico que se dirigirá a la versión `v1` (20%)
+
+Lo aplicaremos en nuestro cluster con 
+
+[source, bash]
+----
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml
+----
+
+Si lanzamos ahora un gran número de peticiones contra `jsonreader` veremos como estadísticamente se tiene a que el 80% de las peticiones muestren los datos de la `v0` de `jsonproducer` y el 20% muestre los datos de la `v1` de `jsonproducer`.
+
 
 ### Casos prácticos
 
