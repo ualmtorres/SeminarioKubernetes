@@ -9,7 +9,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 :doctype: book
 :imagesdir: ./images
 :icons: font
-
+:linkattrs:
 
 ////
 Nombre y título del trabajo
@@ -50,9 +50,9 @@ COLOCA A CONTINUACION LOS OBJETIVOS
 ====
 Disponibles los repositorios usados en este seminario:
 
-* https://github.com/ualmtorres/json-producer[Código fuente de JSON Producer]
-* https://github.com/ualmtorres/json-reader[Código fuente de JSON Reader]
-* https://github.com/ualmtorres/jsonproducerreader[Archivos YAML de JSON Producer y Reader]
+* https://github.com/ualmtorres/json-producer[Código fuente de JSON Producer,window=_blank]
+* https://github.com/ualmtorres/json-reader[Código fuente de JSON Reader,window=_blank]
+* https://github.com/ualmtorres/jsonproducerreader[Archivos YAML de JSON Producer y Reader,window=_blank]
 ====
 // Entrar en modo numerado de apartados
 :numbered:
@@ -91,7 +91,7 @@ Un cluster Kubernetes en producción debería tener al menos 3 nodos. En entorno
 
 image::KubernetesCluster.svg[]
 
-Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-[API de Kubernetes]. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.
+Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-[API de Kubernetes,window=_blank]. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.
 
 .Lista de pods usando la API de Kubernetes
 ====
@@ -128,7 +128,7 @@ $ curl http://<kubernetes_home>/api/v1/namespaces/default/pods
 ----
 ====
 
-Los clusters de Kubernetes se pueden desplegar sobre máquinas físicas o virtuales. Para comenzar a practicar con Kubernetes o para tareas de desarrollo, https://github.com/kubernetes/minikube[Minikube] es una buena opción. En la sección <<Minikube>> se presenta más información sobre esta plataforma. Minikube está disponible para Windows, Linux y MacOS.
+Los clusters de Kubernetes se pueden desplegar sobre máquinas físicas o virtuales. Para comenzar a practicar con Kubernetes o para tareas de desarrollo, https://github.com/kubernetes/minikube[Minikube,window=_blank] es una buena opción. En la sección <<Minikube>> se presenta más información sobre esta plataforma. Minikube está disponible para Windows, Linux y MacOS.
 
 ### Arquitectura de Kubernetes
 
@@ -151,7 +151,7 @@ image::KubernetesArchitecture.png[]
 
 [TIP]
 ====
-https://etcd.io/[etcd], es una base de datos clave-valor fiable y distribiuda para los datos más críticos de un un sistema distribuido. Dado que Kubernetes guarda todos los datos del cluster en ella, se deberían mantener copias de seguridad de esta base de datos y disponer de un plan de recuperación ante posibles desastres.
+https://etcd.io/[etcd,window=_blank], es una base de datos clave-valor fiable y distribiuda para los datos más críticos de un un sistema distribuido. Dado que Kubernetes guarda todos los datos del cluster en ella, se deberían mantener copias de seguridad de esta base de datos y disponer de un plan de recuperación ante posibles desastres.
 ====
 
 [NOTE]
@@ -186,7 +186,7 @@ Los objetos de nivel superior o Controladores se basan en los objetos básicos y
 
 * Minikube es una gran herramienta para el desarrollo de aplicaciones Kubernetes y permite características habituales como _LoadBalancer_, _NodePort_, volúmenes persistentes, _Ingress_, dashboard, reglas de acceso, y demás.
 
-En la https://github.com/kubernetes/minikube[página de GitHub de Minikube] se encuentra información sobre el proyecto, https://kubernetes.io/docs/tasks/tools/install-minikube/[instalación] y otros temas de interés.
+En la https://github.com/kubernetes/minikube[página de GitHub de Minikube,window=_blank] se encuentra información sobre el proyecto, https://kubernetes.io/docs/tasks/tools/install-minikube/[instalación,window=_blank] y otros temas de interés.
 
 Una vez instalado, probaremos los comandos básicos:
 
@@ -224,7 +224,7 @@ image::KubernetesDashboard.png[]
 
 Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa `kubectl`, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. `kubectl` es el CLI para interactuar con el servidor de la API de Kubernetes.
 
-Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página oficial de instalación y configuración de `kubectl`]
+Consultar la https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl[página oficial de instalación y configuración de `kubectl`,window=_blank]
 
 Para interactuar con unos ejemplos sencillo con `kubectl` podemos
 
@@ -340,7 +340,7 @@ Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kuberne
 
 .Creación de un pod para MongoDB
 
-Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, ...) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis https://yaml.org/[YAML] y representan una forma declarativa de definir los recursos del cluster Kubernetes. 
+Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, ...) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis https://yaml.org/[YAML,window=_blank] y representan una forma declarativa de definir los recursos del cluster Kubernetes. 
 
 Para ilustrar cómo crear un pod, veremos cómo crear uno sencillo para MongoDB a partir de un archivo de manifiesto. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs, redirección de puertos
 
@@ -1096,15 +1096,15 @@ La idea entonces es inyectar un contenedor sidecar especial en el pod de cada mi
 
 Sin un _service mesh_, cada microservicio debería incluir la lógica de gobierno y de comunicación con otros servicios, lo que añade una complejidad extra al desarrollo del servicio. Además, el disponer de un _service mesh_ en entornos normalizados permite tratar de forma estándar el problema del tráfico, así como la gestión de políticas, seguridad y certificados entre servicios, independientemente de la plataforma en la que estén desplegadas nuestras aplicaciones.
 
-En el contexto de _service mesh_ se suelen tratar con varias aplicaciones. Las más habituales son las siguientes:
+En el contexto de _service mesh_ se suelen tratar con varioss proyectos. Los más habituales son los siguientes:
 
-* https://istio.io/[Istio]: _Service mesh_ que permite conectar, asegurar, controlar y observar servicios. 
+* https://istio.io/[Istio,window=_blank]: _Service mesh_ que permite conectar, asegurar, controlar y observar servicios. 
 
-* https://www.kiali.io/[Kiali]: Extiende estas características de gestión del tráfico incorporando observabilidad y visualización de servicios de la red. Kiali ofrece una forma sencilla de ver la topología de un _service mesh_ y observar cómo interactúan los servicios.
+* https://www.kiali.io/[Kiali,window=_blank]: Extiende estas características de gestión del tráfico incorporando observabilidad y visualización de servicios de la red. Kiali ofrece una forma sencilla de ver la topología de un _service mesh_ y observar cómo interactúan los servicios.
 
-* https://www.jaegertracing.io[Jaeger]: Se encarga del tracing y permite fragmentar una petición y ver cómo qué tiempo se emplea en cada uno los componentes o partes de las que consta la petición inicial.
+* https://www.jaegertracing.io[Jaeger,window=_blank]: Se encarga del tracing y permite analizar una petición desde el principio hasta el final, y comprobar las latencias de cada una de las etapas por las que va pasando.
 
-* https://prometheus.io/[Prometheus]: Sistema de monitorización y alertas que almacena en forma de series temporales la actividad del _mesh_ (peticiones, volumen de descarga, tiempos de resolución, errores, ...)
+* https://prometheus.io/[Prometheus,window=_blank]: Sistema de monitorización y alertas que almacena en forma de series temporales la actividad del _mesh_ (peticiones, volumen de descarga, tiempos de resolución, errores, ...)
 
 image::ServiceMeshKialiJaeger.png[]
 
@@ -1118,17 +1118,17 @@ Istio está disponible en Rancher desde la versión 2.3.0-alpha5. Basta activarl
 
 ====
 
-La figura siguiente ilustra una aplicación sin Istio. En ella cada microservicio es el responsable de implementar la funcionalidad de _discovery_, balanceo, resilencia, métricas y trazado.
+La figura siguiente ilustra una aplicación sin Istio. En ella, cada microservicio es el responsable de implementar la funcionalidad de _discovery_, balanceo, resilencia, métricas y trazado.
 
 image::beforeIstio.jpg[]
 
-La figura siguiente ilustra como en las aplicaciones basadas en Istio los pods están formados por dos contenedores: el contenedor del microservicio y el sidecar. Al sidecar se le delegan las tareas de _discovery_, balanceo, resilencia, métricas y trazado, lo que facilita el desarrollo de los microservicios.
+La figura siguiente ilustra cómo en las aplicaciones basadas en Istio los pods están formados por dos contenedores: el contenedor propio del microservicio y el del sidecar. Al sidecar se le delegan las tareas de _discovery_, balanceo, resilencia, métricas y trazado, lo que facilita el desarrollo de los microservicios.
 
 image::afterIstio.jpg[]
 
 Istio ofrece una forma declarativa, mediante la creación de manifiestos YAML, de gestión del tráfico, enrutado selectivo de peticiones (en lugar del round robin que ofrece Kubernetes), diferentes tipos de despliegue (_canary, A/B, blue/green_), resilencia a nivel de red (con opciones de _retry_, _timeout_), control de acceso, observación de microservicios distribuidos comprendiendo los flujos y trazas y pudiendo ver las métricas importantes de forma inmediata, inyección de caos para poner a prueba la resilencia de aplicaciones y servicios, por citar algunas de sus funcionalidades destacadas.
 
-Para activar el uso de Istio en un namespace se haría con 
+Para activar el uso de Istio en un namespace (p.e. `default`) se haría con 
 
 [source, bash]
 ----
@@ -1151,7 +1151,7 @@ image::istioCanary.jpg[]
 Algo a tener en cuenta es que los componentes del plano de control son aplicaciones sin estado, lo que favorece que puedan escalar horizontalmente. Todos los datos están almacenados en _etcd_ como descricpciones personalizadas de recursos Kubernetes.
 ====
 
-Sin embargo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cuando mayor sea el cluster, mayor será la carga añadida al sistema. Cada sidecar consume mucha RAM (unos 350Mb). Además, añade una latencia de unos 10 ms a cada petición.
+Sin embargo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cuando mayor sea el cluster, mayor será la carga añadida al sistema. Cada sidecar consume bastante RAM (unos 350Mb). Además, añade una latencia de unos 10 ms a cada petición.
 
 
 ### Control de tráfico y técnicas de despliegue 
@@ -1159,13 +1159,53 @@ Sin embargo, toda esta funcionalidad tiene un coste sobre la infraestructura. Cu
 * Despliegue _canary_: Se despliega en producción una nueva versión del código, pero sólo se dirige a ella una parte del tráfico. A la nueva versión quizá sólo tengan acceso clientes de prueba, empleados, usuarios de iOS, etcétera. Una vez desplegado el canario, éste se monitoriza para comprobar la posible existencia de excepciones, comportamiento no satisfactorio, bajada del rendimiento, y demás. Si el canario no muestra indicios de que presente problemas, se puede ir aumentando paulatinamente el tráfico hacia él. En cambio, si presenta un comportamiento inaceptable, se puede retirar fácilmente de producción.
 
 * Control del tráfico: Se pueden especificar reglas de enrutado que controlen el tráfico a un conjunto de pods. En concreto, Istio usa los recursos `DestinationRule` y `VirtualService` en forma de manifiestos YAML para describir estas reglas.
-    - `DestinationRule`: Define grupos (_subsets_) de pods. Normalmente definiremos un _subset_ para cada servicio y el _subset_ estará formado por cada una de las versiones que se pueden utilizar del servicio.
-    - `VirtualService` dirige el tráfico a un _subset_ basado en porcentajes, cabeceras, direcciones IP, por citar algunas. La selección de pods afectados es similar al modelo de selectores utilizado por Kubernetes para selección basada en etiquetas (_labels_).
+    - `DestinationRule`: Define grupos (_subsets_) de pods. Normalmente definiremos un _subset_ para cada servicio y el _subset_ estará formado por cada una de las versiones que se pueden utilizar del servicio. A continuación se muestra un fragmento YAML con la definición de una `DestinationRule` que define dos versiones posibles a las que enrutar tráfico con Istio.
     
 +
-Este comportamiento del enrutado no es sólo para el tráfico de entrada externo. Es para toda la comunicación inter-servicio en el _service mesh_. Así, si hubiese servicios desplegados en Kubernetes, pero que no sean parte del _mesh_, no estaría afectado por estas reglas y se regiría por las reglas de balanceo de Kubernetes (round-robin).
+[source, bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: jsonproducer
+spec:
+  host: jsonproducer
+  subsets:
+  - name: v0
+    labels:
+      version: v0
+  - name: v1
+    labels:
+      version: v1
+----
 
-* _Dark launch_: Despliegue a producción que no es visible a los clientes. En este caso Istio permite duplicar (_mirror_) el tráfico a una versión de la aplicación y ver cómo se comporta respecto a la versión del pod en producción. De esta forma se están realizando peticiones en las condiciones de producción al nuevo servicio sin afectar al tráfico de la versión en producción. No obstante, hay que tener una consideración especial con los servicios que traten con datos o estén vinculados a otros servicios, para no introducir duplicados, provocar inconsistencias y otros problemas derivados de la duplicación de peticiones.
+    - `VirtualService` dirige el tráfico a un _subset_, y lo puede hacer basándose en porcentajes, cabeceras, direcciones IP, por citar algunas. La selección de pods afectados es similar al modelo de selectores utilizado por Kubernetes para selección basada en etiquetas (_labels_). A continuación se muestra un fragmento YAML con la definición de un `VirtualService` para aplicar un enrutado del 80% de las peticiones a la versión `v0` de un microservicio y el 20% a la versión `v1`.
++
+[source, bash]
+----
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jsonproducer
+spec:
+  hosts:
+  - jsonproducer
+  http:
+  - route:
+    - destination:
+        host: jsonproducer
+        subset: v0
+      weight: 80
+    - destination:
+        host: jsonproducer
+        subset: v1
+      weight: 20
+----
+
++
+Este comportamiento del enrutado no es sólo para el tráfico de entrada externo. Es para toda la comunicación inter-servicio en el _service mesh_. Así, si hubiese servicios desplegados en Kubernetes, pero que no sean parte del _mesh_, dichos servicios no estarían afectados por estas reglas y se regirían por las reglas de balanceo de Kubernetes (round-robin).
+
+* _Dark launch_: Se trata de un despliegue a producción que no es visible a los clientes. En este caso Istio permite duplicar (_mirror_) el tráfico a una versión de la aplicación y ver cómo se comporta respecto a la versión del pod en producción. De esta forma se están realizando peticiones en las condiciones de producción al nuevo servicio sin afectar al tráfico de la versión en producción. No obstante, hay que tener una consideración especial con los servicios que traten con datos o estén vinculados a otros servicios, para no introducir duplicados, provocar inconsistencias y otros problemas derivados de la duplicación de peticiones.
 
 ### Técnicas de resilencia
 
@@ -1177,7 +1217,7 @@ Este comportamiento del enrutado no es sólo para el tráfico de entrada externo
 
 Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.
 
-El servicio que genera datos se denomina `jsonproducer` y genera un documento JSON con un único elemento `nombre` y un valor aasociado (p.e. `{"nombre": "manolo"}`). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión (`v0`) devuelve el elemento JSON `{"nombre": "manolo"}`. La segunda versión (`v1`) devuelve el elemento JSON `{"nombre": "Manuel Torres"}`
+El servicio que genera datos se denomina `jsonproducer` y genera un documento JSON con un único elemento `nombre` y un valor asociado (p.e. `{"nombre": "manolo"}`). De este servicio se cuenta con dos versiones, cada una con su imagen Docker correspondiente. La primera versión (`v0`) devuelve el elemento JSON `{"nombre": "manolo"}`. La segunda versión (`v1`) devuelve el elemento JSON `{"nombre": "Manuel Torres"}`
 
 El servicio que consume datos se denomina `jsonreader` y usará los datos leídos de `jsonproducer` para presentarlos al usuario en forma de saludo, mostrando `Hola` seguido del nombre leído del JSON devuelto por la versión de `jsonproducer` usada (`Hola manolo` cuando use `v0` y `Hola Manuel Torres` cuando use `v1`).
 
@@ -1185,18 +1225,15 @@ El servicio que consume datos se denomina `jsonreader` y usará los datos leído
 
 En primer lugar vamos a desplegar en el cluster de Kubernetes todos los recursos (`Service` y `Deployment`) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos `Deployment`, uno para cada una de las versiones del `jsonproducer` (`v0` y `v1`) que quedarán desplegadas en el cluster.
 
-Cada despliegue incorpora en los metadatos el nombre que le que queremos dar, así como unas etiquetas con su versión, que le permitirán ser seleccionado posteriormente cuando se definan los _servicios virtuales_. Además, en la `spec` del despliegue se usarán etiquetas en `matchLabels` que permitirán más adelante a Istio distinguir los pods correspondientes a cada despliegue.
+Cada despliegue incorpora en los metadatos el nombre que le queremos dar, así como unas etiquetas con su versión, que le permitirán ser seleccionado posteriormente cuando se definan los _servicios virtuales_. Además, en la `spec` del despliegue se usarán etiquetas en `matchLabels` que permitirán más adelante a Istio distinguir los pods correspondientes a cada despliegue.
 
 En este ejemplo usaremos dos versiones (dos recursos `Deployment`) del `jsonproducer`. La primera está basada en la imagen `ualmtorres/jsonproducer:v0` que devuelve `{"nombre": "manolo"}`. La segunda está basada en la imagen `ualmtorres/jsonproducer:v1` que devuelve `{"nombre": "Manuel Torres"}`. Con este ejemplo tan sencillo nos bastará para ver a Istio en acción controlando el tráfico. 
 
-El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`greeter.yaml`]) corresponde a los dos servicios (`jsonproducer`  y `jsonreader`), a los dos `Deployment` correspondientes a las dos versiones de `jsonproducer` (`jsonproducer-v0` y `jsonproducer-v1`) y al `Deployment` de `jsonreader` (`jsonreader-v0`).
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`greeter.yaml`,window=_blank]) configura varios recursos Kubernetes:
 
-Lo aplicaremos en nuestro cluster con 
-
-[source, bash]
-----
-$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml
-----
+* Dos servicios (`jsonproducer`  y `jsonreader`).
+* Dos `Deployment` de `jsonproducer`, correspondientes a las dos versiones  (`jsonproducer-v0` y `jsonproducer-v1`).
+* `Deployment` de `jsonreader` (`jsonreader-v0`).
 
 [source, bash]
 ----
@@ -1320,23 +1357,44 @@ spec:
 <5> Selector para determinar los pods asociados a la versión `v1` del servicio
 <6> Imagen `v1` del servicio
 
-#### Creación de los _subsets_ mediante `DestionationRule`
+Lo aplicaremos en nuestro cluster con 
 
-A continación vamos a definir todas las versiones de un servicio que vamos a tener disponibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las `DestinationRule` se usan para definir las distintas instancias o versiones disponibles de cada servicio. Cada servicio tendrá su `DestinationRule` con lo siguiente:
+[source, bash]
+----
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml
+----
+
+Después, podemos consultar los servicios y _deployments_ configurados
+
+[source, bash]
+----
+$ kubectl get services
+NAME                                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+jsonproducer                               ClusterIP   10.43.88.162    <none>        80/TCP           40s
+jsonreader                                 ClusterIP   10.43.106.61    <none>        80/TCP           40s
+
+$ kubectl get deployments
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+jsonproducer-v0   1/1     1            1           40s
+jsonproducer-v1   1/1     1            1           40s
+jsonreader-v0     1/1     1            1           40s
+----
+
+[TIP]
+====
+De cara a poder probar los distintos escenarios que vamos a desarrollar, sería conveniente crear el Ingress en Rancher para los servicios `jsonproducer` y `jsonreader` y que nos genere automáticamente un hostname `.xip.io` para cada uno de ellos. 
+====
+
+#### Creación de los _subsets_ mediante `DestinationRule`
+
+A continación vamos a definir todas las versiones de un servicio que vamos a tener elegibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las `DestinationRule` se usan para definir las distintas instancias o versiones disponibles que se pueden usar de cada servicio. Cada servicio tendrá su `DestinationRule` con lo siguiente:
 
 * `metatada.name`: Nombre.
 * `spec.host`: Host contra el que se lanzará este servicio. Puede ser un nombre DNS (admite _wildcards_) o un nombre de servicio válido en nuestra aplicación.
 * `spec.subsets`: Lista de versiones de servicios a configurar. Cada versión tendrá su nombre (`name`) y usará una etiqueta (p.e. `labels.version: v0`) para emparejarse con los pods de su versión de acuerdo a lo definido en el selector `matchLabels` del objeto `Deployment` del manifiesto del apartado anterior.
 
 
-El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`destination-rule-all.yaml`]) corresponde a los dos recursos `DestinationRule` que vamos a crear, uno para cada servicio, `jsonproducer`  y `jsonreader`, respectivamente. Cada `DestinationRule` incluye los _subsets_ o versiones de recursos `Deployment` de cada servicio. En este caso, indicamos que `jsonreader` consta sólo de un _subset_  al que llegaremos a través de la versión `v0` del servicio (_host_) `jsonreader`. En cambio, `jsonproducer` consta de dos _subset_ , a los que llegaremos a través de las versiones `v0` o `v1` del servicio (_host_) `jsonproducer`. 
-
-Lo aplicaremos en nuestro cluster con 
-
-[source, bash]
-----
-$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml
-----
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml[`destination-rule-all.yaml`,window=_blank]) corresponde a los dos recursos `DestinationRule` que vamos a crear, uno para cada servicio, `jsonproducer`  y `jsonreader`, respectivamente. Cada `DestinationRule` incluye los _subsets_ o versiones de recursos `Deployment` de cada servicio. En este caso, indicamos que `jsonreader` consta sólo de un _subset_  al que llegaremos a través de la versión `v0` del servicio (_host_) `jsonreader`. En cambio, `jsonproducer` consta de dos _subset_ , a los que llegaremos a través de las versiones `v0` o `v1` del servicio (_host_) `jsonproducer`. 
 
 [source, bash]
 ----
@@ -1370,19 +1428,36 @@ spec:
 <2> Nombre dado a esta versión del servicio
 <3> Etiqueta usada para seleccionar los pods a los que corresponde esta versión. Se emparejarán los pods que tengan `version: v1` en su `MatchingLabels`
 
+Lo aplicaremos en nuestro cluster con 
+
+[source, bash]
+----
+$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml
+----
+
+Después, podemos consultar las `DestinationRule` configuradas
+
+[source, bash]
+----
+$ kubectl get destinationrules
+NAME           HOST           AGE
+jsonproducer   jsonproducer   40s
+jsonreader     jsonreader     40s
+----
+
 #### Creación de los servicios virtuales para el control del tráfico a versiones específicas
 
 Por último, crearemos los `VirtualService` para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el _mesh_.
 
-Con los servicios virtuales conseguimos crear la capa complementaria a la aplicación que controlará su tráfico. Esto nos permite usar y cambiar a versiones concretas, derivar un porcentaje del tráfico a versiones concretas (despliegues `canary`), tener versiones diferentes para usuarios diferentes, control de tráfico basado en CIDR, y demás. 
+Con los servicios virtuales conseguimos poner en marcha la capa complementaria a la aplicación que controlará su tráfico. Esto nos permite usar y cambiar a versiones concretas, derivar un porcentaje del tráfico a versiones determinadas (p.e. para despliegues `canary`), tener versiones diferentes para usuarios diferentes, control de tráfico basado en CIDR, y demás. 
 
 
 [NOTE]
 ====
-Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánica. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los `VirtualService` que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás, y el _mesh_ habrá cambiado de acuerdo a las nuevas especificaciones.
+Con Istio podremos cambiar el enrutado a unos servicios u otros de forma dinánica. Basta con aplicar otro manifiesto con los nuevos valores de enrutado de los `VirtualService` que seleccionen las versiones correspondientes, el porcentaje de derivación de tráfico entre versiones que coexistan, y demás. El _mesh_ cambiará de acuerdo a las nuevas especificaciones.
 ====
 
-El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml[`all-v0.yaml`]) define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión `v0` de los `Deployment` desplegados en el cluster.
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml[`all-v0.yaml`,window=_blank]) define un servicio virtual para cada servicio de nuestra aplicación. En este ejemplo cada servicio virtual usa la versión `v0` de los `Deployment` desplegados en el cluster.
 
 [source, bash]
 ----
@@ -1424,11 +1499,23 @@ Lo aplicaremos en nuestro cluster con
 $ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml
 ----
 
+Después, podemos consultar los servicios virtuales configurados
+
+[source, bash]
+----
+$ kubectl get virtualservices
+NAME           GATEWAYS             HOSTS            AGE
+jsonproducer                        [jsonproducer]   40s
+jsonreader                          [jsonreader]     40s
+----
+
+Si lanzamos ahora peticiones contra `jsonreader` o contra `jsonproducer` siempre se selecciona la versión `v0` de cada una de ellos (`jsonproducer` siempre devuelve `{"nombre":"manolo"}`
+
 #### Desvío de una fracción del tráfico a una nueva versión
 
-Como comentamos, en los despliegues _canary_ se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión `v0` de `jsonproducer` y el 20% del tráfico a la versión `v1` de `jsonproducer`. 
+Como comentamos en el apartado <<Control de tráfico y técnicas de despliegue>>, en los despliegues _canary_ se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Con Istio, este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión `v0` de `jsonproducer` y el 20% del tráfico a la versión `v1` de `jsonproducer`. 
 
-El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml[`virtual-service-jsonproducer-20-v1.yaml`]) define un servicio virtual para cada servicio de nuestra aplicación y modifica el original de `jsonproducer` para desviar el 80% del tráfico a `v0` y el 20% a `v1`.
+El manifiesto siguiente (https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml[`virtual-service-jsonproducer-20-v1.yaml`,window=_blank]) define un servicio virtual para cada servicio de nuestra aplicación y modifica el original de `jsonproducer` para desviar el 80% del tráfico a `v0` y el 20% a `v1`.
 
 [source, bash]
 ----
@@ -1478,184 +1565,79 @@ $ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283f
 
 Si lanzamos ahora un gran número de peticiones contra `jsonreader` veremos como estadísticamente se tiene a que el 80% de las peticiones muestren los datos de la `v0` de `jsonproducer` y el 20% muestre los datos de la `v1` de `jsonproducer`.
 
-
-### Casos prácticos
-
-. Instalación del ejemplo
-+
-[source, bash]
-----
-$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/platform/kube/bookinfo.yaml
-$ kubectl get services
-$ kubectl get pods
-$ kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
-$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/bookinfo-gateway.yaml
-$ kubectl get gateway
-----
-
-. Crear el Ingress en Rancher para el servicio `productpage`. 
-. Crear las reglas de acceso predeterminadas para los servicios de la aplicación
-
-+
-[source, bash]
-----
-$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/destination-rule-all.yaml
-$ kubectl get destinationrules -o yaml
-----
-
-Archivo `destination-rule-all.yaml` que permite el tráfico de forma indistinta a cualquier versión de `ratings`, `reviews` y `details`
-[source, yaml]
-----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: productpage
-spec:
-  host: productpage
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: reviews
-spec:
-  host: reviews
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v3
-    labels:
-      version: v3
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: ratings
-spec:
-  host: ratings
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v2-mysql
-    labels:
-      version: v2-mysql
-  - name: v2-mysql-vm
-    labels:
-      version: v2-mysql-vm
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: details
-spec:
-  host: details
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
----
-----
-
-Usar sólo la versión V1 de cada microservicio:
-
-[source, yaml]
-----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: productpage
-spec:
-  hosts:
-  - productpage
-  http:
-  - route:
-    - destination:
-        host: productpage
-        subset: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: reviews
-spec:
-  hosts:
-  - reviews
-  http:
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: ratings
-spec:
-  hosts:
-  - ratings
-  http:
-  - route:
-    - destination:
-        host: ratings
-        subset: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: details
-spec:
-  hosts:
-  - details
-  http:
-  - route:
-    - destination:
-        host: details
-        subset: v1
----
-----
-
-
-Aplicando ahora unas reglas para desviar el tráfico a V2 a los usuarios con sesión iniciada con el usuario `jason` y a V1 a los que no tienen sesión iniciada.
+Experimento:
 
 [source, bash]
 ----
-$ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.2/samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+$ ab -n 100 http://greeter-jsonreader.default.192.168.65.94.xip.io/
+This is ApacheBench, Version 2.3 <$Revision: 1663405 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking greeter-jsonreader.default.192.168.65.94.xip.io (be patient).....done
+
+
+Server Software:        nginx/1.15.6
+Server Hostname:        greeter-jsonreader.default.192.168.65.94.xip.io
+Server Port:            80
+
+Document Path:          /
+Document Length:        11 bytes
+
+Concurrency Level:      1
+Time taken for tests:   13.647 seconds
+Complete requests:      100
+Failed requests:        0
+Total transferred:      29965 bytes
+HTML transferred:       1100 bytes
+Requests per second:    7.33 [#/sec] (mean)
+Time per request:       136.466 [ms] (mean)
+Time per request:       136.466 [ms] (mean, across all concurrent requests)
+Transfer rate:          2.14 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       46   49   4.6     47      73
+Processing:    55   88  37.7     77     268
+Waiting:       55   85  37.0     72     268
+Total:        101  136  37.5    126     315
+
+Percentage of the requests served within a certain time (ms)
+  50%    126
+  66%    137
+  75%    145
+  80%    151
+  90%    196
+  95%    208
+  98%    258
+  99%    315
+ 100%    315 (longest request)
 ----
 
-[source, yaml]
-----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: reviews
-spec:
-  hosts:
-    - reviews
-  http:
-  - match:
-    - headers:
-        end-user:
-          exact: jason
-    route:
-    - destination:
-        host: reviews
-        subset: v2
-  - route:
-    - destination:
-        host: reviews
-        subset: v1
-----
+Grafo de tráfico en Rancher
+
+image::RancherKialiGraphic.png[]
+
+Métricas de acceso en Rancher
+
+image::RancherKialiMetrics.png[]
+
+Actividad de los servicios en Kiali
+
+image::Kiali.png[]
+
+Visión general de las trazas con Jaeger
+
+image::Jaeger.png[]
+
+Detalles de una traza con Jaeger
+
+image::JaegerTrace.png[]
+
+Actividad del servicio con Grafana
+
+image::Grafana.png[]
+
+Consultas de métricas en Prometheus
+
+image::Prometheus.png[]
