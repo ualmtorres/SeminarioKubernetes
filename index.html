@@ -446,7 +446,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truenodos">5.3. Nodos</a></li>
 <li><a href="#trueservicios">5.4. Servicios</a></li>
 <li><a href="#truevol-menes">5.5. Volúmenes</a></li>
-<li><a href="#truenamespaces">5.6. Namespaces</a></li>
+<li><a href="#truesecrets">5.6. Secrets</a></li>
+<li><a href="#truenamespaces">5.7. Namespaces</a></li>
 </ul>
 </li>
 <li><a href="#trueescalado-de-una-aplicaci-n">6. Escalado de una aplicación</a>
@@ -461,20 +462,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truecreaci-n-del-archivo-de-servicio">8.2. Creación del archivo de Servicio</a></li>
 </ul>
 </li>
-<li><a href="#trueap-ndice-cheat-sheet">9. Apéndice. Cheat Sheet</a>
+<li><a href="#trueconfigmaps-2">9. ConfigMaps</a></li>
+<li><a href="#trueap-ndice-cheat-sheet">10. Apéndice. Cheat Sheet</a>
 <ul class="sectlevel2">
-<li><a href="#truecomandos-minikube">9.1. Comandos Minikube</a></li>
-<li><a href="#truecomandos-code-kubectl-code">9.2. Comandos <code>kubectl</code></a></li>
-<li><a href="#truecontextos">9.3. Contextos</a></li>
+<li><a href="#truecomandos-minikube">10.1. Comandos Minikube</a></li>
+<li><a href="#truecomandos-code-kubectl-code">10.2. Comandos <code>kubectl</code></a></li>
+<li><a href="#trueherramientas-interesantes">10.3. Herramientas interesantes</a></li>
+<li><a href="#truecontextos">10.4. Contextos</a></li>
 </ul>
 </li>
-<li><a href="#trueap-ndice-service-mesh-con-istio">10. Apéndice. Service Mesh con Istio</a>
+<li><a href="#trueap-ndice-service-mesh-con-istio">11. Apéndice. Service Mesh con Istio</a>
 <ul class="sectlevel2">
-<li><a href="#trueistio">10.1. Istio</a></li>
-<li><a href="#truearquitectura-de-istio">10.2. Arquitectura de Istio</a></li>
-<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">10.3. Control de tráfico y técnicas de despliegue</a></li>
-<li><a href="#truet-cnicas-de-resilencia">10.4. Técnicas de resilencia</a></li>
-<li><a href="#truecaso-pr-ctico">10.5. Caso práctico</a></li>
+<li><a href="#trueistio">11.1. Istio</a></li>
+<li><a href="#truearquitectura-de-istio">11.2. Arquitectura de Istio</a></li>
+<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">11.3. Control de tráfico y técnicas de despliegue</a></li>
+<li><a href="#truet-cnicas-de-resilencia">11.4. Técnicas de resilencia</a></li>
+<li><a href="#truecaso-pr-ctico">11.5. Caso práctico</a></li>
 </ul>
 </li>
 </ul>
@@ -640,12 +643,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ curl http://&lt;kubernetes_home&gt;/api/v1/namespaces/default/pods</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl http://&lt;kubernetes_home&gt;/api/v1/namespaces/default/pods</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{
+<pre class="highlight"><code class="language-json" data-lang="json">{
   "kind": "PodList",
   "apiVersion": "v1",
   "metadata": {
@@ -825,8 +828,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Iniciar un cluster: <code>minikube start</code> (La primera vez que ejecutemos este comando descargará la ISO de Minikube, que son unos 130 MB, y creará la máquina virtual correspondiente)</p>
+<p>Iniciar un cluster: <code>minikube start</code></p>
 </li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>La primera vez que ejecutemos este comando descargará la ISO de Minikube, que son unos 130 MB, y creará la máquina virtual correspondiente. Después, la preparará para Kubernetes y tras unos minutos estará disponible minikube en nuestro puesto de trabajo.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Acceso al Dashboard de Kubernetes: <code>minikube dashboard</code></p>
 </li>
@@ -862,6 +883,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Si ahora probamos a eliminar el pod creado, veremos que se vuelve a crear. El objeto Deployment <code>hello-minikube</code> creado anteriormente se encarga de mantener el número de réplicas especificado (1 de forma predeterminada). Realmente tendremos que eliminar el objeto Deployment, y un poco más adelante veremos cómo hacerlo.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Otros comandos interesantes de minikube</div>
+<div class="ulist">
+<ul>
 <li>
 <p>Iniciar un segundo cluster local: <code>minikube start -p cluster2</code></p>
 </li>
@@ -872,6 +903,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Eliminar el cluster local: <code>minikube delete</code></p>
 </li>
 </ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -896,7 +929,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Obtener información del cluster</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl cluster-info
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl cluster-info
 Kubernetes master is running at https://192.168.99.100:8443
 KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</code></pre>
 </div>
@@ -906,7 +939,7 @@ KubeDNS is running at https://192.168.99.100:8443/api/v1/namespaces/kube-system/
 <p>Obtener los nodos que forman el cluster</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get nodes
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get nodes
 NAME       STATUS   ROLES    AGE     VERSION
 minikube   Ready    master   3d23h   v1.15.0</code></pre>
 </div>
@@ -916,6 +949,12 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 <p>Otras operaciones de interés son:</p>
 <div class="ulist">
 <ul>
+<li>
+<p><code>kubectl get pods</code> para listar todos los pods desplegados.</p>
+</li>
+<li>
+<p><code>kubectl get all</code> para listar todos los objetos desplegados.</p>
+</li>
 <li>
 <p><code>kubectl describe &lt;resource&gt;</code> para obtener información detallada sobre un recurso.</p>
 </li>
@@ -961,7 +1000,7 @@ minikube   Ready    master   3d23h   v1.15.0</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80 <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80 <i class="conum" data-value="1"></i><b>(1)</b>
 
 deployment.apps/jsonproducer created</code></pre>
 </div>
@@ -996,7 +1035,7 @@ deployment.apps/jsonproducer created</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
 
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           8s</code></pre>
@@ -1007,7 +1046,7 @@ jsonproducer   1/1     1            1           8s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl expose deployment jsonproducer --type=NodePort
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl expose deployment jsonproducer --type=NodePort
 
 service/jsonproducer exposed</code></pre>
 </div>
@@ -1017,7 +1056,7 @@ service/jsonproducer exposed</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonproducer</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonproducer</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1025,7 +1064,7 @@ service/jsonproducer exposed</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json" data-lang="json">{"nombre":"manolo"}</code></pre>
+<pre class="highlight"><code class="language-json" data-lang="json">{"nombre":"manolo"}</code></pre>
 </div>
 </div>
 </div>
@@ -1043,7 +1082,7 @@ service/jsonproducer exposed</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan <em>sidecars</em>. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación.</p>
+<p>Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan <em>sidecars</em>. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación. Otro ejemplo más lo podemos encontrar en un sidecar que actúa como volumen.</p>
 </div>
 </td>
 </tr>
@@ -1058,10 +1097,25 @@ service/jsonproducer exposed</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster. <strong>Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod</strong>. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.</p>
+<p>Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster.</p>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<div class="title">Creación de un pod para MongoDB</div>
+<p>Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="truecreaci-n-de-un-pod-para-mongodb-mediante-un-archivo-de-manifiesto"><a class="anchor" href="#truecreaci-n-de-un-pod-para-mongodb-mediante-un-archivo-de-manifiesto"></a>5.2.1. Creación de un pod para MongoDB mediante un archivo de manifiesto</h4>
+<div class="paragraph">
 <p>Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, &#8230;&#8203;) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis <a href="https://yaml.org/" target="_blank">YAML</a> y representan una forma declarativa de definir los recursos del cluster Kubernetes.</p>
 </div>
 <div class="paragraph">
@@ -1076,7 +1130,7 @@ service/jsonproducer exposed</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
 kind: Pod
 metadata:
   name: mongodb
@@ -1091,7 +1145,7 @@ spec:
 <p>Despliegue del manifiesto para crear el pod</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mongodb-basico.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mongodb-basico.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -1099,7 +1153,7 @@ spec:
 <p>Inicio de sesión SSH en el pod</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl exec -it mongodb /bin/bash</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl exec -it mongodb /bin/bash</code></pre>
 </div>
 </div>
 </li>
@@ -1107,7 +1161,7 @@ spec:
 <p>Mostrar información del pod</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl describe pod mongodb</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl describe pod mongodb</code></pre>
 </div>
 </div>
 </li>
@@ -1115,7 +1169,7 @@ spec:
 <p>Mostrar los logs del pod</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl logs mongodb</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl logs mongodb</code></pre>
 </div>
 </div>
 </li>
@@ -1123,19 +1177,34 @@ spec:
 <p>Redirección del puerto del pod a un puerto local (establece un túnel SSH entre nuestro equipo y el pod con los puertos indicados)</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl port-forward mongodb 27017:27017</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl port-forward mongodb 27017:27017</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Para poder probar el comando anterior de la redirección de puertos necesitaremos disponer de un cliente MongoDB instalado en nuestro equipo.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
 <p>Eliminación del pod</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl delete -f mongodb-basico.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete -f mongodb-basico.yaml</code></pre>
 </div>
 </div>
 </li>
 </ol>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1165,10 +1234,67 @@ spec:
 <div class="sect2">
 <h3 id="trueservicios"><a class="anchor" href="#trueservicios"></a>5.4. Servicios</h3>
 <div class="paragraph">
-<p>Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
+<p>Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver el cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
 </div>
 <div class="paragraph">
 <p>Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos estableciendo un nombre para acceder a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. El acceso puede ser interno o externo al cluster. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Agrupación de pods en servicios</div>
+<div class="paragraph">
+<p>Los pods son etiquetados con metadatos. Estos metadatos posteriormente son usados por otros objetos Kubernetes (p.e. ReplicaSet, Deployment) para seleccionar los pods y crear una unidad lógica (p.e. todas las réplicas de un contenedor de frontend)</p>
+</div>
+<div class="paragraph">
+<p>La figura siguiente ilustra como un servicio agrupa mediante el <strong>selector</strong> <code>app:ngnix</code> a aquellos pods que están etiquetados con <code>app:ngnix</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/podlabels.png" alt="podlabels.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: webcontainer
+        image: nginx
+        ports:
+        - containerPort: 80</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Al desplegar este deployment se crearán dos pods, que quedarán agrupados por la coincidencia entre el selector que pide el deployment (<code>app: nginx</code>) y la etiqueta con los que son creados los pods (<code>app: nginx</code>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f ngnix.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si ahora vemos los detalles del deployment en el dashboard de minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment <code>ngnix</code>. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ReplicaSetPods.png" alt="ReplicaSetPods.png">
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:</p>
@@ -1195,13 +1321,30 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>Los servicios enrutan el tráfico entre los pods proporcionando una abstracción que permite que los pod mueran y se repliquen sin impactar en la aplicación. El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios.</p>
+<p>Los servicios enrutan el tráfico entre los pods proporcionando una abstracción que permite que los pod mueran y se repliquen sin impactar en la aplicación.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios. Los servicios agrupan a sus pods usando etiquetas y selectores. Los servicios usan selectores y los pods son creados con etiquetas. Su emparejamiento por valores coincidenetes es lo que agupa los pods en un servicio.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Los servicios agrupan a sus pods usando etiquetas y selectores. Las etiquetas son pares clave-valor y tienen usos muy variados:</p>
+<p>Las etiquetas son pares clave-valor y tienen usos muy variados:</p>
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p>Seleccionar los objetos de un despliegue</p>
+</li>
 <li>
 <p>Diferenciar entre objetos de desarrollo, prueba y producción</p>
 </li>
@@ -1221,6 +1364,20 @@ spec:
 <div class="paragraph">
 <p>Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Prueba a editar un pod en el dashboard de kubernetes cambiándole la etiqueta (p.e. <code>app:apache</code>). Esto hará que ese pod salga del ReplicaSet al que pertencía y se cree un nuevo pod etiquetado con <code>app:nginx</code> para mantener la especificación del Deployment, que exigía tener 2 réplicas.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.4.1. Ejemplo. Creación de un servicio</h4>
 <div class="paragraph">
@@ -1232,7 +1389,7 @@ spec:
 <p>Crear un Deployment a partir de la imagen <code>ualmtorres/jsonproducer:v0</code> de Docker Hub con el comando</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1240,7 +1397,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json" data-lang="json">$ kubectl get deployments
+<pre class="highlight"><code class="language-json" data-lang="json">$ kubectl get deployments
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           17m</code></pre>
 </div>
@@ -1250,7 +1407,7 @@ jsonproducer   1/1     1            1           17m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
 NAME                            READY   STATUS    RESTARTS   AGE
 jsonproducer-7769d76894-2nzt2   1/1     Running   0          23m</code></pre>
 </div>
@@ -1260,7 +1417,7 @@ jsonproducer-7769d76894-2nzt2   1/1     Running   0          23m</code></pre>
 <p>Crear un servicio para poder exponer la aplicación al exterior. Concretamente usamos un servicio de tipo NodePort, lo que nos sirve la aplicación concatenando la IP del nodo donde está el pod y un puerto aleatorio. El servicio lo creamos con</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl expose deployment jsonproducer --type=NodePort</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl expose deployment jsonproducer --type=NodePort</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1268,7 +1425,7 @@ jsonproducer-7769d76894-2nzt2   1/1     Running   0          23m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
 NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 jsonproducer   NodePort    10.99.116.165   &lt;none&gt;        80:30737/TCP   25m <i class="conum" data-value="1"></i><b>(1)</b>
 kubernetes     ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        34d <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
@@ -1291,7 +1448,7 @@ kubernetes     ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        34
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonproducer</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonproducer</code></pre>
 </div>
 </div>
 <div class="imageblock">
@@ -1304,7 +1461,7 @@ kubernetes     ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        34
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl describe services jsonproducer <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl describe services jsonproducer <i class="conum" data-value="1"></i><b>(1)</b>
 
 Name:                     jsonproducer
 Namespace:                default
@@ -1342,7 +1499,7 @@ Events:                   &lt;none&gt;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods <i class="conum" data-value="1"></i><b>(1)</b>
 
 NAME                            READY   STATUS    RESTARTS   AGE
 jsonproducer-7769d76894-2nzt2   1/1     Running   0          49m
@@ -1400,11 +1557,129 @@ Containers:
 <p>Básicamente, uno volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.</p>
 </div>
 <div class="paragraph">
-<p>Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo <code>.spec.volumes</code>) y donde montarlo en los contenedores (el campo <code>.spec.containers.volumeMounts</code>).</p>
+<p>Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo <code>.spec.volumes</code>) y donde montarlo en los contenedores (el campo <code>.spec.containers.volumeMounts</code>). Dejamos por ahora el tema de los volúmenes para volver a ellos más adelante cuando usemos archivos de despliegue.</p>
+</div>
+<div class="sect3">
+<h4 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.5.1. ConfigMaps</h4>
+<div class="paragraph">
+<p>Los objetos ConfigMap permiten almacenar datos en forma de clave valor y que pueden usarse posteriormente en un despliegue con el fin de parametrizar los despliegues parametrizados y hacerlos más portables.</p>
+</div>
+<div class="paragraph">
+<p>Usaremos los ConfigMap para almacenar datos no sensibles sobre la configuración. Deben ser datos no sensibles porque los datos se guardan tal cual.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creación de un ConfigMap con valores directamente:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create configmap datosmtorres --from-literal=nombre=Manuel --from-literal=apellidos=Torres</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Creación de un ConfigMap desde archivos:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create configmap datosstevemcqueen --from-file=nombre=nombre.txt --from-file=apellidos=apellidos.txt</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Los archivos que contienen los valores que alimentarán las claves no contendrán caracteres no deseados como espacios o saltos de línea al final.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Obtener los datos de un ConfigMap</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl describe configmap datosmtorres
+$ kubectl describe configmap datosstevemcqueen</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Eliminar un ConfigMap</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete configmap datosmtorres
+$ kubectl delete configmap datosstevemcqueen</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.6. Namespaces</h3>
+<h3 id="truesecrets"><a class="anchor" href="#truesecrets"></a>5.6. Secrets</h3>
+<div class="paragraph">
+<p>Los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. Colocar esta información en objetos Secret es más seguro que colocarla en texto plano y legible.</p>
+</div>
+<div class="paragraph">
+<p>Los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente. Sistemas como <a href="https://www.vaultproject.io/">Vault</a> son usados de forma complementaria para aumentar la seguridad de la información que contienen los Secret.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creación de un Secret con valores directamente:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Creación de un Secret desde archivos:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create secret generic my-second-secret --from-file=key1=key1.txt --from-file=key2=key2.txt</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Obtener los datos de un Secret:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get secret my-secret -o yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Decodificación de un Secret:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$  echo 'yourEncodedKey' | base64 --decode</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Eliminar un Secret:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete secret my-secret</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.7. Namespaces</h3>
 <div class="paragraph">
 <p>Abstracción de Kubernetes para soportar varios clusters virtuales en un mismo cluster físico. Los namspaces se usan para organizar objetos en un cluster y para proporcionar una forma de dividir los recursos del cluster. Los nombres de los recursos tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.</p>
 </div>
@@ -1417,6 +1692,100 @@ Containers:
 <td class="content">
 <div class="paragraph">
 <p>En clusters con varios usuarios los namespaces proporcionan una forma de agrupar los recursos de cada usuario. Además, los administradores pueden establecer cuotas a nivel de namespace limitando a los usuarios la cantidad de objetos que pueden crear y la cantidad de recursos del cluster que pueden consumir (p.e. CPU, memoria).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Crear un Namespace</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create namespace rrhh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Crear un pod en un namespace diferente</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl run nginxrrhh --image=nginx --port 80 --namespace rrhh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Mostrar los pods de un namespace</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods --namespace rrhh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Cambiar de namespace</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">kubectl config set-context --current --namespace=rrhh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Volver al namespace default</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl config set-context --current --namespace=default</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Eliminar un namespace</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete namespace rrhh</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Eliminar un namespace elimina el namespace y todos los objetos que contenga, por lo que es una operación muy peligrosa.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Si se elimina un namespace estando situado sobre él no se cambia a ningún namespace por lo que habrá que cambiar a uno de los namespace existentes en nuestro sistema</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><a href="https://github.com/ahmetb/kubectx"><code>kubectx</code> y <code>kubens</code></a> son dos herramientas que facilitan la gestión de cambios de namespace y de contexto</p>
 </div>
 </td>
 </tr>
@@ -1472,7 +1841,7 @@ Containers:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
 
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           68m</code></pre>
@@ -1491,12 +1860,49 @@ jsonproducer   1/1     1            1           68m</code></pre>
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Si no contamos con este deployment porque vamos limpiando el entorno en cada sección, los comandos siguientes vuelven a crear el Deployment <code>jsonproducer</code> para continuar el tutorial.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80 <i class="conum" data-value="1"></i><b>(1)</b>
+$ kubectl expose deployment jsonproducer --type=NodePort <i class="conum" data-value="2"></i><b>(2)</b>
+$ minikube service jsonproducer <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Crea el Deployment, ReplicaSet y el Pod</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Crea el servicio del tipo NodePort. El servicio está accesible mediante la IP del cluster (<code>kubectl cluster-info</code>) concatenada al puerto que se haya asignado (<code>NodePort</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Pedir minikube que abra un navegador para acceder al servicio <code>jsonproducer</code></td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>El comando siguiente escala a 4 réplicas el despliegue de ejemplo (<code>jsonproducer</code>)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl scale deployments jsonproducer --replicas=4
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl scale deployments jsonproducer --replicas=4
 
 deployment.extensions/jsonproducer scaled</code></pre>
 </div>
@@ -1506,7 +1912,7 @@ deployment.extensions/jsonproducer scaled</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
 
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   4/4     4            4           73m</code></pre>
@@ -1525,7 +1931,7 @@ jsonproducer   4/4     4            4           73m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
 
 NAME                            READY   STATUS    RESTARTS   AGE
 jsonproducer-7769d76894-2nzt2   1/1     Running   0          74m
@@ -1542,7 +1948,7 @@ jsonproducer-7769d76894-qbvzd   1/1     Running   0          38s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl delete pods jsonproducer-7769d76894-qbvzd
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete pods jsonproducer-7769d76894-qbvzd
 pod "jsonproducer-7769d76894-qbvzd" deleted
 
 $ kubectl get pods
@@ -1566,7 +1972,7 @@ jsonproducer-7769d76894-nhtl4   1/1     Running   0          12m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl scale deployments jsonproducer --replicas=2
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl scale deployments jsonproducer --replicas=2
 deployment.extensions/jsonproducer scaled
 
 $ kubectl get pods
@@ -1588,14 +1994,14 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 <p>De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.</p>
 </div>
 <div class="paragraph">
-<p>Al igual que ocurre al escalar las aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
+<p>Al igual que ocurre al escalar las aplicaciones, si el Deployment está expuesto, el Service balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
 </div>
 <div class="paragraph">
-<p>A continuación se muestra cómo actualizar el Deployment de ejemplo <code>jsonproducer</code> con nuevo Deployment con el mismo nombre y una versión de la imagen.</p>
+<p>A continuación se muestra cómo actualizar el Deployment de ejemplo <code>jsonproducer</code> con nuevo Deployment con el mismo nombre y una nueva versión de la imagen (<code>v1</code>).</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl set image deployments jsonproducer jsonproducer=ualmtorres/jsonproducer:v1</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl set image deployments jsonproducer jsonproducer=ualmtorres/jsonproducer:v1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1603,7 +2009,7 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
 NAME                            READY   STATUS              RESTARTS   AGE
 jsonproducer-7769d76894-fr7cz   1/1     Running             0          25s
 jsonproducer-7769d76894-hfpr7   1/1     Terminating         0          24s
@@ -1612,7 +2018,7 @@ jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s</code>
 </div>
 </div>
 <div class="paragraph">
-<p>Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación sirve <code>Manolo Torres</code> en lugar de <code>manolo</code> en el JSON.</p>
+<p>Tras unos instantes, la aplicación dejará de servir totalmente la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación devuelve <code>Manolo Torres</code> en lugar de <code>manolo</code> en el JSON.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1624,7 +2030,7 @@ jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl rollout undo deployments jsonproducer
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl rollout undo deployments jsonproducer
 deployment.extensions/jsonproducer rolled back</code></pre>
 </div>
 </div>
@@ -1633,7 +2039,7 @@ deployment.extensions/jsonproducer rolled back</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
 NAME                            READY   STATUS        RESTARTS   AGE
 jsonproducer-7769d76894-m22sv   1/1     Running       0          2s
 jsonproducer-7769d76894-v6hfv   1/1     Running       0          4s
@@ -1646,7 +2052,7 @@ jsonproducer-c76c87f-tmbkk      0/1     Terminating   0          14m</code></pre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">Caligari:~ manolo$ kubectl get pods
+<pre class="highlight"><code class="language-bash" data-lang="bash">Caligari:~ manolo$ kubectl get pods
 NAME                            READY   STATUS    RESTARTS   AGE
 jsonproducer-7769d76894-m22sv   1/1     Running   0          8s
 jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
@@ -1666,7 +2072,7 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 <h2 id="truedespliegue-de-aplicaciones-mediante-archivos-yaml"><a class="anchor" href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml"></a>8. Despliegue de aplicaciones mediante archivos YAML</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, se suelen crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, &#8230;&#8203;). Una vez creados estos archivos, se usará <code>kubectl</code> para cargarlos/desplegarlos en Kubernetes.</p>
+<p>Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Esto nos ha servido familiarizarnos tanto con los objetos básicos de Kubernetes (Pod, ReplicaSet, Deployment, Service, ConfigMap, Secret, Namespace, volúmenes, &#8230;&#8203;), como con operaciones habituales (escalado, actualización de versiones, &#8230;&#8203;). Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, la forma de operar consiste en crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, &#8230;&#8203;). Una vez creados estos archivos, se usará <code>kubectl</code> para cargarlos/desplegarlos en Kubernetes.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1676,7 +2082,7 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>El uso de archivos para despliegues Kubernetes nos permitirá admeás someter nuestros archivos de despligue de recursos Kubernetes a control de versiones y poder distribuirlos fácilmente.</p>
+<p>El uso de archivos para despliegues Kubernetes nos permitirá además beneficiarnos de las ventajas de los sistemas de control de versiones, sometiendo nuestros recursos de Kubernetes al control de versiones, facilidad de distribución y trabajo en equipo.</p>
 </div>
 </td>
 </tr>
@@ -1695,7 +2101,7 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
 kind: Deployment <i class="conum" data-value="1"></i><b>(1)</b>
 metadata:
   name: jsonreader <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1790,7 +2196,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f json-reader-deployment.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f json-reader-deployment.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1801,7 +2207,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get deployments
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
 jsonproducer   1/1     1            1           22h
 jsonreader     2/2     2            2           21h</code></pre>
@@ -1812,7 +2218,7 @@ jsonreader     2/2     2            2           21h</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get rs
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get rs
 NAME                      DESIRED   CURRENT   READY   AGE
 jsonproducer-7769d76894   1         1         1       22h
 jsonreader-86699d9f94     2         2         2       22h</code></pre>
@@ -1823,7 +2229,7 @@ jsonreader-86699d9f94     2         2         2       22h</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods --show-labels
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods --show-labels
 NAME                            READY   STATUS    RESTARTS   AGE   LABELS
 jsonproducer-7769d76894-ss5qh   1/1     Running   1          22h   pod-template-hash=7769d76894,run=jsonproducer
 jsonreader-86699d9f94-khfzh     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94
@@ -1841,7 +2247,7 @@ jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreade
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
 kind: Service <i class="conum" data-value="1"></i><b>(1)</b>
 metadata:
   name: jsonreader <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1889,7 +2295,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl create -f json-reader-service.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl create -f json-reader-service.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1897,7 +2303,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
 NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
 jsonproducer   NodePort    10.105.30.95   &lt;none&gt;        80:30228/TCP   22h
 jsonreader     NodePort    10.99.85.2     &lt;none&gt;        80:31976/TCP   22h
@@ -1909,7 +2315,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonreader</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ minikube service jsonreader</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1937,10 +2343,72 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>9. Apéndice. Cheat Sheet</h2>
+<h2 id="trueconfigmaps-2"><a class="anchor" href="#trueconfigmaps-2"></a>9. ConfigMaps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Variables de entorno</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-env
+spec:
+  containers:
+  - name: php-apache
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        value: Manolo
+      - name: APELLIDOS
+        value: Torres</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ConfigMap</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap
+data:
+  nombre: Manolo
+  apellidos: Torres
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-example
+spec:
+  containers:
+  - name: configmap-cm
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: nombre
+      - name: APELLIDOS
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: apellidos</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Secret</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>10. Apéndice. Cheat Sheet</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>9.1. Comandos Minikube</h3>
+<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>10.1. Comandos Minikube</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -1962,7 +2430,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>9.2. Comandos <code>kubectl</code></h3>
+<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>10.2. Comandos <code>kubectl</code></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2006,6 +2474,16 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="trueherramientas-interesantes"><a class="anchor" href="#trueherramientas-interesantes"></a>10.3. Herramientas interesantes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/ahmetb/kubectx"><code>kubectl</code> y <code>kubens</code></a>: Cambio de namespace contexto</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>cloud_provider:
   name: "openstack"
@@ -2029,7 +2507,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>9.3. Contextos</h3>
+<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>10.4. Contextos</h3>
 <div class="paragraph">
 <p>El archivo de contextos</p>
 </div>
@@ -2038,7 +2516,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
 clusters:
 - cluster:
     certificate-authority: /Users/manolo/.minikube/ca.crt
@@ -2064,7 +2542,7 @@ users:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl config get-contexts
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl config get-contexts
 CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
           minikube        minikube        minikube</code></pre>
 </div>
@@ -2098,7 +2576,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
 clusters:
 - cluster:
     certificate-authority: /Users/manolo/.minikube/ca.crt
@@ -2151,7 +2629,7 @@ users:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl config use-context produccion-ci
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl config use-context produccion-ci
 
 Switched to context "produccion-ci".</code></pre>
 </div>
@@ -2161,7 +2639,7 @@ Switched to context "produccion-ci".</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl config get-contexts
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl config get-contexts
 CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
           minikube        minikube        minikube
 *         produccion-ci   produccion-ci   user-mzmh8   mtorres</code></pre>
@@ -2171,7 +2649,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>10. Apéndice. Service Mesh con Istio</h2>
+<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>11. Apéndice. Service Mesh con Istio</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. Esto permite que los microservicios pueden ser creados por grupos de desarrollo pequeños, creando sus propias herramientas y usando los lenguajes de programación más adecuados, lo que aumenta la productividad y velocidad del proyecto. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y permiten el fallo de forma individual sin provocar una caída del funcionamiento de la aplicación completa.</p>
@@ -2221,7 +2699,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>10.1. Istio</h3>
+<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>11.1. Istio</h3>
 <div class="paragraph">
 <p>Istio viene a incorporarse al vocabulario marinero y ballenero del ecosistema de Docker y Kubernetes. Istio es una palabra griega que significa <em>navegar</em>.</p>
 </div>
@@ -2263,12 +2741,12 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">kubectl label namespace default istio-injection=enabled</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">kubectl label namespace default istio-injection=enabled</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>10.2. Arquitectura de Istio</h3>
+<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>11.2. Arquitectura de Istio</h3>
 <div class="paragraph">
 <p>Istio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que se integran en los pods de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales son gestionados individualmente por Istio para enrutar, filtrar y aumentar el tráfico según sea necesario.</p>
 </div>
@@ -2304,7 +2782,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>10.3. Control de tráfico y técnicas de despliegue</h3>
+<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>11.3. Control de tráfico y técnicas de despliegue</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2318,7 +2796,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 <p><code>DestinationRule</code>: Define grupos (<em>subsets</em>) de pods. Normalmente definiremos un <em>subset</em> para cada servicio y el <em>subset</em> estará formado por cada una de las versiones que se pueden utilizar del servicio. A continuación se muestra un fragmento YAML con la definición de una <code>DestinationRule</code> que define dos versiones posibles a las que enrutar tráfico con Istio.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: jsonproducer
@@ -2338,7 +2816,7 @@ spec:
 <p><code>VirtualService</code> dirige el tráfico a un <em>subset</em>, y lo puede hacer basándose en porcentajes, cabeceras, direcciones IP, por citar algunas. La selección de pods afectados es similar al modelo de selectores utilizado por Kubernetes para selección basada en etiquetas (<em>labels</em>). A continuación se muestra un fragmento YAML con la definición de un <code>VirtualService</code> para aplicar un enrutado del 80% de las peticiones a la versión <code>v0</code> de un microservicio y el 20% a la versión <code>v1</code>.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: jsonproducer
@@ -2371,7 +2849,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>10.4. Técnicas de resilencia</h3>
+<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>11.4. Técnicas de resilencia</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2387,7 +2865,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>10.5. Caso práctico</h3>
+<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>11.5. Caso práctico</h3>
 <div class="paragraph">
 <p>Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.</p>
 </div>
@@ -2398,7 +2876,7 @@ spec:
 <p>El servicio que consume datos se denomina <code>jsonreader</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada (<code>Hola manolo</code> cuando use <code>v0</code> y <code>Hola Manuel Torres</code> cuando use <code>v1</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>10.5.1. Creación de todos los servicios</h4>
+<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>11.5.1. Creación de todos los servicios</h4>
 <div class="paragraph">
 <p>En primer lugar vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> (<code>v0</code> y <code>v1</code>) que quedarán desplegadas en el cluster.</p>
 </div>
@@ -2426,7 +2904,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">#########################################################
+<pre class="highlight"><code class="language-bash" data-lang="bash">#########################################################
 # jsonproducer service
 #########################################################
 apiVersion: v1
@@ -2573,7 +3051,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/b651f3c73aa87376752c606e3747b151/raw/9f289b6500b75d93f22b4b36c63c6e3f409f1ccf/greeter.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2581,7 +3059,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get services
 NAME                                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 jsonproducer                               ClusterIP   10.43.88.162    &lt;none&gt;        80/TCP           40s
 jsonreader                                 ClusterIP   10.43.106.61    &lt;none&gt;        80/TCP           40s
@@ -2609,7 +3087,7 @@ jsonreader-v0     1/1     1            1           40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>10.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
+<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>11.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
 <div class="paragraph">
 <p>A continación vamos a definir todas las versiones de un servicio que vamos a tener elegibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las <code>DestinationRule</code> se usan para definir las distintas instancias o versiones disponibles que se pueden usar de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
 </div>
@@ -2631,7 +3109,7 @@ jsonreader-v0     1/1     1            1           40s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: jsonreader
@@ -2679,7 +3157,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/440e04403d2ec662bda2a9cc29721a75/raw/37542b7886916efe9f306c6d9c48bafef91b335d/destination-rule-all.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2687,7 +3165,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get destinationrules
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get destinationrules
 NAME           HOST           AGE
 jsonproducer   jsonproducer   40s
 jsonreader     jsonreader     40s</code></pre>
@@ -2695,7 +3173,7 @@ jsonreader     jsonreader     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>10.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
+<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>11.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
 <div class="paragraph">
 <p>Por último, crearemos los <code>VirtualService</code> para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el <em>mesh</em>.</p>
 </div>
@@ -2721,7 +3199,7 @@ jsonreader     jsonreader     40s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: jsonreader
@@ -2770,7 +3248,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/e900fc85856fec3d918575e6e3d91d29/raw/35d799ca518f8e5ad76112ecf575a6b8e62f3ff3/all-v0.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2778,7 +3256,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl get virtualservices
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get virtualservices
 NAME           GATEWAYS             HOSTS            AGE
 jsonproducer                        [jsonproducer]   40s
 jsonreader                          [jsonreader]     40s</code></pre>
@@ -2789,7 +3267,7 @@ jsonreader                          [jsonreader]     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>10.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
+<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>11.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
 <div class="paragraph">
 <p>Como comentamos en el apartado <a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">Control de tráfico y técnicas de despliegue</a>, en los despliegues <em>canary</em> se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Con Istio, este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión <code>v0</code> de <code>jsonproducer</code> y el 20% del tráfico a la versión <code>v1</code> de <code>jsonproducer</code>.</p>
 </div>
@@ -2798,7 +3276,7 @@ jsonreader                          [jsonreader]     40s</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: jsonreader
@@ -2856,7 +3334,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/7c04cf736f2283fa3c2ffb6bc81a8c30/raw/ae7eb38d0c1d66d08f6792021da15b5ac5462507/virtual-service-jsonproducer-20-v1.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2867,7 +3345,7 @@ spec:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash" data-lang="bash">$ ab -n 100 http://greeter-jsonreader.default.192.168.65.94.xip.io/
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ ab -n 100 http://greeter-jsonreader.default.192.168.65.94.xip.io/
 This is ApacheBench, Version 2.3 &lt;$Revision: 1663405 $&gt;
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
@@ -2975,11 +3453,8 @@ Percentage of the requests served within a certain time (ms)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-15 08:20:28 CEST
+Last updated 2019-11-20 09:49:34 CET
 </div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
-<script>hljs.initHighlighting()</script>
 </body>
 </html>

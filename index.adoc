@@ -190,7 +190,12 @@ En la https://github.com/kubernetes/minikube[página de GitHub de Minikube,windo
 
 Una vez instalado, probaremos los comandos básicos:
 
-* Iniciar un cluster: `minikube start` (La primera vez que ejecutemos este comando descargará la ISO de Minikube, que son unos 130 MB, y creará la máquina virtual correspondiente)
+* Iniciar un cluster: `minikube start` 
+
+[NOTE]
+====
+La primera vez que ejecutemos este comando descargará la ISO de Minikube, que son unos 130 MB, y creará la máquina virtual correspondiente. Después, la preparará para Kubernetes y tras unos minutos estará disponible minikube en nuestro puesto de trabajo.
+====
 
 * Acceso al Dashboard de Kubernetes: `minikube dashboard`
 
@@ -213,12 +218,18 @@ Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura sigu
 
 +
 image::KubernetesDashboard.png[]
+
+Si ahora probamos a eliminar el pod creado, veremos que se vuelve a crear. El objeto Deployment `hello-minikube` creado anteriormente se encarga de mantener el número de réplicas especificado (1 de forma predeterminada). Realmente tendremos que eliminar el objeto Deployment, y un poco más adelante veremos cómo hacerlo.
     
+.Otros comandos interesantes de minikube
+****
 * Iniciar un segundo cluster local: `minikube start -p cluster2`
 
 * Detener el cluster local: `minikube stop`
 
 * Eliminar el cluster local: `minikube delete`
+****
+
 
 ## `kubectl` el CLI para Kubernetes
 
@@ -251,6 +262,8 @@ minikube   Ready    master   3d23h   v1.15.0
 ----
 
 * Otras operaciones de interés son: 
+    - `kubectl get pods` para listar todos los pods desplegados.
+    - `kubectl get all` para listar todos los objetos desplegados.
     - `kubectl describe <resource>` para obtener información detallada sobre un recurso.
     - `kubectl logs <pod>` para mostrar los logs de un contenedor en un pod.
     - `kubectl exec <pod> <command>` para ejecutar un comando en un contenedor de un pod.
@@ -328,17 +341,22 @@ Al crear el Deployment anterior, Kubernetes creó un Pod para ejecutar una insta
 
 [NOTE]
 ====
-Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación.
+Un ejemplo de pod con más de un contenedor lo encontramos en lo que se denominan _sidecars_. Ejemplos de sidecar los encontramos en aplicaciones que registran su actividad en un contenedor (sidecar) dentro del mismo pod y publican la actividad en una aplicación que monitoriza el cluster. Otro ejemplo de sidecar es el de un contenedor sidecar que proporciona un certificado SSL para comunicación https al contenedor de la aplicación. Otro ejemplo más lo podemos encontrar en un sidecar que actúa como volumen.
 ====
 
 Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo. La figura siguiente ilustra varias configuraciones de pods: Un pod con un contenedor, un pod con un contenedor y un volumen, un pod con dos contenedores que comparten un volumen y un pod con varios contenedores y varios volúmenes.
 
 image::KubernetesPod.svg[]
 
-Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster. *Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod*. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.
+Los pods son la unidad atómica de Kubernetes. Al crear un despliegue en Kubernetes, el Deployment crea Pods con contenedores en su interior. Cada pod queda ligado a un nodo y sigue allí hasta que se finalice o se elimine. En caso de fallo del nodo se planifica la creación de sus pods en otros nodos disponibles del cluster. 
+
+[IMPORTANT]
+====
+Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.
+====
 
 
-.Creación de un pod para MongoDB
+#### Creación de un pod para MongoDB mediante un archivo de manifiesto
 
 Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, ...) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis https://yaml.org/[YAML,window=_blank] y representan una forma declarativa de definir los recursos del cluster Kubernetes. 
 
@@ -401,7 +419,14 @@ $ kubectl port-forward mongodb 27017:27017
 ----
 
 +
+[NOTE]
+====
+Para poder probar el comando anterior de la redirección de puertos necesitaremos disponer de un cliente MongoDB instalado en nuestro equipo.
+====
+
++
 . Eliminación del pod
+
 +
 [source, bash]
 ----
@@ -421,9 +446,55 @@ Cada Nodo ejecuta al menos:
 
 ### Servicios
 
-Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver al cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
+Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un _ReplicaSet_ se encarga de devolver el cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y *aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando*.
 
 Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos estableciendo un nombre para acceder a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. El acceso puede ser interno o externo al cluster. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.
+
+.Agrupación de pods en servicios
+****
+Los pods son etiquetados con metadatos. Estos metadatos posteriormente son usados por otros objetos Kubernetes (p.e. ReplicaSet, Deployment) para seleccionar los pods y crear una unidad lógica (p.e. todas las réplicas de un contenedor de frontend)
+
+La figura siguiente ilustra como un servicio agrupa mediante el *selector* `app:ngnix` a aquellos pods que están etiquetados con `app:ngnix`.
+
+image::podlabels.png[]
+
+[source,yaml]
+----
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: nginx
+  labels: 
+    app: nginx
+spec: 
+  replicas: 2 
+  selector: 
+    matchLabels:
+      app: nginx 
+  template: 
+    metadata:
+      labels: 
+        app: nginx
+    spec:
+      containers:
+      - name: webcontainer 
+        image: nginx 
+        ports:
+        - containerPort: 80 
+----
+
+Al desplegar este deployment se crearán dos pods, que quedarán agrupados por la coincidencia entre el selector que pide el deployment (`app: nginx`) y la etiqueta con los que son creados los pods (`app: nginx`).
+
+[source, bash]
+----
+$ kubectl apply -f ngnix.yaml
+----
+
+Si ahora vemos los detalles del deployment en el dashboard de minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment `ngnix`. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.
+
+image::ReplicaSetPods.png[]
+****
+
 
 Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:
 
@@ -434,10 +505,16 @@ Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del clus
 
 image::KubernetesService.svg[]
 
-Los servicios enrutan el tráfico entre los pods proporcionando una abstracción que permite que los pod mueran y se repliquen sin impactar en la aplicación. El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios.
+Los servicios enrutan el tráfico entre los pods proporcionando una abstracción que permite que los pod mueran y se repliquen sin impactar en la aplicación. 
 
-Los servicios agrupan a sus pods usando etiquetas y selectores. Las etiquetas son pares clave-valor y tienen usos muy variados:
+[NOTE]
+====
+El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios. Los servicios agrupan a sus pods usando etiquetas y selectores. Los servicios usan selectores y los pods son creados con etiquetas. Su emparejamiento por valores coincidenetes es lo que agupa los pods en un servicio. 
+====
 
+Las etiquetas son pares clave-valor y tienen usos muy variados:
+
+* Seleccionar los objetos de un despliegue
 * Diferenciar entre objetos de desarrollo, prueba y producción
 * Distinguir entre versiones
 
@@ -446,6 +523,11 @@ image::KubernetesLabels.svg[]
 En la figura se observa cómo el selector de etiquetas usado en los Deployment sirve para agrupar los pods que conforman un servicio, ya que cada pod contiene la misma etiqueta usada en el selector del Deployment al que pertenece.
 
 Las etiquetas se pueden configurar durante la creación o en cualquier momento posterior.
+
+[TIP]
+====
+Prueba a editar un pod en el dashboard de kubernetes cambiándole la etiqueta (p.e. `app:apache`). Esto hará que ese pod salga del ReplicaSet al que pertencía y se cree un nuevo pod etiquetado con `app:nginx` para mantener la especificación del Deployment, que exigía tener 2 réplicas.
+====
 
 #### Ejemplo. Creación de un servicio
 
@@ -581,7 +663,98 @@ Containers:
 
 Básicamente, uno volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.
 
-Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo `.spec.volumes`) y donde montarlo en los contenedores (el campo `.spec.containers.volumeMounts`).
+Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo `.spec.volumes`) y donde montarlo en los contenedores (el campo `.spec.containers.volumeMounts`). Dejamos por ahora el tema de los volúmenes para volver a ellos más adelante cuando usemos archivos de despliegue.
+
+#### ConfigMaps
+
+Los objetos ConfigMap permiten almacenar datos en forma de clave valor y que pueden usarse posteriormente en un despliegue con el fin de parametrizar los despliegues parametrizados y hacerlos más portables.
+
+Usaremos los ConfigMap para almacenar datos no sensibles sobre la configuración. Deben ser datos no sensibles porque los datos se guardan tal cual.
+
+* Creación de un ConfigMap con valores directamente:
+
++
+[source, bash]
+----
+$ kubectl create configmap datosmtorres --from-literal=nombre=Manuel --from-literal=apellidos=Torres
+----
+
+* Creación de un ConfigMap desde archivos:
+
++
+[source, bash]
+----
+$ kubectl create configmap datosstevemcqueen --from-file=nombre=nombre.txt --from-file=apellidos=apellidos.txt
+----
+
+[IMPORTANT]
+====
+Los archivos que contienen los valores que alimentarán las claves no contendrán caracteres no deseados como espacios o saltos de línea al final.
+====
+
+* Obtener los datos de un ConfigMap
+
++
+[source, bash]
+----
+$ kubectl describe configmap datosmtorres
+$ kubectl describe configmap datosstevemcqueen
+----
+
+* Eliminar un ConfigMap
+
++
+[source, bash]
+----
+$ kubectl delete configmap datosmtorres 
+$ kubectl delete configmap datosstevemcqueen
+----
+
+### Secrets
+
+Los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. Colocar esta información en objetos Secret es más seguro que colocarla en texto plano y legible.
+
+Los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente. Sistemas como https://www.vaultproject.io/[Vault] son usados de forma complementaria para aumentar la seguridad de la información que contienen los Secret.
+
+* Creación de un Secret con valores directamente:
+
++
+[source, bash]
+----
+$ kubectl create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret
+----
+
+* Creación de un Secret desde archivos:
+
++
+[source, bash]
+----
+$ kubectl create secret generic my-second-secret --from-file=key1=key1.txt --from-file=key2=key2.txt
+----
+
+* Obtener los datos de un Secret:
+
++
+[source, bash]
+----
+$ kubectl get secret my-secret -o yaml
+----
+
+* Decodificación de un Secret:
+
++
+[source, bash]
+----
+$  echo 'yourEncodedKey' | base64 --decode
+----
+
+* Eliminar un Secret:
+
++
+[source, bash]
+----
+$ kubectl delete secret my-secret
+----
 
 ### Namespaces
 
@@ -590,6 +763,69 @@ Abstracción de Kubernetes para soportar varios clusters virtuales en un mismo c
 [TIP]
 ====
 En clusters con varios usuarios los namespaces proporcionan una forma de agrupar los recursos de cada usuario. Además, los administradores pueden establecer cuotas a nivel de namespace limitando a los usuarios la cantidad de objetos que pueden crear y la cantidad de recursos del cluster que pueden consumir (p.e. CPU, memoria).
+====
+
+* Crear un Namespace
+
++
+[source,bash]
+----
+$ kubectl create namespace rrhh
+----
+
+* Crear un pod en un namespace diferente
+
++
+[source,bash]
+----
+$ kubectl run nginxrrhh --image=nginx --port 80 --namespace rrhh
+----
+
+* Mostrar los pods de un namespace
+
++
+[source,bash]
+----
+$ kubectl get pods --namespace rrhh
+----
+
+* Cambiar de namespace
+
++
+[source,bash]
+----
+kubectl config set-context --current --namespace=rrhh
+----
+
+* Volver al namespace default 
+
++
+[source,bash]
+----
+$ kubectl config set-context --current --namespace=default
+----
+
+* Eliminar un namespace
+
++
+[source,bash]
+----
+$ kubectl delete namespace rrhh
+----
+
+[CAUTION]
+====
+Eliminar un namespace elimina el namespace y todos los objetos que contenga, por lo que es una operación muy peligrosa.
+====
+
+[NOTE]
+====
+Si se elimina un namespace estando situado sobre él no se cambia a ningún namespace por lo que habrá que cambiar a uno de los namespace existentes en nuestro sistema
+====
+
+[TIP]
+====
+https://github.com/ahmetb/kubectx[`kubectx` y `kubens`] son dos herramientas que facilitan la gestión de cambios de namespace y de contexto
 ====
 
 ## Escalado de una aplicación
@@ -625,6 +861,21 @@ jsonproducer   1/1     1            1           68m
 * `READY` indica el ratio entre los pods deseados y los que están en ejecución.
 * `UP-TO-DATE` indica el número de réplicas que están actualizadas para alcanzar el estado deseado.
 * `AVAILABLE` indica el número de réplicas disponibles actualmente para los usuarios.
+
+[NOTE]
+====
+Si no contamos con este deployment porque vamos limpiando el entorno en cada sección, los comandos siguientes vuelven a crear el Deployment `jsonproducer` para continuar el tutorial.
+
+[source, bash]
+----
+$ kubectl run jsonproducer --image=ualmtorres/jsonproducer:v0 --port 80 <1>
+$ kubectl expose deployment jsonproducer --type=NodePort <2>
+$ minikube service jsonproducer <3>
+----
+<1> Crea el Deployment, ReplicaSet y el Pod
+<2> Crea el servicio del tipo NodePort. El servicio está accesible mediante la IP del cluster (`kubectl cluster-info`) concatenada al puerto que se haya asignado (`NodePort`)
+<3> Pedir minikube que abra un navegador para acceder al servicio `jsonproducer`
+====
 
 El comando siguiente escala a 4 réplicas el despliegue de ejemplo (`jsonproducer`)
 
@@ -699,9 +950,9 @@ Para poder realizar actualizaciones sin tener que suspender el servicio mientras
 
 De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.
 
-Al igual que ocurre al escalar las aplicaciones, si el Despliegue está expuesto, el Servicio balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.
+Al igual que ocurre al escalar las aplicaciones, si el Deployment está expuesto, el Service balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.
 
-A continuación se muestra cómo actualizar el Deployment de ejemplo `jsonproducer` con nuevo Deployment con el mismo nombre y una versión de la imagen. 
+A continuación se muestra cómo actualizar el Deployment de ejemplo `jsonproducer` con nuevo Deployment con el mismo nombre y una nueva versión de la imagen (`v1`). 
 
 [source, bash]
 ----
@@ -720,7 +971,7 @@ jsonproducer-c76c87f-jwhxq      0/1     ContainerCreating   0          0s
 jsonproducer-c76c87f-tmbkk      1/1     Running             0          1s
 ----
 
-Tras unos instantes, la aplicación dejará de servir la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación sirve `Manolo Torres` en lugar de `manolo` en el JSON.
+Tras unos instantes, la aplicación dejará de servir totalmente la versión anterior de la aplicación y comenzará a servir la nueva versión. La nueva versión de la aplicación devuelve `Manolo Torres` en lugar de `manolo` en el JSON.
 
 image::KubernetesUpdateImage.png[]
 
@@ -760,11 +1011,11 @@ image::KubernetesRunningService.png[]
 
 ## Despliegue de aplicaciones mediante archivos YAML
 
-Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, se suelen crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, ...). Una vez creados estos archivos, se usará `kubectl` para cargarlos/desplegarlos en Kubernetes.
+Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Esto nos ha servido familiarizarnos tanto con los objetos básicos de Kubernetes (Pod, ReplicaSet, Deployment, Service, ConfigMap, Secret, Namespace, volúmenes, ...), como con operaciones habituales (escalado, actualización de versiones, ...). Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, la forma de operar consiste en crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, ...). Una vez creados estos archivos, se usará `kubectl` para cargarlos/desplegarlos en Kubernetes.
 
 [NOTE]
 ====
-El uso de archivos para despliegues Kubernetes nos permitirá admeás someter nuestros archivos de despligue de recursos Kubernetes a control de versiones y poder distribuirlos fácilmente.
+El uso de archivos para despliegues Kubernetes nos permitirá además beneficiarnos de las ventajas de los sistemas de control de versiones, sometiendo nuestros recursos de Kubernetes al control de versiones, facilidad de distribución y trabajo en equipo.
 ====
 
 Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio `jsonproducer` creado anteriormente. Se trata de un ejemplo muy sencillo de un entorno frontend-backend con un funcionamiento independiente. Esto, además de desacoplar la presentación del backend, desde el punto de vista de la escalabilidad, permite escaladar backend y frontend de forma independiente.
@@ -926,6 +1177,60 @@ image::KubernetesDashboardJSON1.png[]
 
 image::KubernetesDashboardJSON2.png[]
 
+## ConfigMaps
+
+Variables de entorno
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-env
+spec:
+  containers:
+  - name: php-apache
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        value: Manolo
+      - name: APELLIDOS
+        value: Torres
+----
+
+ConfigMap
+[source, bash]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap
+data:
+  nombre: Manolo
+  apellidos: Torres
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-example
+spec:
+  containers:
+  - name: configmap-cm
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: nombre
+      - name: APELLIDOS
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: apellidos
+----
+
+Secret
+
 ## Apéndice. Cheat Sheet
 
 ### Comandos Minikube
@@ -952,6 +1257,10 @@ image::KubernetesDashboardJSON2.png[]
 * `kubectl apply -f <filename-or-URL>`
 * `kubectl logs <pod>`
 * `kubectl exec <pod> <command>`
+
+### Herramientas interesantes
+
+* https://github.com/ahmetb/kubectx[`kubectl` y `kubens`]: Cambio de namespace contexto
 
 cloud_provider: 
   name: "openstack"
