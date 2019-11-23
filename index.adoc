@@ -53,6 +53,7 @@ Disponibles los repositorios usados en este seminario:
 * https://github.com/ualmtorres/json-producer[Código fuente de JSON Producer,window=_blank]
 * https://github.com/ualmtorres/json-reader[Código fuente de JSON Reader,window=_blank]
 * https://github.com/ualmtorres/jsonproducerreader[Archivos YAML de JSON Producer y Reader,window=_blank]
+* https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos[Ejemplos de Minikube y manifiestos YAML]
 ====
 // Entrar en modo numerado de apartados
 :numbered:
@@ -661,11 +662,11 @@ Containers:
 
 ### Volúmenes
 
-Básicamente, uno volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.
+Básicamente, un volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.
 
 Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo `.spec.volumes`) y donde montarlo en los contenedores (el campo `.spec.containers.volumeMounts`). Dejamos por ahora el tema de los volúmenes para volver a ellos más adelante cuando usemos archivos de despliegue.
 
-#### ConfigMaps
+### ConfigMaps
 
 Los objetos ConfigMap permiten almacenar datos en forma de clave valor y que pueden usarse posteriormente en un despliegue con el fin de parametrizar los despliegues parametrizados y hacerlos más portables.
 
@@ -1112,6 +1113,8 @@ jsonreader-86699d9f94-khfzh     1/1     Running   1          22h   app=jsonreade
 jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94
 ----
 
+https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo16-Deployment[Ejemplo más completo de Deployment]
+
 ### Creación del archivo de Servicio
 
 Un Servicio es una abstracción que define una agrupación de Pods y una política de acceso a ellos. El conjunto de Pods al que se dirige un Servicio están determinados por un *selector*.
@@ -1177,9 +1180,15 @@ image::KubernetesDashboardJSON1.png[]
 
 image::KubernetesDashboardJSON2.png[]
 
-## ConfigMaps
+https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo17-Service[Ejemplo más completo de Service]
 
-Variables de entorno
+### ConfigMaps
+
+Tal y como comentamos anteriormente, los objetos ConfigMap permiten almacenar datos no sensibles en forma de clave valor. Un uso habitual es para inicialización de variables de entorno.
+
+
+Antes de comenzar a usar ConfigMaps con variables de entorno, veamos cómo establecer variables de entorno. El ejemplo siguiente muestra un manifiesto YAML que crea un pod e inicializa dos variables de entorno (`NOMBRE` y `APELLIDOS`)
+
 [source, yaml]
 ----
 apiVersion: v1
@@ -1197,31 +1206,412 @@ spec:
         value: Torres
 ----
 
-ConfigMap
+El código siguiente muestra cómo lanzamos el manifiesto YAML para configurar las variables de entorno:
+
+[source, bash]
+----
+$ kubectl apply -f configmap-env.yaml 
+----
+
+Una vez que el pod esté en ejecución podremos abrir una sesión interactiva en él con
+
+[source, bash]
+----
+$ kubectl exec -it configmap-env /bin/bash
+----
+
+Una vez dentro del contenedor del pod podremos mostrar las variables de entorno
+
+[source, bash]
+----
+$ echo $NOMBRE
+$ echo $APELLIDOS
+----
+
+Una vez hecho esto haremos el mismo ejemplo pero configurando los valores a través de un ConfigMap. Una vez creado el ConfigMap, habrá que acceder a sus pares clave-valor para asignarlo a las variables del entorno en el contenedor de destino.
+
+
+El manifiesto YAML siguiente crea un objeto ConfigMap con dos pares clave-valor y un objeto Pod que accede al ConfigMap para inicializar dos variables de entorno.
+
 [source, bash]
 ----
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: myconfigmap
+  name: myconfigmap <1>
 data:
-  nombre: Manolo
+  nombre: Manolo <2>
+  apellidos: Torres 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+  - name: configmap-container
+    image: php:7-apache
+    env:
+      - name: NOMBRE 
+        valueFrom: <3>
+          configMapKeyRef: <4>
+            name: myconfigmap <5>
+            key: nombre <6>
+      - name: APELLIDOS
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: apellidos
+----
+<1> Nombre del objeto ConfigMap para poder ser usado posteriormente
+<2> Configuración de pares clave-valor en el ConfigMap
+<3> Acceso de un valor almacenado
+<4> Acceso a un un ConfigMap
+<5> Nombre del ConfigMap a usar
+<6> Clave del ConfigMap a leer
+
+El código siguiente muestra cómo lanzamos el manifiesto YAML para configurar las variables de entorno:
+
+[source, bash]
+----
+$ kubectl apply -f configmap-pod.yaml 
+----
+
+Una vez que el pod esté en ejecución podremos abrir una sesión interactiva en él con
+
+[source, bash]
+----
+$ kubectl exec -it configmap-env /bin/bash
+----
+
+Una vez dentro del contenedor del pod podremos mostrar las variables de entorno
+
+[source, bash]
+----
+$ echo $NOMBRE
+$ echo $APELLIDOS
+----
+
+### Secrets
+
+Como comentamos anteriormente, los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. No obstante, los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente. 
+
+Para ilustrar el uso de Secrets veamos ekl manifiesto de creación de un pod con MySQL sin y con secretos.
+
+El manifiesto siguiente crea un pod MySQL al que se le pasa la variable de entorno `MYSQL_ROOT_PASSWORD` durante su inicialización con la contraseña del `root`. En este ejemplo, el valor de la variable de entorno de la contraseña del root es pasada en el propio manifiesto
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-sin-secrets
+spec:
+  selector: 
+    matchLabels: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql-sin-secrets
+        image: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+----
+
+El manifiesto anterior lo lanzamos con 
+
+[source, bash]
+----
+$ kubectl apply -f mysql-sin-secrets.yaml
+----
+
+A continuación vamos a modificar el manifiesto anterior para hacer uso de objetos Secret.
+
+Kubernetes guarda los secretos en base64. Por tanto, los valores que vayamos a almacenar en los pares clave-valor de un secreto tendrán que estar en base64.
+
+Para codificar en base64 el valor `password` que utilizamos en el ejemplo anterior para contraseña del root, desde la línea de comandos ejecutaremos:
+
+[source, bash]
+----
+$ echo 'password' | base64
+----
+
+Esto devolverá la cadena `cGFzc3dvcmQ=`, que corresponde a la cadena `password` en base64. Este valor codificado será el que usaremos para la creación del Secret.
+
+A continuación crearemos el manifiesto YAML `secret-password.yaml` que inicializa un objeto Secret.
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=
+----
+
+Lanzamos la creación del Secret con kubectl:
+
+[source, yaml]
+----
+kubectl apply -f secret-password.yaml
+----
+
+Por último, creamos el manifiesto YAML que inicializa un pod MySQL que lee del Secret creado la contraseña del usuario root para inicializar el pod correctamente.
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: initdb
+spec:
+  selector: 
+    matchLabels:
+     app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql-con-secrets
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysqlpassword
+              key: password
+        ports:
+        - containerPort: 3306
+----
+
+Este manifiesto lo lanzaremos con `kubectl`:
+
+[source, bash]
+----
+$ kubectl apply -f mysql-con-secrets.yaml
+----
+
+## HPA. Horizontal Pod Autoscaler
+
+* Consulta cada 15s las métricas de uso (CPU, RAM, ...) de cada pod
+* Fija un mínimo y máximo de réplicas de un deployment
+* Define las condiciones de stress (p.e. porcentaje de uso de la CPU)
+* Ante stress escala hacia arriba
+* 5m sin stress escala hacia abajo
+
+image::HPA.png[]
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selectividad-api
+  namespace: default
+  labels:
+    app: selectividad-api
+spec:
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: selectividad-api
+  template:
+    metadata:
+      labels:
+        app: selectividad-api
+    spec:
+      containers:
+      - name: selectividad-api
+        image: ualmtorres/selectividad-api:v2
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
+----
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selectividad-front
+  namespace: default
+  labels:
+    app: selectividad-front
+spec:
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: selectividad-front
+  template:
+    metadata:
+      labels:
+        app: selectividad-front
+    spec:
+      containers:
+      - name: selectividad-front
+        image: ualmtorres/selectividad-front:v2
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
+----
+
+[source, bash]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectividad-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: selectividad-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectividad-front
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: selectividad-front
+----
+
+[source, bash]
+----
+$ kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+$ kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040
+----
+
+[source, bash]
+----
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: selectividad-api
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1beta1
+   kind: Deployment
+   name: selectividad-api
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 15
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: selectividad-front
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1beta1
+   kind: Deployment
+   name: selectividad-front
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 15
+----
+
+[source, bash]
+----
+$ kubectl get hpa
+
+NAME                 REFERENCE                       TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+selectividad-api     Deployment/selectividad-api     1%/15%    1         10        1          5m
+selectividad-front   Deployment/selectividad-front   1%/15%    1         10        1          5m
+----
+
+Prueba de stress (Apache Benchmark)
+
+* 100.000 peticiones totales
+* 100 peticiones simultáneas
+* ab -n 100000 -c 100 http://selectividad-front.default.192.168.66.253.xip.io/
+
+image::WeaveScopeEvolucion.png[]
+
+image::HPAEvolucion.png[]
+
+## ConfigMaps
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-env
+spec:
+  containers:
+  - name: php-apache
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        value: Manolo
+      - name: APELLIDOS
+        value: Torres
+----
+
+[source, bash]
+----
+$ kubectl apply -f configmap-env.yaml
+----
+
+[source, yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap 
+data:
+  nombre: Manolo 
   apellidos: Torres
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: configmap-example
+  name: configmap-pod
 spec:
   containers:
-  - name: configmap-cm
+  - name: configmap-container
     image: php:7-apache
     env:
       - name: NOMBRE
-        valueFrom:
-          configMapKeyRef:
-            name: myconfigmap
-            key: nombre
+        valueFrom: 
+          configMapKeyRef: 
+            name: myconfigmap 
+            key: nombre 
       - name: APELLIDOS
         valueFrom:
           configMapKeyRef:
@@ -1229,7 +1619,525 @@ spec:
             key: apellidos
 ----
 
+[source, bash]
+----
+$ kubectl apply -f configmap-pod.yaml
+----
+
+## Secrets
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-sin-secrets
+spec:
+  containers:
+  - name: mysql-sin-secrets
+    image: mysql
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: password
+    ports:
+    - containerPort: 3306
+----
+
+[source, bash]
+----
+$ kubectl apply -f mysql-sin-secrets.yaml
+----
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=
+----
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-con-secrets
+spec:
+  containers:
+  - name: mysql-con-secrets
+    image: mysql
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mysqlpassword
+          key: password
+    ports:
+    - containerPort: 3306
+----
+
+[source, bash]
+----
+$ kubectl apply -f secret-password.yaml
+$ kubectl apply -f mysql-con-secrets.yaml
+----
+
+## Volúmenes con Openstack Cinder
+
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cinder-sc
+provisioner: kubernetes.io/cinder
+parameters:
+  availability: nova
+----
+
+[source, bash]
+----
+$ kubectl apply -f cinder-storageclass.yaml
+----
+
+[source, bash]
+----
+$ kubectl get storageclasses.storage.k8s.io 
+
+NAME            PROVISIONER            AGE
+cinder-sc   kubernetes.io/cinder   15s
+----
+
+[source, yaml]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cinder-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 9Gi # pass here the size of the volume
+  storageClassName: cinder-sc
+----
+
+[source, bash]
+----
+$ kubectl apply -f cinder-persistentvolumeclaim.yaml
+----
+
+[source, bash]
+----
+$ kubectl get persistentvolumeclaims       
+
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS    AGE
+cinder-pvc   Bound    pvc-3688b17d-0de1-11ea-945c-fa163e416ffb   9Gi        RWO            cinder-sc   15s
+----
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-cinder
+spec:
+  selector: 
+    matchLabels:
+     app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache
+        image: httpd
+        volumeMounts:
+          - mountPath: /usr/local/apache2/htdocs
+            name: cinder-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: cinder-vol
+          persistentVolumeClaim:
+            claimName: cinder-pvc
+----
+
+[source, bash]
+----
+$ kubectl apply -f cinder-apache-pvc.yaml
+----
+
+[source, bash]
+----
+$ kubectl get pods
+
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-cinder-54d6c66cf8-djv76        1/1     Running   0          15s
+----
+
+[source, bash]
+----
+$ sudo kubectl port-forward apache-cinder-54d6c66cf8-djv76 81:80
+
+Forwarding from 127.0.0.1:81 -> 80
+Forwarding from [::1]:81 -> 80
+----
+
+image::ApacheCinderVacio.png[]
+
+[source, bash]
+----
+$ kubectl exec -it apache-cinder-54d6c66cf8-djv76 /bin/bash
+----
+
+[source, bash]
+----
+root@apache-cinder-54d6c66cf8-djv76:/usr/local/apache2# echo "<h1>Volumen Cinder</h1>" > htdocs/index.html
+----
+
+image::ApacheCinderInicializado.png[]
+
+
+[source, bash]
+----
+$ kubectl delete -f cinder-apache-pvc.yaml
+----
+
+[source, bash]
+----
+$ kubectl apply -f cinder-apache-pvc.yaml
+----
+
+[source, bash]
+----
+$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-cinder-54d6c66cf8-zx92w        1/1     Running   0          102s
+----
+
+[source, bash]
+----
+sudo kubectl port-forward apache-cinder-54d6c66cf8-zx92w 81:80
+----
+
+image::ApacheCinderInicializado.png[]
+
+
+## Volúmenes NFS. Openstack Manila
+
+[source, yaml]
+----
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /var/lib/manila/mnt/share-2e653a46-bc6a-4fc3-83d3-d144554113e1
+    server: 192.168.64.17
+----
+
+[source, bash]
+----
+$ kubectl apply -f nfs-persistentvolume.yaml
+----
+
+[source, yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ""
+  volumeName: nfs-pv
+----
+
+[source, bash]
+----
+$ kubectl apply -f nfs-persistentvolumeclaim.yaml
+----
+
+[source, bash]
+----
+kubectl get pv,pvc
+NAME                         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                     STORAGECLASS   REASON   AGE
+persistentvolume/nfs-pv      10Gi       RWX            Recycle          Bound      default/nfs-pvc                                   3m36s
+
+NAME                            STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/nfs-pvc   Bound    nfs-pv   10Gi       RWX                           3m35
+----
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-nfs
+spec:
+  selector: 
+    matchLabels:
+     app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache
+        image: httpd
+        volumeMounts:
+          - mountPath: /usr/local/apache2/htdocs
+            name: nfs-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: nfs-vol
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+----
+
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: www-vol
+spec:
+  selector: 
+    matchLabels:
+     app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            name: nfs-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: nfs-vol
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+----
+
+[source, bash]
+----
+$ kubectl apply -f nfs-apache-pvc.yaml
+$ kubectl apply -f nfs-nginx-pvc.yaml
+----
+
+[source, bash]
+----
+$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-nfs-5cb7d87b6f-jp774           1/1     Running   0          4m55s
+nginix-nfs-58d6698d65-vfqkv           1/1     Running   0          4m54s
+----
+
+[source, bash]
+----
+$ sudo kubectl port-forward apache-nfs-5cb7d87b6f-jp774 82:80
+
+Forwarding from 127.0.0.1:82 -> 80
+Forwarding from [::1]:82 -> 80
+
+$ sudo kubectl port-forward nginix-nfs-58d6698d65-vfqkv 83:80
+
+Forwarding from 127.0.0.1:83 -> 80
+Forwarding from [::1]:83 -> 80
+----
+
+image::NFSVacio.png[]
+
+[source, bash]
+----
+kubectl exec -it apache-nfs-5cb7d87b6f-jp774 /bin/bash
+----
+
+[source, bash]
+----
+root@apache-nfs-5cb7d87b6f-jp774:/usr/local/apache2# echo "<h1>Volumen NFS</h1>" > htdocs/index.html
+----
+
+image::NFSActualizado.png[]
+
+[source, bash]
+----
+$ kubectl delete -f nfs-apache-pvc.yaml
+----
+
+[source, bash]
+----
+kubectl apply -f nfs-apache-pvc.yaml 
+deployment.apps/apache-nfs created
+----
+
+[source, bash]
+----
+$ kubectl get pods                    
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-nfs-5cb7d87b6f-2dzhr           1/1     Running   0          46s
+nginix-nfs-58d6698d65-vfqkv           1/1     Running   0          16m
+----
+
+[source, bash]
+----
+sudo kubectl port-forward apache-nfs-5cb7d87b6f-2dzhr 82:80
+
+Forwarding from 127.0.0.1:82 -> 80
+Forwarding from [::1]:82 -> 80
+----
+
+image::NFSActualizado.png[]
+
+## Init Containers
+
+Existen un tipo especial de contenedores denominados _Init Containers_ que se ejecutan antes que el resto de contenedores de aplicación del pod. Este tipo de contenedores suelen dedicarse a realizar operaciones de incialización que no están presentes en la imagen de los otros contenedores del pod.
+
+Para ilustrar el uso de Init Container supongamos que queremos tener disponibles distintos tipos de bases de datos MySQL para pruebas en desarrollo.. En función del proyecto en el que estemos trabajando queremos tener disponible una base de datos u otra. Contaremos con varios scripts diferentes de inicialización de los distintos tipos de bases de datos que queremos configurar.
+
+Para llevar a cabo ese caso práctico contaremos con:
+
+* URL donde se encuentra el script de inicialización de la base de datos.
+* ConfigMap que configura la URL con la que se va a inicializar la base de datos.
+* Secret el que se almacena la contraseña del usuario root.
+* Init Container que inicializa una imagen `busybox` con un volumen donde descarga el script SQL que inicializa la BD. La URL de descarga del script la toma del ConfigMap. El script SQL se descarga con el nombre `init.sql` para que sirva como script de inicialización del contenedor MySQL.
+* Contenedor que monta el volumen que ha inicializado el Init Container con el script SQL. Dicho volumen es montando en el directorio `/docker-entrypoint-initdb.d` de la imagen MySQL. Como el script se llama `init.sql`, al arrancar por primera vez el contenedor MySQL, se inicializará el contenedor con la base de datos elegida.
+
+Esta condfiguración con Init Container permite la configuración a medida y sobre la marcha de una imagen MySQL sin necesidad de tener disponibles diferentes imágenes MySQL, cada una con su propia base de datos. En su puesto, lo que hacemos es cambiar e el ConfigMap la URL del script que inicializará una nueva base de datos. Con esto podremos tener todas las bases de datos diferentes que queramos con una única imagen MySQL.
+
+A continuación se muestra el manifiesto YAML que crea el ConfigMap que contiene el script SQL de inicialización de la base de datos.
+
+ConfigMap
+[source, yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: initsqlsource
+data:
+  source: https://gist.githubusercontent.com/ualmtorres/eb328b653fcc5964f976b22c320dc10f/raw/448b00c44d7102d66077a393dad555585862f923/init.sql
+----
+
+Desplegaremos el ConfigMap con:
+
+[source, bash]
+----
+$ kubectl apply -f initsqlsource-configmap.yaml
+----
+
+También contaremos con un objeto Secret para almacenar la contraseña del usuario root. Este sería su manifiesto YAML
+
 Secret
+[source, yaml]
+----
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=
+----
+
+Desplegaremos el Secret con:
+
+[source, bash]
+----
+$ kubectl apply -f credentials-secret.yaml
+----
+
+Por último, crearemos el pod que incluye el contenedor MySQL y el Init Container que lo inicialia. El pod contiene un volumen que comparten ambos contenedores. El Init Container descarga el script SQL de inicialización en el volumen. Posteriormente, el contenedor MySQL monta ese volumen en el directorio de scripts de inicialización de forma que al arrancar por primera vez inicialice la base de datos con el script descargado por el Init Container.
+
+Este sería el manifiesto YAML del pod que incluye el Init Container, el contenedor MySQL y el volumen compartido por los dos contenedores.
+
+MySQL con InitContainer
+[source, yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: initdb
+spec:
+  selector: 
+    matchLabels:
+     app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql <1>
+        image: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD <2>
+          valueFrom: 
+            secretKeyRef:
+              name: mysqlpassword
+              key: password
+        ports:
+        - containerPort: 3306
+        volumeMounts: <3>
+        - name: workdir
+          mountPath: /docker-entrypoint-initdb.d
+      initContainers:
+      - name: install <4>
+        image: busybox
+        env:
+        - name: SQLSOURCE <5>
+          valueFrom:
+            configMapKeyRef:
+              name: initsqlsource
+              key: source
+        command: <6>
+        - wget
+        - "-O"
+        - "/work-dir/init.sql"
+        args: ["$(SQLSOURCE)"]
+        volumeMounts: <7>
+        - name: workdir
+          mountPath: "/work-dir"
+      dnsPolicy: Default
+      volumes: <8>
+      - name: workdir
+        emptyDir: {}
+----
+<1> Contenedor MySQL
+<2> Inicialización de la variable de entorno con el Secret que contiene la contraseña del usuario root
+<3> Montar el volumen `workdir`, definido al final del script, en el directorio `/docker-entrypoint-initdb.d` 
+<4> Contenedor de inicialización
+<5> Inicialización de la variable de entorno con el ConfigMap que contiene la URL con el script SQL que inicializará la base de datos
+<6> Comando de inicialización para ejecutar al crear el Init Container
+<7> Montar el volumen `workdir` en el directorio `work-dir` del InitContainer
+<8> Volumen que almacenará el script de inicialización de la base de datos
+
+[NOTE]
+====
+El volumen `workdir` se crea del tipo `emptyDir` porque su único propósito es almacenar el script de inicialización de la base de datos del contenedor MySQL en su primer arranque. Una vez hecha esta función, ya no es necesario, y no está destinado a guardar datos que se quieran persistir tras la finalización del contenedor MySQL.
+====
 
 ## Apéndice. Cheat Sheet
 

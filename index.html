@@ -446,8 +446,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truenodos">5.3. Nodos</a></li>
 <li><a href="#trueservicios">5.4. Servicios</a></li>
 <li><a href="#truevol-menes">5.5. Volúmenes</a></li>
-<li><a href="#truesecrets">5.6. Secrets</a></li>
-<li><a href="#truenamespaces">5.7. Namespaces</a></li>
+<li><a href="#trueconfigmaps">5.6. ConfigMaps</a></li>
+<li><a href="#truesecrets">5.7. Secrets</a></li>
+<li><a href="#truenamespaces">5.8. Namespaces</a></li>
 </ul>
 </li>
 <li><a href="#trueescalado-de-una-aplicaci-n">6. Escalado de una aplicación</a>
@@ -460,24 +461,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#truecreaci-n-del-archivo-de-deployment">8.1. Creación del archivo de Deployment</a></li>
 <li><a href="#truecreaci-n-del-archivo-de-servicio">8.2. Creación del archivo de Servicio</a></li>
+<li><a href="#trueconfigmaps-2">8.3. ConfigMaps</a></li>
+<li><a href="#truesecrets-2">8.4. Secrets</a></li>
 </ul>
 </li>
-<li><a href="#trueconfigmaps-2">9. ConfigMaps</a></li>
-<li><a href="#trueap-ndice-cheat-sheet">10. Apéndice. Cheat Sheet</a>
+<li><a href="#truehpa-horizontal-pod-autoscaler">9. HPA. Horizontal Pod Autoscaler</a></li>
+<li><a href="#trueconfigmaps-3">10. ConfigMaps</a></li>
+<li><a href="#truesecrets-3">11. Secrets</a></li>
+<li><a href="#truevol-menes-con-openstack-cinder">12. Volúmenes con Openstack Cinder</a></li>
+<li><a href="#truevol-menes-nfs-openstack-manila">13. Volúmenes NFS. Openstack Manila</a></li>
+<li><a href="#trueinit-containers">14. Init Containers</a></li>
+<li><a href="#trueap-ndice-cheat-sheet">15. Apéndice. Cheat Sheet</a>
 <ul class="sectlevel2">
-<li><a href="#truecomandos-minikube">10.1. Comandos Minikube</a></li>
-<li><a href="#truecomandos-code-kubectl-code">10.2. Comandos <code>kubectl</code></a></li>
-<li><a href="#trueherramientas-interesantes">10.3. Herramientas interesantes</a></li>
-<li><a href="#truecontextos">10.4. Contextos</a></li>
+<li><a href="#truecomandos-minikube">15.1. Comandos Minikube</a></li>
+<li><a href="#truecomandos-code-kubectl-code">15.2. Comandos <code>kubectl</code></a></li>
+<li><a href="#trueherramientas-interesantes">15.3. Herramientas interesantes</a></li>
+<li><a href="#truecontextos">15.4. Contextos</a></li>
 </ul>
 </li>
-<li><a href="#trueap-ndice-service-mesh-con-istio">11. Apéndice. Service Mesh con Istio</a>
+<li><a href="#trueap-ndice-service-mesh-con-istio">16. Apéndice. Service Mesh con Istio</a>
 <ul class="sectlevel2">
-<li><a href="#trueistio">11.1. Istio</a></li>
-<li><a href="#truearquitectura-de-istio">11.2. Arquitectura de Istio</a></li>
-<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">11.3. Control de tráfico y técnicas de despliegue</a></li>
-<li><a href="#truet-cnicas-de-resilencia">11.4. Técnicas de resilencia</a></li>
-<li><a href="#truecaso-pr-ctico">11.5. Caso práctico</a></li>
+<li><a href="#trueistio">16.1. Istio</a></li>
+<li><a href="#truearquitectura-de-istio">16.2. Arquitectura de Istio</a></li>
+<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">16.3. Control de tráfico y técnicas de despliegue</a></li>
+<li><a href="#truet-cnicas-de-resilencia">16.4. Técnicas de resilencia</a></li>
+<li><a href="#truecaso-pr-ctico">16.5. Caso práctico</a></li>
 </ul>
 </li>
 </ul>
@@ -559,6 +567,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li>
 <p><a href="https://github.com/ualmtorres/jsonproducerreader" target="_blank">Archivos YAML de JSON Producer y Reader</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos">Ejemplos de Minikube y manifiestos YAML</a></p>
 </li>
 </ul>
 </div>
@@ -1554,13 +1565,14 @@ Containers:
 <div class="sect2">
 <h3 id="truevol-menes"><a class="anchor" href="#truevol-menes"></a>5.5. Volúmenes</h3>
 <div class="paragraph">
-<p>Básicamente, uno volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.</p>
+<p>Básicamente, un volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.</p>
 </div>
 <div class="paragraph">
 <p>Para usar un volumen, un Pod especifica el volumen que proporciona al Pod (el campo <code>.spec.volumes</code>) y donde montarlo en los contenedores (el campo <code>.spec.containers.volumeMounts</code>). Dejamos por ahora el tema de los volúmenes para volver a ellos más adelante cuando usemos archivos de despliegue.</p>
 </div>
-<div class="sect3">
-<h4 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.5.1. ConfigMaps</h4>
+</div>
+<div class="sect2">
+<h3 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.6. ConfigMaps</h3>
 <div class="paragraph">
 <p>Los objetos ConfigMap permiten almacenar datos en forma de clave valor y que pueden usarse posteriormente en un despliegue con el fin de parametrizar los despliegues parametrizados y hacerlos más portables.</p>
 </div>
@@ -1624,9 +1636,8 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </ul>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="truesecrets"><a class="anchor" href="#truesecrets"></a>5.6. Secrets</h3>
+<h3 id="truesecrets"><a class="anchor" href="#truesecrets"></a>5.7. Secrets</h3>
 <div class="paragraph">
 <p>Los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. Colocar esta información en objetos Secret es más seguro que colocarla en texto plano y legible.</p>
 </div>
@@ -1679,7 +1690,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.7. Namespaces</h3>
+<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.8. Namespaces</h3>
 <div class="paragraph">
 <p>Abstracción de Kubernetes para soportar varios clusters virtuales en un mismo cluster físico. Los namspaces se usan para organizar objetos en un cluster y para proporcionar una forma de dividir los recursos del cluster. Los nombres de los recursos tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.</p>
 </div>
@@ -2236,6 +2247,9 @@ jsonreader-86699d9f94-khfzh     1/1     Running   1          22h   app=jsonreade
 jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreader,pod-template-hash=86699d9f94</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p><a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo16-Deployment">Ejemplo más completo de Deployment</a></p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="truecreaci-n-del-archivo-de-servicio"><a class="anchor" href="#truecreaci-n-del-archivo-de-servicio"></a>8.2. Creación del archivo de Servicio</h3>
@@ -2339,14 +2353,17 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 <img src="./images/KubernetesDashboardJSON2.png" alt="KubernetesDashboardJSON2.png">
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="trueconfigmaps-2"><a class="anchor" href="#trueconfigmaps-2"></a>9. ConfigMaps</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Variables de entorno</p>
+<p><a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo17-Service">Ejemplo más completo de Service</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trueconfigmaps-2"><a class="anchor" href="#trueconfigmaps-2"></a>8.3. ConfigMaps</h3>
+<div class="paragraph">
+<p>Tal y como comentamos anteriormente, los objetos ConfigMap permiten almacenar datos no sensibles en forma de clave valor. Un uso habitual es para inicialización de variables de entorno.</p>
+</div>
+<div class="paragraph">
+<p>Antes de comenzar a usar ConfigMaps con variables de entorno, veamos cómo establecer variables de entorno. El ejemplo siguiente muestra un manifiesto YAML que crea un pod e inicializa dos variables de entorno (<code>NOMBRE</code> y <code>APELLIDOS</code>)</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2366,11 +2383,469 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>ConfigMap</p>
+<p>El código siguiente muestra cómo lanzamos el manifiesto YAML para configurar las variables de entorno:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-env.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez que el pod esté en ejecución podremos abrir una sesión interactiva en él con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl exec -it configmap-env /bin/bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez dentro del contenedor del pod podremos mostrar las variables de entorno</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo $NOMBRE
+$ echo $APELLIDOS</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez hecho esto haremos el mismo ejemplo pero configurando los valores a través de un ConfigMap. Una vez creado el ConfigMap, habrá que acceder a sus pares clave-valor para asignarlo a las variables del entorno en el contenedor de destino.</p>
+</div>
+<div class="paragraph">
+<p>El manifiesto YAML siguiente crea un objeto ConfigMap con dos pares clave-valor y un objeto Pod que accede al ConfigMap para inicializar dos variables de entorno.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap <i class="conum" data-value="1"></i><b>(1)</b>
+data:
+  nombre: Manolo <i class="conum" data-value="2"></i><b>(2)</b>
+  apellidos: Torres
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+  - name: configmap-container
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        valueFrom: <i class="conum" data-value="3"></i><b>(3)</b>
+          configMapKeyRef: <i class="conum" data-value="4"></i><b>(4)</b>
+            name: myconfigmap <i class="conum" data-value="5"></i><b>(5)</b>
+            key: nombre <i class="conum" data-value="6"></i><b>(6)</b>
+      - name: APELLIDOS
+        valueFrom:
+          configMapKeyRef:
+            name: myconfigmap
+            key: apellidos</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nombre del objeto ConfigMap para poder ser usado posteriormente</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configuración de pares clave-valor en el ConfigMap</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Acceso de un valor almacenado</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Acceso a un un ConfigMap</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Nombre del ConfigMap a usar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Clave del ConfigMap a leer</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>El código siguiente muestra cómo lanzamos el manifiesto YAML para configurar las variables de entorno:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-pod.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez que el pod esté en ejecución podremos abrir una sesión interactiva en él con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl exec -it configmap-env /bin/bash</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Una vez dentro del contenedor del pod podremos mostrar las variables de entorno</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo $NOMBRE
+$ echo $APELLIDOS</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truesecrets-2"><a class="anchor" href="#truesecrets-2"></a>8.4. Secrets</h3>
+<div class="paragraph">
+<p>Como comentamos anteriormente, los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. No obstante, los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente.</p>
+</div>
+<div class="paragraph">
+<p>Para ilustrar el uso de Secrets veamos ekl manifiesto de creación de un pod con MySQL sin y con secretos.</p>
+</div>
+<div class="paragraph">
+<p>El manifiesto siguiente crea un pod MySQL al que se le pasa la variable de entorno <code>MYSQL_ROOT_PASSWORD</code> durante su inicialización con la contraseña del <code>root</code>. En este ejemplo, el valor de la variable de entorno de la contraseña del root es pasada en el propio manifiesto</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-sin-secrets
+spec:
+  selector:
+    matchLabels: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql-sin-secrets
+        image: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>El manifiesto anterior lo lanzamos con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mysql-sin-secrets.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A continuación vamos a modificar el manifiesto anterior para hacer uso de objetos Secret.</p>
+</div>
+<div class="paragraph">
+<p>Kubernetes guarda los secretos en base64. Por tanto, los valores que vayamos a almacenar en los pares clave-valor de un secreto tendrán que estar en base64.</p>
+</div>
+<div class="paragraph">
+<p>Para codificar en base64 el valor <code>password</code> que utilizamos en el ejemplo anterior para contraseña del root, desde la línea de comandos ejecutaremos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo 'password' | base64</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto devolverá la cadena <code>cGFzc3dvcmQ=</code>, que corresponde a la cadena <code>password</code> en base64. Este valor codificado será el que usaremos para la creación del Secret.</p>
+</div>
+<div class="paragraph">
+<p>A continuación crearemos el manifiesto YAML <code>secret-password.yaml</code> que inicializa un objeto Secret.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lanzamos la creación del Secret con kubectl:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kubectl apply -f secret-password.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Por último, creamos el manifiesto YAML que inicializa un pod MySQL que lee del Secret creado la contraseña del usuario root para inicializar el pod correctamente.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: initdb
+spec:
+  selector:
+    matchLabels:
+     app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql-con-secrets
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysqlpassword
+              key: password
+        ports:
+        - containerPort: 3306</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Este manifiesto lo lanzaremos con <code>kubectl</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mysql-con-secrets.yaml</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="truehpa-horizontal-pod-autoscaler"><a class="anchor" href="#truehpa-horizontal-pod-autoscaler"></a>9. HPA. Horizontal Pod Autoscaler</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Consulta cada 15s las métricas de uso (CPU, RAM, &#8230;&#8203;) de cada pod</p>
+</li>
+<li>
+<p>Fija un mínimo y máximo de réplicas de un deployment</p>
+</li>
+<li>
+<p>Define las condiciones de stress (p.e. porcentaje de uso de la CPU)</p>
+</li>
+<li>
+<p>Ante stress escala hacia arriba</p>
+</li>
+<li>
+<p>5m sin stress escala hacia abajo</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/HPA.png" alt="HPA.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selectividad-api
+  namespace: default
+  labels:
+    app: selectividad-api
+spec:
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: selectividad-api
+  template:
+    metadata:
+      labels:
+        app: selectividad-api
+    spec:
+      containers:
+      - name: selectividad-api
+        image: ualmtorres/selectividad-api:v2
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selectividad-front
+  namespace: default
+  labels:
+    app: selectividad-front
+spec:
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: selectividad-front
+  template:
+    metadata:
+      labels:
+        app: selectividad-front
+    spec:
+      containers:
+      - name: selectividad-front
+        image: ualmtorres/selectividad-front:v2
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: Service
+metadata:
+  name: selectividad-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: selectividad-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectividad-front
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: selectividad-front</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+$ kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: selectividad-api
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1beta1
+   kind: Deployment
+   name: selectividad-api
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 15
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: selectividad-front
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1beta1
+   kind: Deployment
+   name: selectividad-front
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 15</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get hpa
+
+NAME                 REFERENCE                       TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+selectividad-api     Deployment/selectividad-api     1%/15%    1         10        1          5m
+selectividad-front   Deployment/selectividad-front   1%/15%    1         10        1          5m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prueba de stress (Apache Benchmark)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>100.000 peticiones totales</p>
+</li>
+<li>
+<p>100 peticiones simultáneas</p>
+</li>
+<li>
+<p>ab -n 100000 -c 100 <a href="http://selectividad-front.default.192.168.66.253.xip.io/" class="bare">http://selectividad-front.default.192.168.66.253.xip.io/</a></p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/WeaveScopeEvolucion.png" alt="WeaveScopeEvolucion.png">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/HPAEvolucion.png" alt="HPAEvolucion.png">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueconfigmaps-3"><a class="anchor" href="#trueconfigmaps-3"></a>10. ConfigMaps</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-env
+spec:
+  containers:
+  - name: php-apache
+    image: php:7-apache
+    env:
+      - name: NOMBRE
+        value: Manolo
+      - name: APELLIDOS
+        value: Torres</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-env.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
 kind: ConfigMap
 metadata:
   name: myconfigmap
@@ -2381,10 +2856,10 @@ data:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: configmap-example
+  name: configmap-pod
 spec:
   containers:
-  - name: configmap-cm
+  - name: configmap-container
     image: php:7-apache
     env:
       - name: NOMBRE
@@ -2399,16 +2874,627 @@ spec:
             key: apellidos</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Secret</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-pod.yaml</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>10. Apéndice. Cheat Sheet</h2>
+<h2 id="truesecrets-3"><a class="anchor" href="#truesecrets-3"></a>11. Secrets</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-sin-secrets
+spec:
+  containers:
+  - name: mysql-sin-secrets
+    image: mysql
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      value: password
+    ports:
+    - containerPort: 3306</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mysql-sin-secrets.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-con-secrets
+spec:
+  containers:
+  - name: mysql-con-secrets
+    image: mysql
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mysqlpassword
+          key: password
+    ports:
+    - containerPort: 3306</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f secret-password.yaml
+$ kubectl apply -f mysql-con-secrets.yaml</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="truevol-menes-con-openstack-cinder"><a class="anchor" href="#truevol-menes-con-openstack-cinder"></a>12. Volúmenes con Openstack Cinder</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cinder-sc
+provisioner: kubernetes.io/cinder
+parameters:
+  availability: nova</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f cinder-storageclass.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get storageclasses.storage.k8s.io
+
+NAME            PROVISIONER            AGE
+cinder-sc   kubernetes.io/cinder   15s</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cinder-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 9Gi # pass here the size of the volume
+  storageClassName: cinder-sc</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f cinder-persistentvolumeclaim.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get persistentvolumeclaims
+
+NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS    AGE
+cinder-pvc   Bound    pvc-3688b17d-0de1-11ea-945c-fa163e416ffb   9Gi        RWO            cinder-sc   15s</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-cinder
+spec:
+  selector:
+    matchLabels:
+     app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache
+        image: httpd
+        volumeMounts:
+          - mountPath: /usr/local/apache2/htdocs
+            name: cinder-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: cinder-vol
+          persistentVolumeClaim:
+            claimName: cinder-pvc</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f cinder-apache-pvc.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-cinder-54d6c66cf8-djv76        1/1     Running   0          15s</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ sudo kubectl port-forward apache-cinder-54d6c66cf8-djv76 81:80
+
+Forwarding from 127.0.0.1:81 -&gt; 80
+Forwarding from [::1]:81 -&gt; 80</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ApacheCinderVacio.png" alt="ApacheCinderVacio.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl exec -it apache-cinder-54d6c66cf8-djv76 /bin/bash</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">root@apache-cinder-54d6c66cf8-djv76:/usr/local/apache2# echo "&lt;h1&gt;Volumen Cinder&lt;/h1&gt;" &gt; htdocs/index.html</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ApacheCinderInicializado.png" alt="ApacheCinderInicializado.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete -f cinder-apache-pvc.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f cinder-apache-pvc.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-cinder-54d6c66cf8-zx92w        1/1     Running   0          102s</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">sudo kubectl port-forward apache-cinder-54d6c66cf8-zx92w 81:80</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/ApacheCinderInicializado.png" alt="ApacheCinderInicializado.png">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="truevol-menes-nfs-openstack-manila"><a class="anchor" href="#truevol-menes-nfs-openstack-manila"></a>13. Volúmenes NFS. Openstack Manila</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /var/lib/manila/mnt/share-2e653a46-bc6a-4fc3-83d3-d144554113e1
+    server: 192.168.64.17</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f nfs-persistentvolume.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ""
+  volumeName: nfs-pv</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f nfs-persistentvolumeclaim.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">kubectl get pv,pvc
+NAME                         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM                     STORAGECLASS   REASON   AGE
+persistentvolume/nfs-pv      10Gi       RWX            Recycle          Bound      default/nfs-pvc                                   3m36s
+
+NAME                            STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/nfs-pvc   Bound    nfs-pv   10Gi       RWX                           3m35</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-nfs
+spec:
+  selector:
+    matchLabels:
+     app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache
+        image: httpd
+        volumeMounts:
+          - mountPath: /usr/local/apache2/htdocs
+            name: nfs-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: nfs-vol
+          persistentVolumeClaim:
+            claimName: nfs-pvc</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: www-vol
+spec:
+  selector:
+    matchLabels:
+     app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            name: nfs-vol
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: nfs-vol
+          persistentVolumeClaim:
+            claimName: nfs-pvc</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f nfs-apache-pvc.yaml
+$ kubectl apply -f nfs-nginx-pvc.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-nfs-5cb7d87b6f-jp774           1/1     Running   0          4m55s
+nginix-nfs-58d6698d65-vfqkv           1/1     Running   0          4m54s</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ sudo kubectl port-forward apache-nfs-5cb7d87b6f-jp774 82:80
+
+Forwarding from 127.0.0.1:82 -&gt; 80
+Forwarding from [::1]:82 -&gt; 80
+
+$ sudo kubectl port-forward nginix-nfs-58d6698d65-vfqkv 83:80
+
+Forwarding from 127.0.0.1:83 -&gt; 80
+Forwarding from [::1]:83 -&gt; 80</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/NFSVacio.png" alt="NFSVacio.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">kubectl exec -it apache-nfs-5cb7d87b6f-jp774 /bin/bash</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">root@apache-nfs-5cb7d87b6f-jp774:/usr/local/apache2# echo "&lt;h1&gt;Volumen NFS&lt;/h1&gt;" &gt; htdocs/index.html</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/NFSActualizado.png" alt="NFSActualizado.png">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl delete -f nfs-apache-pvc.yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">kubectl apply -f nfs-apache-pvc.yaml
+deployment.apps/apache-nfs created</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+apache-nfs-5cb7d87b6f-2dzhr           1/1     Running   0          46s
+nginix-nfs-58d6698d65-vfqkv           1/1     Running   0          16m</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">sudo kubectl port-forward apache-nfs-5cb7d87b6f-2dzhr 82:80
+
+Forwarding from 127.0.0.1:82 -&gt; 80
+Forwarding from [::1]:82 -&gt; 80</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/NFSActualizado.png" alt="NFSActualizado.png">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueinit-containers"><a class="anchor" href="#trueinit-containers"></a>14. Init Containers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Existen un tipo especial de contenedores denominados <em>Init Containers</em> que se ejecutan antes que el resto de contenedores de aplicación del pod. Este tipo de contenedores suelen dedicarse a realizar operaciones de incialización que no están presentes en la imagen de los otros contenedores del pod.</p>
+</div>
+<div class="paragraph">
+<p>Para ilustrar el uso de Init Container supongamos que queremos tener disponibles distintos tipos de bases de datos MySQL para pruebas en desarrollo.. En función del proyecto en el que estemos trabajando queremos tener disponible una base de datos u otra. Contaremos con varios scripts diferentes de inicialización de los distintos tipos de bases de datos que queremos configurar.</p>
+</div>
+<div class="paragraph">
+<p>Para llevar a cabo ese caso práctico contaremos con:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>URL donde se encuentra el script de inicialización de la base de datos.</p>
+</li>
+<li>
+<p>ConfigMap que configura la URL con la que se va a inicializar la base de datos.</p>
+</li>
+<li>
+<p>Secret el que se almacena la contraseña del usuario root.</p>
+</li>
+<li>
+<p>Init Container que inicializa una imagen <code>busybox</code> con un volumen donde descarga el script SQL que inicializa la BD. La URL de descarga del script la toma del ConfigMap. El script SQL se descarga con el nombre <code>init.sql</code> para que sirva como script de inicialización del contenedor MySQL.</p>
+</li>
+<li>
+<p>Contenedor que monta el volumen que ha inicializado el Init Container con el script SQL. Dicho volumen es montando en el directorio <code>/docker-entrypoint-initdb.d</code> de la imagen MySQL. Como el script se llama <code>init.sql</code>, al arrancar por primera vez el contenedor MySQL, se inicializará el contenedor con la base de datos elegida.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Esta condfiguración con Init Container permite la configuración a medida y sobre la marcha de una imagen MySQL sin necesidad de tener disponibles diferentes imágenes MySQL, cada una con su propia base de datos. En su puesto, lo que hacemos es cambiar e el ConfigMap la URL del script que inicializará una nueva base de datos. Con esto podremos tener todas las bases de datos diferentes que queramos con una única imagen MySQL.</p>
+</div>
+<div class="paragraph">
+<p>A continuación se muestra el manifiesto YAML que crea el ConfigMap que contiene el script SQL de inicialización de la base de datos.</p>
+</div>
+<div class="paragraph">
+<p>ConfigMap</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: initsqlsource
+data:
+  source: https://gist.githubusercontent.com/ualmtorres/eb328b653fcc5964f976b22c320dc10f/raw/448b00c44d7102d66077a393dad555585862f923/init.sql</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Desplegaremos el ConfigMap con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f initsqlsource-configmap.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>También contaremos con un objeto Secret para almacenar la contraseña del usuario root. Este sería su manifiesto YAML</p>
+</div>
+<div class="paragraph">
+<p>Secret</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlpassword
+type: Opaque
+data:
+  password: cGFzc3dvcmQ=</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Desplegaremos el Secret con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f credentials-secret.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Por último, crearemos el pod que incluye el contenedor MySQL y el Init Container que lo inicialia. El pod contiene un volumen que comparten ambos contenedores. El Init Container descarga el script SQL de inicialización en el volumen. Posteriormente, el contenedor MySQL monta ese volumen en el directorio de scripts de inicialización de forma que al arrancar por primera vez inicialice la base de datos con el script descargado por el Init Container.</p>
+</div>
+<div class="paragraph">
+<p>Este sería el manifiesto YAML del pod que incluye el Init Container, el contenedor MySQL y el volumen compartido por los dos contenedores.</p>
+</div>
+<div class="paragraph">
+<p>MySQL con InitContainer</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: initdb
+spec:
+  selector:
+    matchLabels:
+     app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql <i class="conum" data-value="1"></i><b>(1)</b>
+        image: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD <i class="conum" data-value="2"></i><b>(2)</b>
+          valueFrom:
+            secretKeyRef:
+              name: mysqlpassword
+              key: password
+        ports:
+        - containerPort: 3306
+        volumeMounts: <i class="conum" data-value="3"></i><b>(3)</b>
+        - name: workdir
+          mountPath: /docker-entrypoint-initdb.d
+      initContainers:
+      - name: install <i class="conum" data-value="4"></i><b>(4)</b>
+        image: busybox
+        env:
+        - name: SQLSOURCE <i class="conum" data-value="5"></i><b>(5)</b>
+          valueFrom:
+            configMapKeyRef:
+              name: initsqlsource
+              key: source
+        command: <i class="conum" data-value="6"></i><b>(6)</b>
+        - wget
+        - "-O"
+        - "/work-dir/init.sql"
+        args: ["$(SQLSOURCE)"]
+        volumeMounts: <i class="conum" data-value="7"></i><b>(7)</b>
+        - name: workdir
+          mountPath: "/work-dir"
+      dnsPolicy: Default
+      volumes: <i class="conum" data-value="8"></i><b>(8)</b>
+      - name: workdir
+        emptyDir: {}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Contenedor MySQL</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Inicialización de la variable de entorno con el Secret que contiene la contraseña del usuario root</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Montar el volumen <code>workdir</code>, definido al final del script, en el directorio <code>/docker-entrypoint-initdb.d</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Contenedor de inicialización</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Inicialización de la variable de entorno con el ConfigMap que contiene la URL con el script SQL que inicializará la base de datos</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Comando de inicialización para ejecutar al crear el Init Container</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Montar el volumen <code>workdir</code> en el directorio <code>work-dir</code> del InitContainer</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Volumen que almacenará el script de inicialización de la base de datos</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>El volumen <code>workdir</code> se crea del tipo <code>emptyDir</code> porque su único propósito es almacenar el script de inicialización de la base de datos del contenedor MySQL en su primer arranque. Una vez hecha esta función, ya no es necesario, y no está destinado a guardar datos que se quieran persistir tras la finalización del contenedor MySQL.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>15. Apéndice. Cheat Sheet</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>10.1. Comandos Minikube</h3>
+<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>15.1. Comandos Minikube</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2430,7 +3516,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>10.2. Comandos <code>kubectl</code></h3>
+<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>15.2. Comandos <code>kubectl</code></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2476,7 +3562,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueherramientas-interesantes"><a class="anchor" href="#trueherramientas-interesantes"></a>10.3. Herramientas interesantes</h3>
+<h3 id="trueherramientas-interesantes"><a class="anchor" href="#trueherramientas-interesantes"></a>15.3. Herramientas interesantes</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2507,7 +3593,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>10.4. Contextos</h3>
+<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>15.4. Contextos</h3>
 <div class="paragraph">
 <p>El archivo de contextos</p>
 </div>
@@ -2649,7 +3735,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>11. Apéndice. Service Mesh con Istio</h2>
+<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>16. Apéndice. Service Mesh con Istio</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. Esto permite que los microservicios pueden ser creados por grupos de desarrollo pequeños, creando sus propias herramientas y usando los lenguajes de programación más adecuados, lo que aumenta la productividad y velocidad del proyecto. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y permiten el fallo de forma individual sin provocar una caída del funcionamiento de la aplicación completa.</p>
@@ -2699,7 +3785,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>11.1. Istio</h3>
+<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>16.1. Istio</h3>
 <div class="paragraph">
 <p>Istio viene a incorporarse al vocabulario marinero y ballenero del ecosistema de Docker y Kubernetes. Istio es una palabra griega que significa <em>navegar</em>.</p>
 </div>
@@ -2746,7 +3832,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>11.2. Arquitectura de Istio</h3>
+<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>16.2. Arquitectura de Istio</h3>
 <div class="paragraph">
 <p>Istio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que se integran en los pods de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales son gestionados individualmente por Istio para enrutar, filtrar y aumentar el tráfico según sea necesario.</p>
 </div>
@@ -2782,7 +3868,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>11.3. Control de tráfico y técnicas de despliegue</h3>
+<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>16.3. Control de tráfico y técnicas de despliegue</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2849,7 +3935,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>11.4. Técnicas de resilencia</h3>
+<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>16.4. Técnicas de resilencia</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2865,7 +3951,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>11.5. Caso práctico</h3>
+<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>16.5. Caso práctico</h3>
 <div class="paragraph">
 <p>Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.</p>
 </div>
@@ -2876,7 +3962,7 @@ spec:
 <p>El servicio que consume datos se denomina <code>jsonreader</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada (<code>Hola manolo</code> cuando use <code>v0</code> y <code>Hola Manuel Torres</code> cuando use <code>v1</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>11.5.1. Creación de todos los servicios</h4>
+<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>16.5.1. Creación de todos los servicios</h4>
 <div class="paragraph">
 <p>En primer lugar vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> (<code>v0</code> y <code>v1</code>) que quedarán desplegadas en el cluster.</p>
 </div>
@@ -3087,7 +4173,7 @@ jsonreader-v0     1/1     1            1           40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>11.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
+<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>16.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
 <div class="paragraph">
 <p>A continación vamos a definir todas las versiones de un servicio que vamos a tener elegibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las <code>DestinationRule</code> se usan para definir las distintas instancias o versiones disponibles que se pueden usar de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
 </div>
@@ -3173,7 +4259,7 @@ jsonreader     jsonreader     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>11.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
+<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>16.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
 <div class="paragraph">
 <p>Por último, crearemos los <code>VirtualService</code> para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el <em>mesh</em>.</p>
 </div>
@@ -3267,7 +4353,7 @@ jsonreader                          [jsonreader]     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>11.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
+<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>16.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
 <div class="paragraph">
 <p>Como comentamos en el apartado <a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">Control de tráfico y técnicas de despliegue</a>, en los despliegues <em>canary</em> se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Con Istio, este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión <code>v0</code> de <code>jsonproducer</code> y el 20% del tráfico a la versión <code>v1</code> de <code>jsonproducer</code>.</p>
 </div>
@@ -3453,7 +4539,7 @@ Percentage of the requests served within a certain time (ms)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-11-20 09:49:34 CET
+Last updated 2019-11-23 18:14:02 CET
 </div>
 </div>
 </body>
