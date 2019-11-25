@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#Minikube">3. Minikube</a></li>
-<li><a href="#true-code-kubectl-code-el-cli-para-kubernetes">4. <code>kubectl</code> el CLI para Kubernetes</a></li>
+<li><a href="#truekubectl-el-cli-de-kubernetes">4. kubectl (el CLI de Kubernetes)</a></li>
 <li><a href="#truecomponentes-de-kubernetes-en-acci-n">5. Componentes de Kubernetes en acción</a>
 <ul class="sectlevel2">
 <li><a href="#truedeployments">5.1. Deployments</a></li>
@@ -459,33 +459,40 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#trueactualizaci-n-de-aplicaciones">7. Actualización de aplicaciones</a></li>
 <li><a href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml">8. Despliegue de aplicaciones mediante archivos YAML</a>
 <ul class="sectlevel2">
-<li><a href="#truecreaci-n-del-archivo-de-deployment">8.1. Creación del archivo de Deployment</a></li>
-<li><a href="#truecreaci-n-del-archivo-de-servicio">8.2. Creación del archivo de Servicio</a></li>
-<li><a href="#trueconfigmaps-2">8.3. ConfigMaps</a></li>
-<li><a href="#truesecrets-2">8.4. Secrets</a></li>
+<li><a href="#truedespliegue-de-un-pod">8.1. Despliegue de un Pod</a></li>
+<li><a href="#truedespliegue-de-un-deployment">8.2. Despliegue de un Deployment</a></li>
+<li><a href="#truedespliegue-de-un-service">8.3. Despliegue de un Service</a></li>
+<li><a href="#truedespliegue-de-configmaps">8.4. Despliegue de ConfigMaps</a></li>
+<li><a href="#truedespliegue-de-secrets">8.5. Despliegue de Secrets</a></li>
 </ul>
 </li>
-<li><a href="#truehpa-horizontal-pod-autoscaler">9. HPA. Horizontal Pod Autoscaler</a></li>
-<li><a href="#trueconfigmaps-3">10. ConfigMaps</a></li>
-<li><a href="#truesecrets-3">11. Secrets</a></li>
-<li><a href="#truevol-menes-con-openstack-cinder">12. Volúmenes con Openstack Cinder</a></li>
-<li><a href="#truevol-menes-nfs-openstack-manila">13. Volúmenes NFS. Openstack Manila</a></li>
-<li><a href="#trueinit-containers">14. Init Containers</a></li>
-<li><a href="#trueap-ndice-cheat-sheet">15. Apéndice. Cheat Sheet</a>
+<li><a href="#truehpa-horizontal-pod-autoscaler">9. HPA. Horizontal Pod Autoscaler</a>
 <ul class="sectlevel2">
-<li><a href="#truecomandos-minikube">15.1. Comandos Minikube</a></li>
-<li><a href="#truecomandos-code-kubectl-code">15.2. Comandos <code>kubectl</code></a></li>
-<li><a href="#trueherramientas-interesantes">15.3. Herramientas interesantes</a></li>
-<li><a href="#truecontextos">15.4. Contextos</a></li>
+<li><a href="#trueprueba-de-stress-de-autoescalado">9.1. Prueba de stress de autoescalado</a></li>
 </ul>
 </li>
-<li><a href="#trueap-ndice-service-mesh-con-istio">16. Apéndice. Service Mesh con Istio</a>
+<li><a href="#truealmacenamiento-externo">10. Almacenamiento externo</a>
 <ul class="sectlevel2">
-<li><a href="#trueistio">16.1. Istio</a></li>
-<li><a href="#truearquitectura-de-istio">16.2. Arquitectura de Istio</a></li>
-<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">16.3. Control de tráfico y técnicas de despliegue</a></li>
-<li><a href="#truet-cnicas-de-resilencia">16.4. Técnicas de resilencia</a></li>
-<li><a href="#truecaso-pr-ctico">16.5. Caso práctico</a></li>
+<li><a href="#truevol-menes-con-openstack-cinder">10.1. Volúmenes con Openstack Cinder</a></li>
+<li><a href="#truevol-menes-nfs-openstack-manila">10.2. Volúmenes NFS. Openstack Manila</a></li>
+</ul>
+</li>
+<li><a href="#trueinit-containers">11. Init Containers</a></li>
+<li><a href="#trueap-ndice-cheat-sheet">12. Apéndice. Cheat Sheet</a>
+<ul class="sectlevel2">
+<li><a href="#truecomandos-minikube">12.1. Comandos Minikube</a></li>
+<li><a href="#truecomandos-code-kubectl-code">12.2. Comandos <code>kubectl</code></a></li>
+<li><a href="#trueherramientas-interesantes">12.3. Herramientas interesantes</a></li>
+<li><a href="#truecontextos">12.4. Contextos</a></li>
+</ul>
+</li>
+<li><a href="#trueap-ndice-service-mesh-con-istio">13. Apéndice. Service Mesh con Istio</a>
+<ul class="sectlevel2">
+<li><a href="#trueistio">13.1. Istio</a></li>
+<li><a href="#truearquitectura-de-istio">13.2. Arquitectura de Istio</a></li>
+<li><a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">13.3. Control de tráfico y técnicas de despliegue</a></li>
+<li><a href="#truet-cnicas-de-resilencia">13.4. Técnicas de resilencia</a></li>
+<li><a href="#truecaso-pr-ctico">13.5. Caso práctico</a></li>
 </ul>
 </li>
 </ul>
@@ -594,7 +601,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="trueconceptos-b-sicos"><a class="anchor" href="#trueconceptos-b-sicos"></a>2. Conceptos básicos</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kubernetes es una plataforma de código abierto para despliegue automático, escalado y gestión de aplicaciones contenedorizadas.</p>
+<p>Kubernetes es una plataforma de código abierto para despliegue, escalado y gestión de aplicaciones contenedorizadas.</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -615,15 +622,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="truecluster-de-kubernetes"><a class="anchor" href="#truecluster-de-kubernetes"></a>2.1. Cluster de Kubernetes</h3>
 <div class="paragraph">
-<p>Un cluster de Kubernetes está formado por dos tipos de recursos:</p>
+<p>Un cluster de Kubernetes está formado por dos tipos de recursos (referidos a máquinas, ya sean físicas o virtuales):</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>El <strong>Master</strong> coordina el cluster. Coordina todas las actividades del cluster como organizar (schedule) las aplicaciones, mantener el estado deseado de las aplicaciones, escalado, despliegue de actualizaciones, y demás. También recoge información de los nodos worker y Pods.</p>
+<p>El <strong>Master</strong> coordina el cluster. Coordina todas las actividades del cluster como organizar (schedule) las aplicaciones, mantener el estado deseado de las aplicaciones, escalado, despliegue de actualizaciones, y demás. También recoge información de los nodos worker y Pods (unidades mínimas de despliegue en Kubernetes. Contienen al menos un contenedor) .</p>
 </li>
 <li>
-<p>Los <strong>Nodos</strong> son <em>workers</em> que ejecutan las aplicaciones. Cada nodo contiene un agente denominado <em>Kubelet</em> que gestiona el nodo y mantiene la comunicación con el Máster. El nodo también tiene herramientas para trabajar con contenedores, como Docker.</p>
+<p>Los <strong>Nodos</strong> son <em>workers</em> que ejecutan las aplicaciones. Cada nodo contiene un agente denominado <em>Kubelet</em> que gestiona el nodo y mantiene la comunicación con el Máster. El nodo también tiene herramientas para trabajar con contenedores, como por ejemplo Docker.</p>
 </li>
 </ul>
 </div>
@@ -647,7 +654,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos del cluster. Los nodos se comunican con el master usando la <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-" target="_blank">API de Kubernetes</a>. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.</p>
+<p>Al desplegar una aplicación en Kubernetes el Master inicia los contenedores de la aplicación. El máster organiza los contenedores para que se ejecuten en los nodos (<em>worker</em>) del cluster. Los nodos se comunican con el master usando la <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#-strong-api-overview-strong-" target="_blank">API de Kubernetes</a>. La API es expuesta a través del nodo Master y es posible usarla directamente para intectuar con el cluster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Una aplicación de tratamiento de imágenes y que esté basada en contenedores podría interactuar con la API de Kubernetes solicitando a demanda la creación de pods dedicados a operaciones específicas (p.e. filtrado, aclarado, &#8230;&#8203;) en respuesta a las acciones de los usuarios. Una vez finalizada la operación, la aplicación volvería a interactuar con la API de Kubernetes para la liberación de los pods creados para la resolución de la tarea.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="exampleblock">
 <div class="title">Example 1. Lista de pods usando la API de Kubernetes</div>
@@ -705,7 +726,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>Plugins de red: Permite la conexión entre pods de nodos diferentes y la integración de soluciones de red diferentes (overlay, L3, &#8230;&#8203;)</p>
+<p>Plugins de red: Permiten la conexión entre pods de nodos diferentes y la integración de soluciones de red diferentes (overlay, L3, &#8230;&#8203;)</p>
 </li>
 <li>
 <p><code>etcd</code>: una base de datos clave-valor donde Kubernetes guarda todos los datos del cluster.</p>
@@ -732,7 +753,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Plano de control o <em>Control plane</em>: Nivel de orquestación de contenedores que expone la API para definir, desplegar y gestionar el ciclo de vida de los contenedores.</p>
 </li>
 <li>
-<p>Plano de datos o <em>Data Plane</em>: Nivel que proporciona los recursos, como CPU. memoria, red y almacenamiento, para que los pods se puedan ejecutar y conectar a la red.</p>
+<p>Plano de datos o <em>Data Plane</em>: Nivel que proporciona los recursos, como CPU, memoria, red y almacenamiento, para que los pods se puedan ejecutar y conectar a la red.</p>
 </li>
 </ul>
 </div>
@@ -744,7 +765,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p><a href="https://etcd.io/" target="_blank">etcd</a>, es una base de datos clave-valor fiable y distribiuda para los datos más críticos de un un sistema distribuido. Dado que Kubernetes guarda todos los datos del cluster en ella, se deberían mantener copias de seguridad de esta base de datos y disponer de un plan de recuperación ante posibles desastres.</p>
+<p><a href="https://etcd.io/" target="_blank">etcd</a>, es una base de datos clave-valor fiable y distribuida para los datos más críticos de un un sistema distribuido. Dado que Kubernetes guarda todos los datos del cluster en ella, se deberían mantener copias de seguridad de esta base de datos y disponer de un plan de recuperación ante posibles desastres.</p>
 </div>
 </td>
 </tr>
@@ -758,7 +779,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Los componentes <code>kube-proxy</code>, <code>kube-scheduler</code>, <code>kube-controller-manager</code>, <code>etcd</code>, <code>kubelet</code>, así como los componentes de red se eejcutan como contenedores en cada uno de los nodos del cluster de Kubernetes. Basta con abrir un terminal en uno de los nodos del cluster y comprobarlo. Si lo hacemos, veremos como en los nodos worker están los contenedores de los componentes de Kubernetes junto con los contenedores de las aplicaciones que se están ejecutando en el nodo.</p>
+<p>Los componentes <code>kube-proxy</code>, <code>kube-scheduler</code>, <code>kube-controller-manager</code>, <code>etcd</code>, <code>kubelet</code>, así como los componentes de red se ejecutan como contenedores en cada uno de los nodos del cluster de Kubernetes. Basta con abrir un terminal en uno de los nodos del cluster y comprobarlo. Si lo hacemos, veremos como en los nodos worker están los contenedores de los componentes de Kubernetes junto con los contenedores de las aplicaciones que se están ejecutando en el nodo.</p>
 </div>
 <div class="paragraph">
 <p>Un ejercicio interesante es detener el contenedor <code>kubelet</code> y ver cómo el nodo pasa a estar inactivo. En caso de ser el único nodo de trabajo, los contenedores de los nuevos despliegues quedarán en el estado <code>Pending</code> mientras <code>kubelet</code> no vuelva a estar disponible.</p>
@@ -771,7 +792,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="trueobjetos-de-kubernetes"><a class="anchor" href="#trueobjetos-de-kubernetes"></a>2.3. Objetos de Kubernetes</h3>
 <div class="paragraph">
-<p>Kubernetes ofrece una serie de objetos básicos y una serie de abstracciones de nivel superior llamadas Controladores. Los Controladores se basan en los objetos básicos y proporcionan funcionalidades adicionales sobre los objetos básicos</p>
+<p>Kubernetes ofrece una serie de objetos básicos y una serie de abstracciones de nivel superior llamadas Controladores.</p>
 </div>
 <div class="paragraph">
 <p>Los objetos básicos de Kubernetes son:</p>
@@ -863,11 +884,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Acceso al Dashboard de Kubernetes: <code>minikube dashboard</code></p>
 </li>
 <li>
-<p>Una vez iniciado, se podrá interactuar con el cluster usando <code>kubectl</code> (que veremos en la sección <a href="#kubectl el CLI para Kubernetes">[kubectl el CLI para Kubernetes]</a>) como con cualquier cluster Kubernetes:</p>
+<p>Una vez iniciado, se podrá interactuar con el cluster usando <code>kubectl</code> (que veremos en la sección <a href="#truekubectl-el-cli-de-kubernetes">kubectl (el CLI de Kubernetes)</a>) como con cualquier cluster Kubernetes:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Iniciar un servidor: <code>kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080</code></p>
+<p>Iniciar un servidor de ejemplo en Minikube: <code>kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080</code></p>
 </li>
 <li>
 <p>Exponer un servicio como un <em>NodePort</em>: <code>kubectl expose deployment hello-minikube --type=NodePort</code></p>
@@ -877,13 +898,41 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>El servidor de ejemplo iniciado muestra información sobre el cliente en el que se está ejecutando y sobre las cabeceras. Dicho servidor es expuesto en el cluster de Kubernetes como un <em>NodePort</em>. El resultado tras mostrarlo con <code>minikube service hello-minikube</code> será algo similar al de la figura siguiente.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Un <em>NodePort</em> es una forma de exponer un servicio mediante la IP del nodo en el que está el pod y un puerto estático (<em>NodePort</em>). De forma predeterminada el rango de puertos para <em>NodePort</em> es 30000-32767.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/SampleKubernetesService.png" alt="SampleKubernetesService.png">
 </div>
 </div>
 <div class="paragraph">
-<p>Si ahora abrimos el dashboard, se mostraría algo similar a lo de la figura siguiente. En la figura se observa cómo ha sido creado el Deployment <code>hello-minikube</code>.</p>
+<p>Si ahora abrimos el dashboard con <code>minikube dashboard</code>, se mostraría algo similar a lo de la figura siguiente. En la figura se observa cómo ha sido creado el <em>Deployment</em> <code>hello-minikube</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Un <em>Deployment</em> es un objeto Kubernetes que de forma declarativa especifica, entre otros, la imagen usada para desplegar los pods, el número de réplicas deseadas, recursos (RAM, CPU, &#8230;&#8203;) solicitados para los pods, y demás.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </li>
 </ul>
@@ -897,13 +946,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </div>
 <div class="paragraph">
-<p>Si ahora probamos a eliminar el pod creado, veremos que se vuelve a crear. El objeto Deployment <code>hello-minikube</code> creado anteriormente se encarga de mantener el número de réplicas especificado (1 de forma predeterminada). Realmente tendremos que eliminar el objeto Deployment, y un poco más adelante veremos cómo hacerlo.</p>
+<p>Si ahora probamos a eliminar el pod creado, veremos que se vuelve a crear. Esto se debe a que el objeto Deployment <code>hello-minikube</code> creado anteriormente (con la orden <code>kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080</code>) se encarga de mantener el número de réplicas especificado (1 de forma predeterminada). Realmente, si queremos eliminar el pod de forma permanente tendríamos que eliminar el objeto Deployment. Un poco más adelante veremos cómo hacerlo.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Otros comandos interesantes de minikube</div>
+<div class="title">Comandos básicos de minikube</div>
 <div class="ulist">
 <ul>
+<li>
+<p>Iniciar un pod a partir de una imagen indicando el puerto de escucha del pod: <code>kubectl run hello-minikube --image=k8s.gcr.io/echoserver:1.4 --port=8080</code></p>
+</li>
+<li>
+<p>Exponer un servicio como un <em>NodePort</em>: <code>kubectl expose deployment hello-minikube --type=NodePort</code></p>
+</li>
+<li>
+<p>Abrir el endpoint del servicio en el navegador: <code>minikube service hello-minikube</code></p>
+</li>
 <li>
 <p>Iniciar un segundo cluster local: <code>minikube start -p cluster2</code></p>
 </li>
@@ -920,13 +978,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="true-code-kubectl-code-el-cli-para-kubernetes"><a class="anchor" href="#true-code-kubectl-code-el-cli-para-kubernetes"></a>4. <code>kubectl</code> el CLI para Kubernetes</h2>
+<h2 id="truekubectl-el-cli-de-kubernetes"><a class="anchor" href="#truekubectl-el-cli-de-kubernetes"></a>4. kubectl (el CLI de Kubernetes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Para la interacción con un cluster local o remoto de Kubernetes mediante comandos se usa <code>kubectl</code>, un CLI sencillo que nos permitirá realizar tareas habituales como despliegues, escalar el cluster u obtener información sobre los servicios en ejecución. <code>kubectl</code> es el CLI para interactuar con el servidor de la API de Kubernetes.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Consultar la <a href="https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl" target="_blank">página oficial de instalación y configuración de <code>kubectl</code></a></p>
+<p>Para más información, consultar la <a href="https://kubernetes.io/es/docs/tasks/tools/install-kubectl/#instalar-kubectl" target="_blank">página oficial de instalación y configuración de <code>kubectl</code></a></p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Para interactuar con unos ejemplos sencillo con <code>kubectl</code> podemos</p>
@@ -935,6 +1004,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul>
 <li>
 <p>Obtener información de la versión</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl version
+Client Version: version.Info{Major:"1", Minor:"16", GitVersion:"v1.16.3", GitCommit:"b3cbbae08ec52a7fc73d334838e18d17e8512749", GitTreeState:"clean", BuildDate:"2019-11-14T04:24:34Z", GoVersion:"go1.12.13", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"16", GitVersion:"v1.16.2", GitCommit:"c97fe5036ef3df2967d086711e6c0c405941e14b", GitTreeState:"clean", BuildDate:"2019-10-15T19:09:08Z", GoVersion:"go1.12.10", Compiler:"gc", Platform:"linux/amd64"}</code></pre>
+</div>
+</div>
 </li>
 <li>
 <p>Obtener información del cluster</p>
@@ -1020,12 +1096,12 @@ deployment.apps/jsonproducer created</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>El puerto hace referencia al puerto que usa la aplicación original para servir su contenido.</td>
+<td>El puerto hace referencia al puerto que usa la aplicación original, es decir su contenedor, para servir su contenido.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Esto ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para programar la ejecución de otra instancia cuando sea necesario.</p>
+<p>Este comando ha hecho que el Master haya buscado un nodo para ejecutar la aplicación, haya programado la ejecución de la aplicación en ese nodo y haya configurado el cluster para programar la ejecución de otra instancia cuando sea necesario.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1100,7 +1176,23 @@ service/jsonproducer exposed</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo. La figura siguiente ilustra varias configuraciones de pods: Un pod con un contenedor, un pod con un contenedor y un volumen, un pod con dos contenedores que comparten un volumen y un pod con varios contenedores y varios volúmenes.</p>
+<p>Los contenedores de un pod comparten una IP y un espacio de puertos, y siempre van juntos y se despliegan juntos en un nodo. La figura siguiente ilustra varias configuraciones de pods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pod 1: Un pod con un contenedor</p>
+</li>
+<li>
+<p>Pod 2: Un pod con un contenedor y un volumen</p>
+</li>
+<li>
+<p>Pod 3: Un pod con dos contenedores que comparten un volumen</p>
+</li>
+<li>
+<p>Pod 4: Un pod con varios contenedores y varios volúmenes</p>
+</li>
+</ul>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1118,7 +1210,7 @@ service/jsonproducer exposed</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. El almacenamiento se tratará en otra sección de este tutorial.</p>
+<p>Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el pod. Por este motivo es necesario saber utilizar almacenamiento externo para que los datos persistan. La sección <a href="#truealmacenamiento-externo">Almacenamiento externo</a> estudia esta funcionalidad.</p>
 </div>
 </td>
 </tr>
@@ -1127,10 +1219,10 @@ service/jsonproducer exposed</code></pre>
 <div class="sect3">
 <h4 id="truecreaci-n-de-un-pod-para-mongodb-mediante-un-archivo-de-manifiesto"><a class="anchor" href="#truecreaci-n-de-un-pod-para-mongodb-mediante-un-archivo-de-manifiesto"></a>5.2.1. Creación de un pod para MongoDB mediante un archivo de manifiesto</h4>
 <div class="paragraph">
-<p>Los pods, al igual que otros recursos de Kubernetes (replicasets, volúmenes, &#8230;&#8203;) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis <a href="https://yaml.org/" target="_blank">YAML</a> y representan una forma declarativa de definir los recursos del cluster Kubernetes.</p>
+<p>Los pods, al igual que otros recursos de Kubernetes (ReplicaSets, volúmenes, &#8230;&#8203;) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis <a href="https://yaml.org/" target="_blank">YAML</a> y representan una forma declarativa de definir los recursos del cluster Kubernetes. En la sección <a href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml">Despliegue de aplicaciones mediante archivos YAML</a> se trata este tema.</p>
 </div>
 <div class="paragraph">
-<p>Para ilustrar cómo crear un pod, veremos cómo crear uno sencillo para MongoDB a partir de un archivo de manifiesto. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs, redirección de puertos</p>
+<p>Para ilustrar cómo crear un pod mediante una manifiesto YAML, veremos cómo crear uno sencillo para MongoDB. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs y redirección de puertos</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1234,7 +1326,7 @@ spec:
 <div class="ulist">
 <ul>
 <li>
-<p>Kubelet, un proceso que se encarga de la comunicación entre el nodo y el Master. Gestiona los pods y los contenedores que se están ejecutando en el nodo.</p>
+<p><code>Kubelet</code>, un proceso que se encarga de la comunicación entre el nodo y el Master. Gestiona los pods y los contenedores que se están ejecutando en el nodo.</p>
 </li>
 <li>
 <p>Un motor de contenedores, como Docker, que se encarga de la descarga de imágenes de un registro y de ejecutar la aplicación.</p>
@@ -1245,7 +1337,7 @@ spec:
 <div class="sect2">
 <h3 id="trueservicios"><a class="anchor" href="#trueservicios"></a>5.4. Servicios</h3>
 <div class="paragraph">
-<p>Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. A continuación, un <em>ReplicaSet</em> se encarga de devolver el cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
+<p>Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. En ese momento, un <em>ReplicaSet</em> se encarga de devolver el cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
 </div>
 <div class="paragraph">
 <p>Los servicios en Kubernetes son una abstracción que definen un conjunto lógico de pods y una política de acceso a ellos estableciendo un nombre para acceder a ellos. Esto permite que haya un acoplamiento débil entre pods dependientes. El acceso puede ser interno o externo al cluster. De esta forma, las aplicaciones sólo usarán los nombres de los servicios y no las IP de los pods, ya que éstas nunca son fijas debido a que, por un lado, los pods se crean y se destruyen para mantener el número de réplicas deseado; y por otro lado, un pod puede ser sustituido por otro ante un problema y el nuevo pod tendrá una IP diferente.</p>
@@ -1254,7 +1346,7 @@ spec:
 <div class="content">
 <div class="title">Agrupación de pods en servicios</div>
 <div class="paragraph">
-<p>Los pods son etiquetados con metadatos. Estos metadatos posteriormente son usados por otros objetos Kubernetes (p.e. ReplicaSet, Deployment) para seleccionar los pods y crear una unidad lógica (p.e. todas las réplicas de un contenedor de frontend)</p>
+<p>Los pods pueden ser etiquetados con metadatos. Estos metadatos posteriormente pueden ser usados por otros objetos Kubernetes (p.e. ReplicaSet, Deployment) para seleccionar los pods y crear una unidad lógica (p.e. todas las réplicas de un contenedor de frontend)</p>
 </div>
 <div class="paragraph">
 <p>La figura siguiente ilustra como un servicio agrupa mediante el <strong>selector</strong> <code>app:ngnix</code> a aquellos pods que están etiquetados con <code>app:ngnix</code>.</p>
@@ -1275,11 +1367,11 @@ metadata:
 spec:
   replicas: 2
   selector:
-    matchLabels:
+    matchLabels: <i class="conum" data-value="1"></i><b>(1)</b>
       app: nginx
   template:
     metadata:
-      labels:
+      labels: <i class="conum" data-value="2"></i><b>(2)</b>
         app: nginx
     spec:
       containers:
@@ -1289,8 +1381,20 @@ spec:
         - containerPort: 80</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Condición para buscar</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Condición para ser encontrado</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Al desplegar este deployment se crearán dos pods, que quedarán agrupados por la coincidencia entre el selector que pide el deployment (<code>app: nginx</code>) y la etiqueta con los que son creados los pods (<code>app: nginx</code>).</p>
+<p>Al desplegar este deployment se crearán dos pods (<code>replicas: 2</code>), que quedarán agrupados por la coincidencia entre el selector que pide el deployment (<code>app: nginx</code>) y la etiqueta con los que son creados los pods (<code>app: nginx</code>).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1298,7 +1402,7 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>Si ahora vemos los detalles del deployment en el dashboard de minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment <code>ngnix</code>. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.</p>
+<p>Si ahora vemos los detalles del deployment en el dashboard de Minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment <code>ngnix</code>. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1308,21 +1412,26 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. Los servicios pemiten que las aplicaciones reciban tráfico. En función del ámbito de la exposición del servicio tenemos:</p>
+<p>Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. <strong>Los servicios pemiten que las aplicaciones reciban tráfico</strong>.</p>
+</div>
+<div class="sect3">
+<h4 id="truetipos-de-servicio"><a class="anchor" href="#truetipos-de-servicio"></a>5.4.1. Tipos de servicio</h4>
+<div class="paragraph">
+<p>En función del ámbito de la exposición del servicio tenemos:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>ClusterIP: El servicio recibe una IP interna a nivel de cluster y hace que el servicio sólo sea accesible a nivel de cluster.</p>
+<p><code>ClusterIP</code>: El servicio recibe una IP interna a nivel de cluster y hace que el servicio sólo sea accesible a nivel de cluster.</p>
 </li>
 <li>
-<p>NodePort: Expone el servicio fuera del cluster concatenando la IP del nodo en el que está el pod y un número de puerto entre 30000 y 32767, que es el mismo en todos los nodos</p>
+<p><code>NodePort</code>: Expone el servicio fuera del cluster concatenando la IP del nodo en el que está el pod y un número de puerto entre 30000 y 32767, que es el mismo en todos los nodos</p>
 </li>
 <li>
-<p>LoadBalancer: Crea en cloud, si es posible, un balanceador externo con una IP externa asignada.</p>
+<p><code>LoadBalancer</code>: Crea en cloud, si es posible, un balanceador externo con una IP externa asignada.</p>
 </li>
 <li>
-<p>ExternalName: Expone el servicio usando un nombre arbitrario (especificado en <code>externalName</code>)</p>
+<p><code>ExternalName</code>: Expone el servicio usando un nombre arbitrario (especificado en <code>externalName</code>)</p>
 </li>
 </ul>
 </div>
@@ -1342,7 +1451,7 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios. Los servicios agrupan a sus pods usando etiquetas y selectores. Los servicios usan selectores y los pods son creados con etiquetas. Su emparejamiento por valores coincidenetes es lo que agupa los pods en un servicio.</p>
+<p>El descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend) son gestionados por los Servicios. Los servicios agrupan a sus pods usando etiquetas y selectores. Los servicios usan selectores y los pods son creados con etiquetas. Su emparejamiento por valores coincidentes es lo que agupa los pods en un servicio.</p>
 </div>
 </td>
 </tr>
@@ -1383,14 +1492,15 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Prueba a editar un pod en el dashboard de kubernetes cambiándole la etiqueta (p.e. <code>app:apache</code>). Esto hará que ese pod salga del ReplicaSet al que pertencía y se cree un nuevo pod etiquetado con <code>app:nginx</code> para mantener la especificación del Deployment, que exigía tener 2 réplicas.</p>
+<p>Prueba a editar en el dashboard de kubernetes uno de los pods de Nginx cambiándole la etiqueta (p.e. <code>app:apache</code>). Esto hará que ese pod salga del ReplicaSet al que pertenecía y se cree automáticamente un nuevo pod etiquetado con <code>app:nginx</code>. De esto se encarga el Deployment, que de acuerdo a su especificación exige tener 2 réplicas en ejecución de pods con etiquetas <code>app:nginx</code>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+</div>
 <div class="sect3">
-<h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.4.1. Ejemplo. Creación de un servicio</h4>
+<h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.4.2. Ejemplo. Creación de un servicio</h4>
 <div class="paragraph">
 <p>Anteriormente, en la sección <a href="#truedespliegue-de-una-aplicaci-n">Despliegue de una aplicación</a> creamos una aplicación de ejemplo que generaba un JSON de prueba. A modo de recordatorio, hicimos lo siguiente:</p>
 </div>
@@ -1574,7 +1684,7 @@ Containers:
 <div class="sect2">
 <h3 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.6. ConfigMaps</h3>
 <div class="paragraph">
-<p>Los objetos ConfigMap permiten almacenar datos en forma de clave valor y que pueden usarse posteriormente en un despliegue con el fin de parametrizar los despliegues parametrizados y hacerlos más portables.</p>
+<p>Los objetos ConfigMap permiten almacenar datos en forma de pares clave-valor para que puedan usarse posteriormente en despliegues parametrizados y hacerlos más portables.</p>
 </div>
 <div class="paragraph">
 <p>Usaremos los ConfigMap para almacenar datos no sensibles sobre la configuración. Deben ser datos no sensibles porque los datos se guardan tal cual.</p>
@@ -1642,7 +1752,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 <p>Los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. Colocar esta información en objetos Secret es más seguro que colocarla en texto plano y legible.</p>
 </div>
 <div class="paragraph">
-<p>Los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente. Sistemas como <a href="https://www.vaultproject.io/">Vault</a> son usados de forma complementaria para aumentar la seguridad de la información que contienen los Secret.</p>
+<p>No obstante, los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente. Sistemas como <a href="https://www.vaultproject.io/">Vault</a> son usados de forma complementaria para aumentar la seguridad de la información que contienen los Secret.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1692,7 +1802,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 <div class="sect2">
 <h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.8. Namespaces</h3>
 <div class="paragraph">
-<p>Abstracción de Kubernetes para soportar varios clusters virtuales en un mismo cluster físico. Los namspaces se usan para organizar objetos en un cluster y para proporcionar una forma de dividir los recursos del cluster. Los nombres de los recursos tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.</p>
+<p>Hasta ahora, todos los objetos que hemos creado (pods, deployments, replicasets, services, configmaps y secrets) están en el mismo lugar, en el mismo espacio. Concretamente en el espacio <code>default</code>. Es lo que se conoce como <em>namespace</em>. Los namespaces se usan para organizar objetos en un cluster, proporcionando una forma de mantener separados los recursos en el cluster. De cara a dar nombres a los recursos, los nombres sólo tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1719,7 +1829,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </div>
 </li>
 <li>
-<p>Crear un pod en un namespace diferente</p>
+<p>Crear un pod indicando el namespace</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl run nginxrrhh --image=nginx --port 80 --namespace rrhh</code></pre>
@@ -1809,7 +1919,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 <h2 id="trueescalado-de-una-aplicaci-n"><a class="anchor" href="#trueescalado-de-una-aplicaci-n"></a>6. Escalado de una aplicación</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Hasta ahora hemos creado un Deployment que posteriomente ha sido expuesto mediante un Servicio. Como no indicamos número de réplicas, el Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda aumenta quizá puede llegar a ser necesario aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.</p>
+<p>Hasta ahora hemos creado un Deployment, el cual posteriomente fue expuesto mediante un Servicio. Como en su creacin no indicamos número de réplicas, el Deployment creó sólo un Pod para ejecutar la aplicación. Si la demanda que soporta el pod aumenta quizá puede ser conveniente aumentar el número de pods de la aplicación. Esto es lo que se conoce como escalado y hace referencia al número de réplicas en un Deployment.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1826,7 +1936,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Al escalar una aplicación se crearán nuevos pods en los nodos con recursos disponibles e irá aumentando hasta llegar al número de pods deseados. La ejecución de varias instancias trae consigo la distribución del tráfico entre todos los pods del Deployment. De esta tarea se encarga un balanceador de carga que integra el propio Servicio.</p>
+<p>Al escalar una aplicación se crearán nuevos pods en los nodos con recursos disponibles. El número de pods irá aumentando paulatinamete hasta llegar al número de pods deseados. La ejecución de varias instancias trae consigo la distribución del tráfico entre todos los pods del Deployment. De esta tarea se encarga un balanceador de carga que integra el propio Servicio.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1843,7 +1953,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden tener actualizaciones en caliente (<em>rolling updates</em>) sin suspensión del servicio. Esto lo veremos en la sección <a href="#trueactualizaci-n-de-aplicaciones">Actualización de aplicaciones</a>.</p>
+<p>Una vez que entramos en la dinámica de tener varias instancias de la misma aplicación, se pueden realizar actualizaciones en caliente (<em>rolling updates</em>) sin suspensión del servicio. Esto lo veremos en la sección <a href="#trueactualizaci-n-de-aplicaciones">Actualización de aplicaciones</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="trueejemplo-de-escalado-de-una-aplicaci-n"><a class="anchor" href="#trueejemplo-de-escalado-de-una-aplicaci-n"></a>6.1. Ejemplo de escalado de una aplicación</h3>
@@ -1861,7 +1971,7 @@ jsonproducer   1/1     1            1           68m</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><code>READY</code> indica el ratio entre los pods deseados y los que están en ejecución.</p>
+<p><code>READY</code> indica el ratio entre los pods que están en ejecución y los pods deseados.</p>
 </li>
 <li>
 <p><code>UP-TO-DATE</code> indica el número de réplicas que están actualizadas para alcanzar el estado deseado.</p>
@@ -1900,7 +2010,7 @@ $ minikube service jsonproducer <i class="conum" data-value="3"></i><b>(3)</b></
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Pedir minikube que abra un navegador para acceder al servicio <code>jsonproducer</code></td>
+<td>Pedir a Minikube que abra un navegador para acceder al servicio <code>jsonproducer</code></td>
 </tr>
 </table>
 </div>
@@ -1974,7 +2084,7 @@ jsonproducer-7769d76894-nhtl4   1/1     Running   0          12m</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Pod que sustituye al pod eliminado creado automáticamente para mantener el número de réplicas a 4</td>
+<td>Pod que sustituye al pod eliminado y que es creado automáticamente para mantener el número de réplicas a 4</td>
 </tr>
 </table>
 </div>
@@ -2005,7 +2115,7 @@ jsonproducer-7769d76894-9xdqw   1/1     Running   0          18m</code></pre>
 <p>De forma predeterminada, el número de pods que pueden estar no disponibles durante una actualización es 1, aunque esta opción es configurable, ya sea mediante cantidad o porcentaje de pods no disponibles durante la actualización. Además, es posible volver a una versión anterior.</p>
 </div>
 <div class="paragraph">
-<p>Al igual que ocurre al escalar las aplicaciones, si el Deployment está expuesto, el Service balancerá el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
+<p>Al igual que ocurre al escalar las aplicaciones, si el Deployment está expuesto, el Service balanceará el tráfico sólo a los pods que estén disponibles durante la actualización.</p>
 </div>
 <div class="paragraph">
 <p>A continuación se muestra cómo actualizar el Deployment de ejemplo <code>jsonproducer</code> con nuevo Deployment con el mismo nombre y una nueva versión de la imagen (<code>v1</code>).</p>
@@ -2083,13 +2193,13 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 <h2 id="truedespliegue-de-aplicaciones-mediante-archivos-yaml"><a class="anchor" href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml"></a>8. Despliegue de aplicaciones mediante archivos YAML</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Esto nos ha servido familiarizarnos tanto con los objetos básicos de Kubernetes (Pod, ReplicaSet, Deployment, Service, ConfigMap, Secret, Namespace, volúmenes, &#8230;&#8203;), como con operaciones habituales (escalado, actualización de versiones, &#8230;&#8203;). Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, la forma de operar consiste en crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, &#8230;&#8203;). Una vez creados estos archivos, se usará <code>kubectl</code> para cargarlos/desplegarlos en Kubernetes.</p>
+<p>Hasta ahora, las interacción con Kubernetes la hemos hecho sobre la marcha, creando despliegues, servicios, escalado de aplicaciones y demás. Esto nos ha servido familiarizarnos tanto con los objetos básicos de Kubernetes (Pod, ReplicaSet, Deployment, Service, ConfigMap, Secret, Namespace, &#8230;&#8203;), como con operaciones habituales (escalado, actualización de versiones, &#8230;&#8203;). Sin embargo, esta no es la forma habitual. Esta forma de uso de Kubernetes está más orientada a la creación de tareas puntuales. En cambio, cuando se trata de operaciones que queremos que sean repetibles, la forma de operar consiste en crear archivos YAML especificando el objeto que se quiere crear en Kubernetes (espacio de nombres, despliegue, servicio, &#8230;&#8203;). Una vez creados estos archivos, se usará <code>kubectl</code> para cargarlos/desplegarlos en Kubernetes.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -2099,16 +2209,142 @@ jsonproducer-7769d76894-v6hfv   1/1     Running   0          10s</code></pre>
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="truedespliegue-de-un-pod"><a class="anchor" href="#truedespliegue-de-un-pod"></a>8.1. Despliegue de un Pod</h3>
 <div class="paragraph">
-<p>Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio <code>jsonproducer</code> creado anteriormente. Se trata de un ejemplo muy sencillo de un entorno frontend-backend con un funcionamiento independiente. Esto, además de desacoplar la presentación del backend, desde el punto de vista de la escalabilidad, permite escaladar backend y frontend de forma independiente.</p>
+<p>Veamos cómo crear un archivo de manifiesto para desplegar un pod mediante un archivo de manifiesto YAML. El ejemplo despliega una web de contenido estático.</p>
+</div>
+<div class="paragraph">
+<p>Archivo <code>pod-dotnet2019.yaml</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: dotnet2019
+spec:
+  containers:
+  - name: dotnet2019
+    image: ualmtorres/dotnet2019web:v0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Desplegaremos el pod con <code>kubectl</code> con este comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f pod-dotnet2019.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si contamos con una URL para el manifiesto también lo podemos desplegar haciendo referencia a la URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://gist.githubusercontent.com/ualmtorres/c6d0052dacd386c3dd01e57ad06dedc5/raw/e3cb7b828c21f6ebe0daa459e37d1578af892ce6/DotNetAlmeria2019-pod-dotnet2019.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto creará un pod denominado <code>dotnet2019</code> en el namespace <code>default</code> de nuestro cluster Kubernetes.</p>
+</div>
+<div class="paragraph">
+<p>Para ver la aplicación de forma provisional haremos un <em>port forward</em> entre el pod y nuestro equipo local con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl port-forward dotnet2019 83:80</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Al abrir un navegador en  nuestro equipo en <code>localhost:83</code> accederemos a la web desplegada.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/DotNet2019Web.png" alt="DotNet2019Web.png">
+</div>
+</div>
+<div class="paragraph">
+<p>Si ahora queremos actualizar el pod con una nueva versión de la aplicación, basta con modificar el manifiesto YAML con la nueva imagen y volver a aplicar los cambios. Para ilustrar esto, modifiquemos la versión del manifiesto anterior a la imagen <code>ualmtorres/dotnet2019web:v1</code> en lugar de la version <code>v0</code>. La nueva versión tiene los botones en verde.</p>
+</div>
+<div class="paragraph">
+<p>La nueva versión del manifiesto quuedaría así:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: dotnet2019
+spec:
+  containers:
+  - name: dotnet2019
+    image: ualmtorres/dotnet2019web:v1 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nueva imagen a desplegar</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Una vez guardados los cambios en el archivo de manifiesto, aplicaríamos los cambios con</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f pod-dotnet2019.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto hará que se descargue la nueva imagen, se cree un nuevo pod con la nueva imagen y se elimine el pod que estaba sirviendo. Una vez finalizado ese proceso ya estará disponible la nueva versión de la aplicación en la misma URL:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/DotNet2019Webv1.png" alt="DotNet2019Webv1.png">
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="truecreaci-n-del-archivo-de-deployment"><a class="anchor" href="#truecreaci-n-del-archivo-de-deployment"></a>8.1. Creación del archivo de Deployment</h3>
+<h3 id="truedespliegue-de-un-deployment"><a class="anchor" href="#truedespliegue-de-un-deployment"></a>8.2. Despliegue de un Deployment</h3>
+<div class="paragraph">
+<p>Normalmente no desplegaremos Pods. En su lugar desplegaremos Deployments. En ellos podremos incluir contenedores con imágenes diferentes para que puedan trabajar de forma coordinada. Un ejemplo habitual es el de frontend y backend. En la espeficación de los contenedores indicaremos además de la imagen de partida, número de réplicas, recursos solicitados (p.e. cantidad de RAM, porcentaje de CPU, &#8230;&#8203;). Esto, además de desacoplar frontend y backend, desde el punto de vista de la escalabilidad, permite escalar frontend y backend de forma independiente.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>Un archivo de Deployment proporciona una forma declarativa de creación de Pods y ReplicaSets. En el archivo de Deployment se especifica el estado deseado.</p>
 </div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Vamos a crear un archivo de Deployment denominado <code>json-reader-deployment.yaml</code>. Este archivo básicamente contiene entre otros el nombre de despliegue, la etiqueta usada para agrupar los pods del servicio, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
+<p>Para ilustrar el despliegue de una aplicación mediante archivos YAML vamos a desplegar una aplicación de ejemplo que consuma del servicio <code>jsonproducer</code> creado anteriormente. Se trata de un ejemplo muy sencillo de un entorno frontend-backend con un funcionamiento independiente.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Recordemos que en la sección <a href="#trueejemplo-de-escalado-de-una-aplicaci-n">Ejemplo de escalado de una aplicación</a> habíamos creado previamente un Deployment para <code>jsonproducer</code> y también habíamos creado un servicio. Por tanto, ya contamos con un Deployment y un Service para la parte de la producción de JSON. Si no es así, vuelve al apartado <a href="#trueejemplo-de-escalado-de-una-aplicaci-n">Ejemplo de escalado de una aplicación</a> y ejecuta los comandos para volver a tenerlos disponibles en tu entorno.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Vamos a crear un archivo de Deployment denominado <code>json-reader-deployment.yaml</code>. Este archivo básicamente contiene entre otros, el nombre de despliegue, el selector que usa el despliegue para seleccionar los pods que forman parte del despliegue, la etiqueta que usan los pods para ser agrupados y formar parte del mismo Deployment, número de réplicas y la imagen usada para crear el contenedor de cada pod.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2127,17 +2363,17 @@ spec:
   selector:
     matchLabels:
       app: jsonreader <i class="conum" data-value="8"></i><b>(8)</b>
-  template:
+  template: <i class="conum" data-value="9"></i><b>(9)</b>
     metadata:
-      labels:
+      labels: <i class="conum" data-value="10"></i><b>(10)</b>
         app: jsonreader
     spec:
       containers:
-      - name: jsonreader <i class="conum" data-value="9"></i><b>(9)</b>
-        image: ualmtorres/jsonreader:v0 <i class="conum" data-value="10"></i><b>(10)</b>
+      - name: jsonreader <i class="conum" data-value="11"></i><b>(11)</b>
+        image: ualmtorres/jsonreader:v0 <i class="conum" data-value="12"></i><b>(12)</b>
         ports:
         - name: http
-          containerPort: 80 <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
+          containerPort: 80 <i class="conum" data-value="13"></i><b>(13)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2156,7 +2392,7 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Selector usado para agrupar a los pods del servicio asociado</td>
+<td>Etiqueta que usar el Deployment para ser luego seleccionado por otro objeto Kubernetes (p.e. Service).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -2176,14 +2412,22 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Prefijo usado para los pods</td>
+<td>Zona (plantilla) de definición del pod</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>Imagen base para los contenedores de la aplicación</td>
+<td>Etiquetas asignadas a los pods y que les permitirán ser seleccionados para formar parte de un Deployment</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Prefijo usado para los pods</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Imagen base para los contenedores de la aplicación</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
 <td>Puerto por el que la aplicación sirve originalmente sus datos</td>
 </tr>
 </table>
@@ -2248,16 +2492,71 @@ jsonreader-86699d9f94-lrvpt     1/1     Running   1          22h   app=jsonreade
 </div>
 </div>
 <div class="paragraph">
-<p><a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo16-Deployment">Ejemplo más completo de Deployment</a></p>
+<p>Ahora podríamos ver a cualquiera de los pods de <code>jsonreader</code> haciendo <em>port forward</em> a nuestro equipo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl port-forward jsonreader-86699d9f94-lrvpt 84:80</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Este sería su resultado en un navegador</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/jsonreader.png" alt="jsonreader.png">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Hacer hincapie en que se puede ver funcionando correctamente este ejemplo porque ya se creó previamente en la sección <a href="#trueejemplo-de-escalado-de-una-aplicaci-n">Ejemplo de escalado de una aplicación</a> el servicio para <code>jsonproducer</code>. Si ese servicio no hubiese sido creado, <code>jsonreader</code> no tendría acceso a <code>jsonreader</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Puedes encontrar un <a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo16-Deployment">ejemplo más completo de Deployment</a> con un front-end más elaborado que consume de una API que proporciona calificaciones de estudiantes.</p>
+</div>
+<div class="paragraph">
+<p>Sin embargo, vemos que el frontend no puede recuperar los datos del backend. Esto se debe a que aún no hay definido un servicio. En la siguiente sección encontraremos la solución a ese problema.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/SelectividadSinDatos.png" alt="SelectividadSinDatos.png">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Los servicios gestionan el descubrimiento y enrutado entre pods dependientes (p.e. frontend y backend)</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecreaci-n-del-archivo-de-servicio"><a class="anchor" href="#truecreaci-n-del-archivo-de-servicio"></a>8.2. Creación del archivo de Servicio</h3>
+<h3 id="truedespliegue-de-un-service"><a class="anchor" href="#truedespliegue-de-un-service"></a>8.3. Despliegue de un Service</h3>
 <div class="paragraph">
-<p>Un Servicio es una abstracción que define una agrupación de Pods y una política de acceso a ellos. El conjunto de Pods al que se dirige un Servicio están determinados por un <strong>selector</strong>.</p>
+<p>Un Service es una abstracción que define una agrupación de Pods y una política de acceso a ellos. El conjunto de Pods al que se dirige un Servicio están determinados por un <strong>selector</strong>.</p>
 </div>
 <div class="paragraph">
-<p>Vamos a crear un archivo de Servicio denominado <code>json-reader-service.yaml</code>. Este archivo básicamente contiene entre otros el nombre de servicio, el tipo del servicio (ClusterIP, NodePort, &#8230;&#8203;), el puerto de acceso a los pods del desplieguw y el selector que identifica al despliegue con el que se corresponde el servicio creado.</p>
+<p>En la sección <a href="#trueejemplo-de-escalado-de-una-aplicaci-n">Ejemplo de escalado de una aplicación</a> habíamos creado un servicio directamente al hacer <code>kubectl expose deployment jsonproducer --type=NodePort</code>. A continuación vamos a ver cómo podemos crear ese servicio mediante un manifiesto YAML.</p>
+</div>
+<div class="paragraph">
+<p>Vamos a crear un archivo de Servicio denominado <code>json-reader-service.yaml</code>. Este archivo básicamente contiene entre otros el nombre de servicio, el tipo del servicio (ClusterIP, NodePort, &#8230;&#8203;), el puerto de acceso a los pods del despliegue y el selector que identifica al despliegue con el que se corresponde el servicio creado.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2292,7 +2591,7 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Tipo de servivio. NodePort hará que el servicio esté disponible en la IP de los nodos en los que estén los pods y un puerto aleatorio entre 30000 y 32767</td>
+<td>Tipo de servicio. NodePort hará que el servicio esté disponible en la IP de los nodos en los que estén los pods y un puerto aleatorio entre 30000 y 32767</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -2300,7 +2599,7 @@ spec:
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Etiqueta que tiene que coincidir con la usada en el Deployment</td>
+<td>Etiqueta que usa el servicio para localizar al Deployment. Buscará un valor coincidente en la etiqueta <code>labels</code> del Deployment.</td>
 </tr>
 </table>
 </div>
@@ -2341,7 +2640,7 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 </div>
 <div class="paragraph">
-<p>También podemos usar el Kubernetes Dashboard para mostrar información de interés sobre este despliegue, viendo como de Deployment de <code>jsonreader</code> se ha incorporado a la lista de despliegues disponibles en el cluster, así como los pods, ReplicaSets y servicios, como muestran las figuras siguientes.</p>
+<p>También podemos usar el Kubernetes Dashboard para mostrar información de interés sobre este despliegue, viendo como el Deployment de <code>jsonreader</code> se ha incorporado a la lista de despliegues disponibles en el cluster, así como los Pods, ReplicaSets y Services, como muestran las figuras siguientes.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2354,13 +2653,21 @@ kubernetes     ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        22h
 </div>
 </div>
 <div class="paragraph">
-<p><a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo17-Service">Ejemplo más completo de Service</a></p>
+<p>Puedes encontrar un <a href="https://github.com/ualmtorres/CursoKubernetes/tree/master/Ejemplos/Ejemplo17-Service">ejemplo más completo de Service</a> que completa el Deployment de la sección anterior. Recordemos que el frontend no podía obtener la lista de calificaciones que ofrecía la API. Esto se debía a que se había desplegado el Deployment de la API, pero no se había desplegado su Service, que es lo que le da visibilidad.</p>
+</div>
+<div class="paragraph">
+<p>Al desplegar el servicio del backend ya podremos ver que el frontend ya sí puede acceder a los datos que genera la API.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/SelectividadFrontService.png" alt="SelectividadFrontService.png">
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueconfigmaps-2"><a class="anchor" href="#trueconfigmaps-2"></a>8.3. ConfigMaps</h3>
+<h3 id="truedespliegue-de-configmaps"><a class="anchor" href="#truedespliegue-de-configmaps"></a>8.4. Despliegue de ConfigMaps</h3>
 <div class="paragraph">
-<p>Tal y como comentamos anteriormente, los objetos ConfigMap permiten almacenar datos no sensibles en forma de clave valor. Un uso habitual es para inicialización de variables de entorno.</p>
+<p>Tal y como comentamos anteriormente en la sección <a href="#trueconfigmaps">ConfigMaps</a>, los objetos ConfigMap permiten almacenar datos no sensibles en forma de clave valor. Un uso habitual de los ConfigMap es para inicialización de variables de entorno.</p>
 </div>
 <div class="paragraph">
 <p>Antes de comenzar a usar ConfigMaps con variables de entorno, veamos cómo establecer variables de entorno. El ejemplo siguiente muestra un manifiesto YAML que crea un pod e inicializa dos variables de entorno (<code>NOMBRE</code> y <code>APELLIDOS</code>)</p>
@@ -2499,15 +2806,15 @@ $ echo $APELLIDOS</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truesecrets-2"><a class="anchor" href="#truesecrets-2"></a>8.4. Secrets</h3>
+<h3 id="truedespliegue-de-secrets"><a class="anchor" href="#truedespliegue-de-secrets"></a>8.5. Despliegue de Secrets</h3>
 <div class="paragraph">
-<p>Como comentamos anteriormente, los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. No obstante, los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente.</p>
+<p>Como comentamos anteriormente en la sección <a href="#truesecrets">Secrets</a>, los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. No obstante, los datos de los objetos Secret no están cifrados. Están codificados en base64 y pueden hacerse visibles fácilmente.</p>
 </div>
 <div class="paragraph">
-<p>Para ilustrar el uso de Secrets veamos ekl manifiesto de creación de un pod con MySQL sin y con secretos.</p>
+<p>Para ilustrar el uso de Secrets veamos el manifiesto de creación de un pod con MySQL sin y con secretos.</p>
 </div>
 <div class="paragraph">
-<p>El manifiesto siguiente crea un pod MySQL al que se le pasa la variable de entorno <code>MYSQL_ROOT_PASSWORD</code> durante su inicialización con la contraseña del <code>root</code>. En este ejemplo, el valor de la variable de entorno de la contraseña del root es pasada en el propio manifiesto</p>
+<p>El manifiesto siguiente crea un pod MySQL al que se le pasa la variable de entorno <code>MYSQL_ROOT_PASSWORD</code> durante su inicialización para la contraseña del <code>root</code>. En este ejemplo, el valor de la variable de entorno de la contraseña del <code>root</code> es pasada en el propio manifiesto</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2548,11 +2855,11 @@ spec:
 <p>Kubernetes guarda los secretos en base64. Por tanto, los valores que vayamos a almacenar en los pares clave-valor de un secreto tendrán que estar en base64.</p>
 </div>
 <div class="paragraph">
-<p>Para codificar en base64 el valor <code>password</code> que utilizamos en el ejemplo anterior para contraseña del root, desde la línea de comandos ejecutaremos:</p>
+<p>Para codificar en base64 el valor <code>password</code> que utilizamos en el ejemplo anterior para contraseña del <code>root</code>, ejecutaremos el comnando siguiente desde la línea de comandos:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo 'password' | base64</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ echo -n 'password' | base64</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2581,7 +2888,7 @@ data:
 </div>
 </div>
 <div class="paragraph">
-<p>Por último, creamos el manifiesto YAML que inicializa un pod MySQL que lee del Secret creado la contraseña del usuario root para inicializar el pod correctamente.</p>
+<p>Por último, creamos el manifiesto YAML que inicializa un pod MySQL que lee del Secret creado la contraseña del usuario <code>root</code> para inicializar el pod correctamente.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2625,22 +2932,28 @@ spec:
 <div class="sect1">
 <h2 id="truehpa-horizontal-pod-autoscaler"><a class="anchor" href="#truehpa-horizontal-pod-autoscaler"></a>9. HPA. Horizontal Pod Autoscaler</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>El Horizontal Pod Autoscaler, o HPA pasa simplificar, escala de forma automática el número de réplicas de un pod en función de la observación de métricas de los pods (p.e. el uso de la CPU).</p>
+</div>
+<div class="paragraph">
+<p>De forma escueta podemos resumir de esta forma su funcionamiento:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Consulta cada 15s las métricas de uso (CPU, RAM, &#8230;&#8203;) de cada pod</p>
+<p>En su definición se fija un mínimo y máximo de réplicas de un deployment</p>
 </li>
 <li>
-<p>Fija un mínimo y máximo de réplicas de un deployment</p>
+<p>En su definición se definen las condiciones de stress (p.e. porcentaje de uso de la CPU)</p>
 </li>
 <li>
-<p>Define las condiciones de stress (p.e. porcentaje de uso de la CPU)</p>
+<p>HPA consulta cada 15s las métricas de uso (CPU, RAM, &#8230;&#8203;) de cada pod</p>
 </li>
 <li>
-<p>Ante stress escala hacia arriba</p>
+<p>Ante stress HPA escala hacia arriba</p>
 </li>
 <li>
-<p>5m sin stress escala hacia abajo</p>
+<p>HPA escala hacia abajo tras un periodo de 5 minutos sin stress</p>
 </li>
 </ul>
 </div>
@@ -2648,6 +2961,12 @@ spec:
 <div class="content">
 <img src="./images/HPA.png" alt="HPA.png">
 </div>
+</div>
+<div class="paragraph">
+<p>A continuación se muestran la redefinición de los Deployment de los ejemplos de la API y frontend del ejemplo de las calificaciones especificando una petición de CPU y memoria para cada pod.</p>
+</div>
+<div class="paragraph">
+<p>Archivo <code>deployment-api.yaml</code> indicando límites de CPU y memoria:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2685,6 +3004,9 @@ spec:
             memory: 256Mi</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Archivo <code>deployment-front.yaml</code> indicando límites de CPU y memoria:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: apps/v1
@@ -2721,6 +3043,71 @@ spec:
             memory: 256Mi</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>La petición de CPU es relativa a unidades teniendo en cuenta lo siguiente:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>1 CPU equivale a 1 vCPU en un entorno cloud</p>
+</li>
+<li>
+<p>1 Hyperthread en un servidor con procesador Intel con Hyperthreading</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Las peticiones se hacen en miliCPUs o en fracciones decimales de CPU. Así una petición de 100m y de 0.1 representan la misma cantidad de CPU solicitada.</p>
+</div>
+<div class="paragraph">
+<p>La unidad mínima solicitada es 1m (1 miliCPU).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Qué ocurre si no se especifica un límite de uso de la CPU</div>
+<div class="paragraph">
+<p>Cuando no se especifica límite de CPU para un contenedor puede pasar una de estas dos situaciones:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Si el contenedor está en un namespace que tiene definido un límite de uso de CPU, el contenedor podrá llegar como máximo hasta ese límite. Los administradores del cluster pueden usar <code>LimitRange</code> para configurar un tope de uso de la CPU.</p>
+</li>
+<li>
+<p>Si no hay límite definido, el contenedor podría llegar todos los recursos de CPU del nodo en el que se está ejecutando.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>También es posible limitar los recursos de RAM asignados a un contenedor. Consultar la <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/">documentación oficial sobre la asignación de recursos de RAM a un contenedor</a> para más información.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A continuación se muestra el manifiesto que crea un servicio para cada deployment.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">apiVersion: v1
@@ -2746,11 +3133,8 @@ spec:
     app: selectividad-front</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-$ kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040</code></pre>
-</div>
+<div class="paragraph">
+<p>Una vez definidos los objetos Deployment y sus Service correspondientes, pasamos a crear el HPA que monitorizará el uso de recursos de los contenedores y solicitará su autoescalado en función del uso de los recursos. En este caso, y para poder ver en acción fácilmente el autoescalado en acción, fijamos que a partir del 15% de uso de la CPU se soliten la creación de nuevos pods. También se indica que el intervalo de escalado esté entre 1 y 10 réplicas según demanda.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2781,6 +3165,9 @@ spec:
  targetCPUUtilizationPercentage: 15</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Podemos acceder al estado y condiciones del autoescalado con el comando siguiente.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get hpa
@@ -2790,8 +3177,27 @@ selectividad-api     Deployment/selectividad-api     1%/15%    1         10     
 selectividad-front   Deployment/selectividad-front   1%/15%    1         10        1          5m</code></pre>
 </div>
 </div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Weavescope</div>
 <div class="paragraph">
-<p>Prueba de stress (Apache Benchmark)</p>
+<p><a href="https://www.weave.works/oss/scope/">Weavescope</a> es una herramienta que nos puede ser muy útil a la hora de controlar cómo escala un despliegue. Con Weavescope podemos ver en vivo el número de réplicas de cada pod conforme se va adaptando a la demanda.</p>
+</div>
+<div class="paragraph">
+<p>Weavescope está disponible para su despliegue en Kubernetes. Los comandos siguientes instalan Weavescope en nuestro cluster y redirigen su frontend al puerto 4040 a nuestro equipo local.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+$ kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trueprueba-de-stress-de-autoescalado"><a class="anchor" href="#trueprueba-de-stress-de-autoescalado"></a>9.1. Prueba de stress de autoescalado</h3>
+<div class="paragraph">
+<p><a href="https://httpd.apache.org/docs/2.4/programs/ab.html">Apache Benchmark</a> es una herramienta útil para realizar pruebas de carga. A continuación se muestra cómo hacer una prueba de carga con</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2801,14 +3207,41 @@ selectividad-front   Deployment/selectividad-front   1%/15%    1         10     
 <li>
 <p>100 peticiones simultáneas</p>
 </li>
-<li>
-<p>ab -n 100000 -c 100 <a href="http://selectividad-front.default.192.168.66.253.xip.io/" class="bare">http://selectividad-front.default.192.168.66.253.xip.io/</a></p>
-</li>
 </ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ ab -n 100000 -c 100 http://selectividad-front.default.192.168.66.253.xip.io/</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Este ejemplo ha sido realizado en un cluster Kubernetes que gestionamos con <a href="https://rancher.com/">Rancher</a>. Al servicio de frontend le hemos creado un <em>ingress</em> de tipo <em>load balancer</em> para poder acceder al cluster desde fuera con un nombre DNS.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>La figura siguiente ilustra varias capturas de cómo ha ido adaptándose el número de pods a la demanda a lo largo de la prueba de carga. Hemos usado colores naranja, rojo y azul para ilustrar el estado de stress y la respuesta elástica con el número de pods en distintos estados que hemos ido capturando durante la prueba de carga.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/WeaveScopeEvolucion.png" alt="WeaveScopeEvolucion.png">
+</div>
+</div>
+<div class="paragraph">
+<p>La figura siguiente ilustra el estado del objeto HPA con el comando</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl get horizontalpodautoscalers.autoscaling --watch</code></pre>
 </div>
 </div>
 <div class="imageblock">
@@ -2818,136 +3251,12 @@ selectividad-front   Deployment/selectividad-front   1%/15%    1         10     
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="trueconfigmaps-3"><a class="anchor" href="#trueconfigmaps-3"></a>10. ConfigMaps</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
-kind: Pod
-metadata:
-  name: configmap-env
-spec:
-  containers:
-  - name: php-apache
-    image: php:7-apache
-    env:
-      - name: NOMBRE
-        value: Manolo
-      - name: APELLIDOS
-        value: Torres</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-env.yaml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: myconfigmap
-data:
-  nombre: Manolo
-  apellidos: Torres
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: configmap-pod
-spec:
-  containers:
-  - name: configmap-container
-    image: php:7-apache
-    env:
-      - name: NOMBRE
-        valueFrom:
-          configMapKeyRef:
-            name: myconfigmap
-            key: nombre
-      - name: APELLIDOS
-        valueFrom:
-          configMapKeyRef:
-            name: myconfigmap
-            key: apellidos</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f configmap-pod.yaml</code></pre>
-</div>
-</div>
-</div>
 </div>
 <div class="sect1">
-<h2 id="truesecrets-3"><a class="anchor" href="#truesecrets-3"></a>11. Secrets</h2>
+<h2 id="truealmacenamiento-externo"><a class="anchor" href="#truealmacenamiento-externo"></a>10. Almacenamiento externo</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
-kind: Pod
-metadata:
-  name: mysql-sin-secrets
-spec:
-  containers:
-  - name: mysql-sin-secrets
-    image: mysql
-    env:
-    - name: MYSQL_ROOT_PASSWORD
-      value: password
-    ports:
-    - containerPort: 3306</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f mysql-sin-secrets.yaml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
-kind: Secret
-metadata:
-  name: mysqlpassword
-type: Opaque
-data:
-  password: cGFzc3dvcmQ=</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
-kind: Pod
-metadata:
-  name: mysql-con-secrets
-spec:
-  containers:
-  - name: mysql-con-secrets
-    image: mysql
-    env:
-    - name: MYSQL_ROOT_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: mysqlpassword
-          key: password
-    ports:
-    - containerPort: 3306</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ kubectl apply -f secret-password.yaml
-$ kubectl apply -f mysql-con-secrets.yaml</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="truevol-menes-con-openstack-cinder"><a class="anchor" href="#truevol-menes-con-openstack-cinder"></a>12. Volúmenes con Openstack Cinder</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="truevol-menes-con-openstack-cinder"><a class="anchor" href="#truevol-menes-con-openstack-cinder"></a>10.1. Volúmenes con Openstack Cinder</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: storage.k8s.io/v1
@@ -3098,10 +3407,8 @@ apache-cinder-54d6c66cf8-zx92w        1/1     Running   0          102s</code></
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="truevol-menes-nfs-openstack-manila"><a class="anchor" href="#truevol-menes-nfs-openstack-manila"></a>13. Volúmenes NFS. Openstack Manila</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="truevol-menes-nfs-openstack-manila"><a class="anchor" href="#truevol-menes-nfs-openstack-manila"></a>10.2. Volúmenes NFS. Openstack Manila</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: v1
@@ -3294,8 +3601,9 @@ Forwarding from [::1]:82 -&gt; 80</code></pre>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="trueinit-containers"><a class="anchor" href="#trueinit-containers"></a>14. Init Containers</h2>
+<h2 id="trueinit-containers"><a class="anchor" href="#trueinit-containers"></a>11. Init Containers</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Existen un tipo especial de contenedores denominados <em>Init Containers</em> que se ejecutan antes que el resto de contenedores de aplicación del pod. Este tipo de contenedores suelen dedicarse a realizar operaciones de incialización que no están presentes en la imagen de los otros contenedores del pod.</p>
@@ -3491,10 +3799,10 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>15. Apéndice. Cheat Sheet</h2>
+<h2 id="trueap-ndice-cheat-sheet"><a class="anchor" href="#trueap-ndice-cheat-sheet"></a>12. Apéndice. Cheat Sheet</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>15.1. Comandos Minikube</h3>
+<h3 id="truecomandos-minikube"><a class="anchor" href="#truecomandos-minikube"></a>12.1. Comandos Minikube</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3516,7 +3824,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>15.2. Comandos <code>kubectl</code></h3>
+<h3 id="truecomandos-code-kubectl-code"><a class="anchor" href="#truecomandos-code-kubectl-code"></a>12.2. Comandos <code>kubectl</code></h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3562,7 +3870,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueherramientas-interesantes"><a class="anchor" href="#trueherramientas-interesantes"></a>15.3. Herramientas interesantes</h3>
+<h3 id="trueherramientas-interesantes"><a class="anchor" href="#trueherramientas-interesantes"></a>12.3. Herramientas interesantes</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3593,7 +3901,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>15.4. Contextos</h3>
+<h3 id="truecontextos"><a class="anchor" href="#truecontextos"></a>12.4. Contextos</h3>
 <div class="paragraph">
 <p>El archivo de contextos</p>
 </div>
@@ -3735,7 +4043,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect1">
-<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>16. Apéndice. Service Mesh con Istio</h2>
+<h2 id="trueap-ndice-service-mesh-con-istio"><a class="anchor" href="#trueap-ndice-service-mesh-con-istio"></a>13. Apéndice. Service Mesh con Istio</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Los microservicios se han convertido en algo habitual en las aplicaciones cloud actuales. Las arquitecturas de microservicios permiten realizar cambios en un servicio sin tener que volver a desplegar toda la aplicación. Esto permite que los microservicios pueden ser creados por grupos de desarrollo pequeños, creando sus propias herramientas y usando los lenguajes de programación más adecuados, lo que aumenta la productividad y velocidad del proyecto. Básicamente, los microservicios se construyen de forma independiente, se comunican entre sí y permiten el fallo de forma individual sin provocar una caída del funcionamiento de la aplicación completa.</p>
@@ -3785,7 +4093,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>16.1. Istio</h3>
+<h3 id="trueistio"><a class="anchor" href="#trueistio"></a>13.1. Istio</h3>
 <div class="paragraph">
 <p>Istio viene a incorporarse al vocabulario marinero y ballenero del ecosistema de Docker y Kubernetes. Istio es una palabra griega que significa <em>navegar</em>.</p>
 </div>
@@ -3832,7 +4140,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>16.2. Arquitectura de Istio</h3>
+<h3 id="truearquitectura-de-istio"><a class="anchor" href="#truearquitectura-de-istio"></a>13.2. Arquitectura de Istio</h3>
 <div class="paragraph">
 <p>Istio consta de un plano de control y un plano de datos. El plano de datos está formado por proxies que se integran en los pods de la aplicación. Usando el patrón del sidecar, cada instancia de la aplicación tendrá su proxy dedicado a través del cual pasa todo el tráfico antes de llegar a la aplicación. Estos proxies individuales son gestionados individualmente por Istio para enrutar, filtrar y aumentar el tráfico según sea necesario.</p>
 </div>
@@ -3868,7 +4176,7 @@ CURRENT   NAME            CLUSTER         AUTHINFO     NAMESPACE
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>16.3. Control de tráfico y técnicas de despliegue</h3>
+<h3 id="truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"><a class="anchor" href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue"></a>13.3. Control de tráfico y técnicas de despliegue</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3935,7 +4243,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>16.4. Técnicas de resilencia</h3>
+<h3 id="truet-cnicas-de-resilencia"><a class="anchor" href="#truet-cnicas-de-resilencia"></a>13.4. Técnicas de resilencia</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3951,7 +4259,7 @@ spec:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>16.5. Caso práctico</h3>
+<h3 id="truecaso-pr-ctico"><a class="anchor" href="#truecaso-pr-ctico"></a>13.5. Caso práctico</h3>
 <div class="paragraph">
 <p>Para no perdernos en los detalles usaremos un ejemplo muy sencillo con dos servicios: uno que produce datos y otro que los presenta. Podríamos ver este ejemplo como un ejemplo muy reducido de backend y frontend.</p>
 </div>
@@ -3962,7 +4270,7 @@ spec:
 <p>El servicio que consume datos se denomina <code>jsonreader</code> y usará los datos leídos de <code>jsonproducer</code> para presentarlos al usuario en forma de saludo, mostrando <code>Hola</code> seguido del nombre leído del JSON devuelto por la versión de <code>jsonproducer</code> usada (<code>Hola manolo</code> cuando use <code>v0</code> y <code>Hola Manuel Torres</code> cuando use <code>v1</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>16.5.1. Creación de todos los servicios</h4>
+<h4 id="truecreaci-n-de-todos-los-servicios"><a class="anchor" href="#truecreaci-n-de-todos-los-servicios"></a>13.5.1. Creación de todos los servicios</h4>
 <div class="paragraph">
 <p>En primer lugar vamos a desplegar en el cluster de Kubernetes todos los recursos (<code>Service</code> y <code>Deployment</code>) con todas sus versiones correspondientes. Posteriormente, con Istio controlaremos el tráfico que se dirige a cada versión desplegada. En nuestro ejemplo se definirán dos objetos <code>Deployment</code>, uno para cada una de las versiones del <code>jsonproducer</code> (<code>v0</code> y <code>v1</code>) que quedarán desplegadas en el cluster.</p>
 </div>
@@ -4173,7 +4481,7 @@ jsonreader-v0     1/1     1            1           40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>16.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
+<h4 id="truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"><a class="anchor" href="#truecreaci-n-de-los-em-subsets-em-mediante-code-destinationrule-code"></a>13.5.2. Creación de los <em>subsets</em> mediante <code>DestinationRule</code></h4>
 <div class="paragraph">
 <p>A continación vamos a definir todas las versiones de un servicio que vamos a tener elegibles en el cluster de Kubernetes y que posteriormente serán seleccionadas o usadas cuando pasemos a controlar el tráfico a cada versión. Las <code>DestinationRule</code> se usan para definir las distintas instancias o versiones disponibles que se pueden usar de cada servicio. Cada servicio tendrá su <code>DestinationRule</code> con lo siguiente:</p>
 </div>
@@ -4259,7 +4567,7 @@ jsonreader     jsonreader     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>16.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
+<h4 id="truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"><a class="anchor" href="#truecreaci-n-de-los-servicios-virtuales-para-el-control-del-tr-fico-a-versiones-espec-ficas"></a>13.5.3. Creación de los servicios virtuales para el control del tráfico a versiones específicas</h4>
 <div class="paragraph">
 <p>Por último, crearemos los <code>VirtualService</code> para indicarle a Istio la versión concreta de cada microservicio desplegado a la que queremos desviar el tráfico. Este recurso es el que Istio usará para configurar los proxies que controlarán el tráfico en el <em>mesh</em>.</p>
 </div>
@@ -4353,7 +4661,7 @@ jsonreader                          [jsonreader]     40s</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>16.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
+<h4 id="truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"><a class="anchor" href="#truedesv-o-de-una-fracci-n-del-tr-fico-a-una-nueva-versi-n"></a>13.5.4. Desvío de una fracción del tráfico a una nueva versión</h4>
 <div class="paragraph">
 <p>Como comentamos en el apartado <a href="#truecontrol-de-tr-fico-y-t-cnicas-de-despliegue">Control de tráfico y técnicas de despliegue</a>, en los despliegues <em>canary</em> se despliega una nueva versión del código, pero sólo se dirige a ella una parte del tráfico con la intención de comenzar a probar el funcionamiento de una nueva versión. Con Istio, este tipo de despliegue lo realizaremos aplicando un nuevo servicio virtual que desviará el 80% del tráfico a la versión <code>v0</code> de <code>jsonproducer</code> y el 20% del tráfico a la versión <code>v1</code> de <code>jsonproducer</code>.</p>
 </div>
@@ -4539,7 +4847,7 @@ Percentage of the requests served within a certain time (ms)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-11-23 18:14:02 CET
+Last updated 2019-11-25 21:09:05 CET
 </div>
 </div>
 </body>
