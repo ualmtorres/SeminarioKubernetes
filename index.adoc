@@ -14,7 +14,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 ////
 Nombre y título del trabajo
 ////
-# Kubernetes
+# Kubernetes. Un orquestador de contenedores que debes poner en tu vida
 Cloud-DI Team - Departamento de Informática. UAL
 
 image::di.png[]
@@ -39,11 +39,14 @@ COLOCA A CONTINUACION LOS OBJETIVOS
 .Objetivos
 * Conocer la importancia del uso de Kubernetes en el ciclo de vida de las aplicaciones actuales.
 * Introducir los conceptos básicos de Kubernetes.
+* Desplegar aplicaciones con archivos YAML.
+* Aprender a usar objetos básicos de Kubernetes, como Pod, Deployment, Service, ConfigMap, Secret y HPA.
 * Usar Minikube para el desarrollo y prueba en local.
 * Usar `kubectl` para la administración básica de Kubernetes.
-* Escalar aplicaciones.
+* Escalar aplicaciones de forma automática en función del uso de la CPU.
 * Realizar actualizaciones en caliente (_rolling updates_).
-* Desplegar aplicaciones con archivos YAML.
+* Aprender a manejar volúmenes en el cluster y externos.
+* Aprender a usar Init Containers para la inicialización de contenedores en su creación.
 * Aprender a usar Kubernetes Dashboard.
     
 [TIP]
@@ -1794,9 +1797,137 @@ $ kubectl get horizontalpodautoscalers.autoscaling --watch
 
 image::HPAEvolucion.png[]
 
-## Almacenamiento externo
+## Almacenamiento en volúmenes
+
+El almacenamiento en contenedores es efímero. Una vez que el contenedor es eliminado también son eliminados sus archivos. Pero además, cuando un contenedor falla, `kubelet` lo reiniciará con un estado limpio habiéndose perdido todo lo que había en sus archivos.
+
+Kubernetes cuenta con una gran cantidad de https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes[tipos de volúmenes]. Los hay de almacenamiento local, almacenamiento en el sistema de archivos de los nodos de Kubernetes, Ceph, Gluster, NFS y almacenamiento cloud, como en Azure, Azure, Google y OpenStack Cinder, por citar algunos. También permite volúmenes `configmap` y `secret`, útiles para el compartir entre pods datos de configuración o información sensible, como contraseñas. En cualquier caso, los volúmenes son montados por los pods y accederían a sus datos.
+
+### Volúmenes `emptyDir`
+
+Se trata de volúmenes que se crean al asignar un pod a un nodo. Su contenido se mantiene en el nodo hasta que el contenedor sea eliminado. Su contenido se mantiene aunque el contenedor sea destruido o eliminado.
+
+De forma predeterminada, los volúmenes `emptyDir` son almacenados en el medio de almacenamiento prederminado del nodo (HD, SSD, NAS, ...). No obstante, se puede definir este tipo de volúmenes como volátiles configurando la propiedad `emptyDir.medium` como `Memory` y Kubernetes lo montará como un sistema de archivos RAM, lo que puede ser muy útiles para cachés.
+
+Este tipo de contenedores se suele usar para situaciones en las que queremos compartir datos entre varios contenedores en un pod o cachés.
+
+El manifiesto siguiente crea un pod con https://redis.io/[Redis] usando un volumen `emptyDir`. El volumen se monta en el directorio `/data` del contenedor, que es el directorio predeterminado de almacenamiento de la https://hub.docker.com/_/redis[imagen de Redis].
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+  - name: redis
+    image: redis
+    volumeMounts: <1>
+    - name: redis-storage <2>
+      mountPath: /data <3>
+  volumes: <4>
+  - name: redis-storage <5>
+    emptyDir: {} <6>
+----
+<1> Montaje de un volumen en el contenedor
+<2> Nombre del volumen a montar
+<3> Ruta del contenedor donde se va a montar el volumen
+<4> Definición del volumen
+<5> Nombre asignado al volumen
+<6> Tipo de volumen
+
+A continuación ya podremos desplegar este pod con un volumen `emptyDir` usando `kubectl`
+
+[source, bash]
+----
+$ kubectl apply -f redis.yaml
+----
+
+### Volúmenes `hostPath`
+
+Un volumen `hostPath` monta en el contenedor un archivo o un directorio del sistema de archivos del nodo en el que está ejecutándose el pod. 
+
+[NOTE]
+====
+Este tipo de volúmenes no es una solución buena para clusters Kubernetes con varios nodos, ya que no se guardarían los mismos datos en cada nodo. 
+
+No obstante se podrá valorar si https://rsync.samba.org/[rsync] o https://syncthing.net/[Syncthing] ofrecen soporte suficiente para usar volúmenes `hostPath` en clusters con más de un nodo.
+====
+
+El ejemplo siguiente muestra un manifiesto para la creación de un pod con un contenedor Apache que monta un volumen `hostPath`. El contenedor monta ese volumen en la carpeta de publicación del contenedor Apache (`/usr/local/apache2/htdocs/`).
+
+[source, yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostPathContainer
+spec:
+  containers:
+  - image: nginx
+    name: nginx-hostPath
+    volumeMounts:
+    - mountPath: /vol-hostPath
+      name: myvolume
+  volumes:
+  - name: myvolume
+    hostPath:
+      path: /data/pv
+----
+
+[NOTE]
+====
+Crear volúmenes `hostPath` es una operación atrevida, ya que estamos accediendo e incluso escribiendo en el sistema de archivos del nodo en el que esté el pod.
+
+Es posible controlar la creación del volumen para montar un archivo o directorio del nodo sólo en aquellos casos en los que previamente exista dicho archivo o directorio. Para ello, tenemos que crear el volumen con `type: Directory`. Esto hará que sólo se cree el pod si existen el directorio previamente en el nodo.
+
+[source, yaml]
+----
+  volumes:
+  - name: myvolume
+    hostPath:
+      type: Directory <1>
+      path: /data/pv
+----
+<1> Sólo se creará el volumen si existe en el nodo el directorio especificado en `path`
+
+Para más información sobre cómo limitar y configurar el uso de `hostPath`, consultar la https://kubernetes.io/docs/concepts/storage/volumes/#hostpath[documentación oficial de volúmenes `hostPath`]
+====
 
 ### Volúmenes con Openstack Cinder
+
+Podemos montar volúmenes OpenStack Cinder en pods Kubernetes. Previamente tendremos que haber configurado el cluster Kubernetes con OpenStack como proveedor cloud.  Los volúmenes Cinder son volúmenes externos al cluster Kubernetes y son persistentes, de forma que su contenido se mantiene después de la eliminación de los pods que lo tengan montado.
+
+Para este ejemplo partimos de un cluster Kubernetes gestionado con Rancher. En la configuración del archivo YAML del cluster añadiremos lo siguiente:
+
+[source, yaml]
+----
+cloud_provider: 
+  name: "openstack"
+  openstackCloudProvider: 
+    block_storage: 
+      ignore-volume-az: true
+      trust-device-path: false
+    global: 
+      auth-url: "http://www.xxx.yyy.zzz:5000/v3/" <1>
+      domain-name: "xxx" <2>
+      tenant-id: "xxx" <3>
+      username: "xxx" <4>
+    load_balancer: 
+      create-monitor: false
+      manage-security-groups: false
+      monitor-max-retries: 0
+      subnet-id: "xxx" <5>
+      use-octavia: false
+    metadata: 
+      request-timeout: 0
+----
+<1> IP o nombre DNS del servicio Keystone de identificación
+<2> Nombre de dominio (p.e. `default`)
+<3> id del proyecto que proporciona los recursos OpenStack a Kubernetes
+<4> Nombre de usuario
+<5> id de la subred a la que se conectarán el balanceador que proporciona acceso a los servicios de tipo `loadbalancer`
 
 [source, yaml]
 ----
@@ -1941,6 +2072,10 @@ image::ApacheCinderInicializado.png[]
 
 
 ### Volúmenes NFS. Openstack Manila
+
+Kubernetes permite montar _shares_ NFS existentes en un pod. Los volúmenes NFS son volúmenes externos al cluster Kubernetes y son persistentes, de forma que su contenido se mantiene después de la eliminación de los pods que lo tengan montado.
+
+Para este ejemplo usaremos Openstack Manila como servidor NFS. Para los ejemplos ya tenemos creado un _share_,. disponible en en la ruta `/var/lib/manila/mnt/share-2e653a46-bc6a-4fc3-83d3-d144554113e1` del servidor `192.168.64.17`
 
 [source, yaml]
 ----
@@ -2127,17 +2262,24 @@ image::NFSActualizado.png[]
 
 Existen un tipo especial de contenedores denominados _Init Containers_ que se ejecutan antes que el resto de contenedores de aplicación del pod. Este tipo de contenedores suelen dedicarse a realizar operaciones de incialización que no están presentes en la imagen de los otros contenedores del pod.
 
-Para ilustrar el uso de Init Container supongamos que queremos tener disponibles distintos tipos de bases de datos MySQL para pruebas en desarrollo.. En función del proyecto en el que estemos trabajando queremos tener disponible una base de datos u otra. Contaremos con varios scripts diferentes de inicialización de los distintos tipos de bases de datos que queremos configurar.
+Para ilustrar el uso de Init Container supongamos que queremos tener disponibles distintos tipos de bases de datos MySQL para pruebas en desarrollo.. En función del proyecto en el que estemos trabajando queremos tener disponible una base de datos u otra (p.e. recursos humanos, espacios, expedientes, préstamos, ...). Para ello, contaremos con varios scripts diferentes de inicialización de los distintos tipos de bases de datos que queremos configurar.
 
 Para llevar a cabo ese caso práctico contaremos con:
 
 * URL donde se encuentra el script de inicialización de la base de datos.
-* ConfigMap que configura la URL con la que se va a inicializar la base de datos.
-* Secret el que se almacena la contraseña del usuario root.
+* ConfigMap que configura la URL del script con el que se va a inicializar la base de datos.
+* Secret el que se almacena la contraseña del usuario `root`.
 * Init Container que inicializa una imagen `busybox` con un volumen donde descarga el script SQL que inicializa la BD. La URL de descarga del script la toma del ConfigMap. El script SQL se descarga con el nombre `init.sql` para que sirva como script de inicialización del contenedor MySQL.
+
++ 
+[NOTE]
+====
+La imagen `busybox` contiene gran cantidad de utilidades Linunx incorporadas y nos va a ser muy útil para realizar la tarea de inicialización de la base de datos en su contenedor compañero de MySQL
+====
+
 * Contenedor que monta el volumen que ha inicializado el Init Container con el script SQL. Dicho volumen es montando en el directorio `/docker-entrypoint-initdb.d` de la imagen MySQL. Como el script se llama `init.sql`, al arrancar por primera vez el contenedor MySQL, se inicializará el contenedor con la base de datos elegida.
 
-Esta condfiguración con Init Container permite la configuración a medida y sobre la marcha de una imagen MySQL sin necesidad de tener disponibles diferentes imágenes MySQL, cada una con su propia base de datos. En su puesto, lo que hacemos es cambiar e el ConfigMap la URL del script que inicializará una nueva base de datos. Con esto podremos tener todas las bases de datos diferentes que queramos con una única imagen MySQL.
+Esta configuración con Init Container permite la configuración a medida y sobre la marcha de una imagen MySQL sin necesidad de tener disponibles diferentes imágenes MySQL, cada una con su propia base de datos. En su puesto, lo que hacemos es cambiar en el ConfigMap la URL del script que inicializará una nueva base de datos. Con esto podremos tener todas las bases de datos diferentes que queramos con una única imagen MySQL.
 
 A continuación se muestra el manifiesto YAML que crea el ConfigMap que contiene el script SQL de inicialización de la base de datos.
 
@@ -2161,7 +2303,6 @@ $ kubectl apply -f initsqlsource-configmap.yaml
 
 También contaremos con un objeto Secret para almacenar la contraseña del usuario root. Este sería su manifiesto YAML
 
-Secret
 [source, yaml]
 ----
 apiVersion: v1
@@ -2180,11 +2321,10 @@ Desplegaremos el Secret con:
 $ kubectl apply -f credentials-secret.yaml
 ----
 
-Por último, crearemos el pod que incluye el contenedor MySQL y el Init Container que lo inicialia. El pod contiene un volumen que comparten ambos contenedores. El Init Container descarga el script SQL de inicialización en el volumen. Posteriormente, el contenedor MySQL monta ese volumen en el directorio de scripts de inicialización de forma que al arrancar por primera vez inicialice la base de datos con el script descargado por el Init Container.
+Por último, crearemos el pod que incluye el contenedor MySQL y el Init Container que lo inicializa. El pod contiene un volumen que comparten ambos contenedores. El Init Container descarga el script SQL de inicialización en el volumen. Posteriormente, el contenedor MySQL monta ese volumen en el directorio de scripts de inicialización de forma que al arrancar por primera vez inicialice la base de datos con el script descargado por el Init Container.
 
 Este sería el manifiesto YAML del pod que incluye el Init Container, el contenedor MySQL y el volumen compartido por los dos contenedores.
 
-MySQL con InitContainer
 [source, yaml]
 ----
 apiVersion: apps/v1
@@ -2238,17 +2378,35 @@ spec:
 ----
 <1> Contenedor MySQL
 <2> Inicialización de la variable de entorno con el Secret que contiene la contraseña del usuario root
-<3> Montar el volumen `workdir`, definido al final del script, en el directorio `/docker-entrypoint-initdb.d` 
+<3> Montar el volumen `workdir`, definido al final del script, en el directorio `/docker-entrypoint-initdb.d` del contenedor
 <4> Contenedor de inicialización
 <5> Inicialización de la variable de entorno con el ConfigMap que contiene la URL con el script SQL que inicializará la base de datos
 <6> Comando de inicialización para ejecutar al crear el Init Container
-<7> Montar el volumen `workdir` en el directorio `work-dir` del InitContainer
+<7> Montar el volumen `workdir` en el directorio `/work-dir` del InitContainer
 <8> Volumen que almacenará el script de inicialización de la base de datos
 
 [NOTE]
 ====
 El volumen `workdir` se crea del tipo `emptyDir` porque su único propósito es almacenar el script de inicialización de la base de datos del contenedor MySQL en su primer arranque. Una vez hecha esta función, ya no es necesario, y no está destinado a guardar datos que se quieran persistir tras la finalización del contenedor MySQL.
 ====
+
+Lanzamos el despliegue del Deployment:
+
+[source, bash]
+----
+$ kubectl apply -f initdb-deployment.yaml
+----
+
+Tras su creación, haremos un _port forward_ al contenedor creado:
+
+[source, bash]
+----
+$ kubectl port-forward initdb-87b65d485-89m4c 3306:3306
+----
+
+Por último, abrimos una sesión con un cliente MySQL (usuario: `root`, password: `password`). Dado que tenemos los puertos redirigidos, las peticiones al puerto 3306 de nuestro equipo irán al puerto 3306 del contenedor. Podremos comprobar que el contenedor tiene inicializada una base de datos, la base de datos que inicializa el script almacenado en la URL especificada en el ConfigMap.
+
+image::MySQLSG.png[]
 
 ## Apéndice. Cheat Sheet
 
@@ -2969,3 +3127,16 @@ image::Grafana.png[]
 Consultas de métricas en Prometheus
 
 image::Prometheus.png[]
+
+## Referencias
+
+* https://kubernetes.io/docs/home/[Kubernetes Documentation]
+* https://github.com/mvallim/kubernetes-under-the-hood/blob/master/README.md[Kubernetes under the hood]. Marcos Vallim.
+* https://theithollow.com/2019/01/26/getting-started-with-kubernetes/[Getting Started with Kubernetes]. The IT Hollow.
+* https://itnext.io/kubernetes-part-1-architecture-and-main-components-overview-a9ce97264a74[Kubernetes: part 1 — architecture and main components overview]. Arseny Zinchenko.
+* https://medium.com/swlh/kubernetes-services-simply-visually-explained-2d84e58d70e5[Kubernetes Services simply visually explained]. Kim Wuestkamp.
+* https://glamanate.com/blog/using-environment-files-over-injected-environment-variables-kubernetes?utm_sq=g7lkc35pm4[Using environment files over injected environment variables in Kubernetes]. Matt Glaman.
+* https://www.josedomingo.org/pledin/2019/03/almacenamiento-kubernetes/[Almacenamiento en Kubernetes. PersistentVolumen. PersistentVolumenClaims]. José Domingo Muñoz.
+* https://itnext.io/learn-about-the-basics-of-kubernetes-persistence-part-1-b1fa2847768f[Learn about the basics of Kubernetes Persistence (Part 1)]. Abhishek Gupta.
+* https://itnext.io/tutorial-basics-of-kubernetes-volumes-part-2-b2ea6f397402[Tutorial: Basics of Kubernetes Volumes (Part 2)]. Abhishek Gupta.
+* https://developers.redhat.com/blog/2019/08/08/4-command-line-tools-for-kubernetes-linux-edition/?utm_sq=g7nv5eimcv[4 command-line tools for Kubernetes: Linux edition]. Don Schenck.
