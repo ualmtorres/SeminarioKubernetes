@@ -443,12 +443,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#truedeployments">5.1. Deployments</a></li>
 <li><a href="#truepods">5.2. Pods</a></li>
-<li><a href="#truenodos">5.3. Nodos</a></li>
-<li><a href="#trueservicios">5.4. Servicios</a></li>
-<li><a href="#truevol-menes">5.5. Volúmenes</a></li>
-<li><a href="#trueconfigmaps">5.6. ConfigMaps</a></li>
-<li><a href="#truesecrets">5.7. Secrets</a></li>
-<li><a href="#truenamespaces">5.8. Namespaces</a></li>
+<li><a href="#trueservicios">5.3. Servicios</a></li>
+<li><a href="#truevol-menes">5.4. Volúmenes</a></li>
+<li><a href="#trueconfigmaps">5.5. ConfigMaps</a></li>
+<li><a href="#truesecrets">5.6. Secrets</a></li>
+<li><a href="#truenamespaces">5.7. Namespaces</a></li>
 </ul>
 </li>
 <li><a href="#trueescalado-de-una-aplicaci-n">6. Escalado de una aplicación</a>
@@ -605,7 +604,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>La adopción de Docker sigue creciendo de forma imparable y cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.</p>
 </div>
 <div class="paragraph">
-<p>Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo <em>dónde debe ir un contenedor, cómo se monitorizan esos contenedores</em> o <em>cómo se reinician cuando tengan un problema</em>.</p>
+<p>Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo <em>dónde debe ir un contenedor, cómo se monitorizan esos contenedores, cómo se reinician cuando tengan un problema, quiero escalar de forma automática de 1 a 20 réplicas en función de la carga</em>. Incluso, con componentes como Istio, podemos <em>derivar porcentajes de tráfico a distintas versiones desplegadas de una aplicación o servicio, derivar tráfico a las versiones en función de la red o IP desde la que se reciben las peticiones</em> o <em>en función del usuario que realiza la petición</em>.</p>
+</div>
+<div class="paragraph">
+<p>Por funcionalidades como estas y otras más sorprendentes aún son por la que posiblemente te planteará que debes poner en tu vida un orquestador como Kubernetes ;-)</p>
 </div>
 </div>
 </div>
@@ -1234,7 +1236,7 @@ service/jsonproducer exposed</code></pre>
 <p>Los pods, al igual que otros recursos de Kubernetes (ReplicaSets, volúmenes, &#8230;&#8203;) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis <a href="https://yaml.org/" target="_blank">YAML</a> y representan una forma declarativa de definir los recursos del cluster Kubernetes. En la sección <a href="#truedespliegue-de-aplicaciones-mediante-archivos-yaml">Despliegue de aplicaciones mediante archivos YAML</a> se trata este tema.</p>
 </div>
 <div class="paragraph">
-<p>Para ilustrar cómo crear un pod mediante una manifiesto YAML, veremos cómo crear uno sencillo para MongoDB. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs y redirección de puertos</p>
+<p>Para ilustrar cómo crear un pod mediante una manifiesto YAML, veremos cómo crear uno sencillo para MongoDB. Para ir familiarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs y redirección de puertos</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1320,10 +1322,9 @@ spec:
 </li>
 </ol>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="truenodos"><a class="anchor" href="#truenodos"></a>5.3. Nodos</h3>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Nodos</div>
 <div class="paragraph">
 <p>Los pods se ejecutan en un Nodo. Un nodo es una máquina <em>worker</em> (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.</p>
 </div>
@@ -1346,8 +1347,11 @@ spec:
 </ul>
 </div>
 </div>
+</div>
+</div>
+</div>
 <div class="sect2">
-<h3 id="trueservicios"><a class="anchor" href="#trueservicios"></a>5.4. Servicios</h3>
+<h3 id="trueservicios"><a class="anchor" href="#trueservicios"></a>5.3. Servicios</h3>
 <div class="paragraph">
 <p>Se dice que en Kubernetes los pods son mortales o efímeros. Cuando un nodo desaparece (bien por un error o por una desconexión), los contenedores que están en el nodo también se pierden. En ese momento, un <em>ReplicaSet</em> se encarga de devolver el cluster al estado deseado y organiza la creación de nuevos pods en otros nodos disponibles para mantener funcionando la aplicación. Las réplicas de los pods han de ser intercambiables y <strong>aunque cada pod en el cluster tenga su propia IP única, Kubernetes reconcialiará los cambios entre los pods para que las aplicaciones sigan funcionando</strong>.</p>
 </div>
@@ -1414,7 +1418,7 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>Si ahora vemos los detalles del deployment en el dashboard de Minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment <code>ngnix</code>. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.</p>
+<p>Si ahora vemos los detalles del deployment en el dashboard de Minikube veremos que los dos pods de Nginx creados están agrupados lógicamente en el deployment <code>ngnix</code>. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1427,7 +1431,7 @@ spec:
 <p>Cada pod tiene una dirección IP única, pero esa IP no se expone fuera del cluster sin lo que se denomina un Servicio. <strong>Los servicios pemiten que las aplicaciones reciban tráfico</strong>.</p>
 </div>
 <div class="sect3">
-<h4 id="truetipos-de-servicio"><a class="anchor" href="#truetipos-de-servicio"></a>5.4.1. Tipos de servicio</h4>
+<h4 id="truetipos-de-servicio"><a class="anchor" href="#truetipos-de-servicio"></a>5.3.1. Tipos de servicio</h4>
 <div class="paragraph">
 <p>En función del ámbito de la exposición del servicio tenemos:</p>
 </div>
@@ -1512,7 +1516,7 @@ spec:
 </div>
 </div>
 <div class="sect3">
-<h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.4.2. Ejemplo. Creación de un servicio</h4>
+<h4 id="trueejemplo-creaci-n-de-un-servicio"><a class="anchor" href="#trueejemplo-creaci-n-de-un-servicio"></a>5.3.2. Ejemplo. Creación de un servicio</h4>
 <div class="paragraph">
 <p>Anteriormente, en la sección <a href="#truedespliegue-de-una-aplicaci-n">Despliegue de una aplicación</a> creamos una aplicación de ejemplo que generaba un JSON de prueba. A modo de recordatorio, hicimos lo siguiente:</p>
 </div>
@@ -1685,7 +1689,7 @@ Containers:
 </div>
 </div>
 <div class="sect2">
-<h3 id="truevol-menes"><a class="anchor" href="#truevol-menes"></a>5.5. Volúmenes</h3>
+<h3 id="truevol-menes"><a class="anchor" href="#truevol-menes"></a>5.4. Volúmenes</h3>
 <div class="paragraph">
 <p>Básicamente, un volumen es un directorio para datos que es accesible a los contenedores de un Pod y que persiste a los reinicios de un Pod. El medio que se use para el almacenamiento y cómo se comporte ante una eliminación del Pod depende del tipo de volumen que se use.</p>
 </div>
@@ -1694,7 +1698,7 @@ Containers:
 </div>
 </div>
 <div class="sect2">
-<h3 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.6. ConfigMaps</h3>
+<h3 id="trueconfigmaps"><a class="anchor" href="#trueconfigmaps"></a>5.5. ConfigMaps</h3>
 <div class="paragraph">
 <p>Los objetos ConfigMap permiten almacenar datos en forma de pares clave-valor para que puedan usarse posteriormente en despliegues parametrizados y hacerlos más portables.</p>
 </div>
@@ -1759,7 +1763,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truesecrets"><a class="anchor" href="#truesecrets"></a>5.7. Secrets</h3>
+<h3 id="truesecrets"><a class="anchor" href="#truesecrets"></a>5.6. Secrets</h3>
 <div class="paragraph">
 <p>Los objetos Secret se usan para almacenar información sensible, como contraseñas, tokens OAuth y claves ssh. Colocar esta información en objetos Secret es más seguro que colocarla en texto plano y legible.</p>
 </div>
@@ -1812,7 +1816,7 @@ $ kubectl delete configmap datosstevemcqueen</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.8. Namespaces</h3>
+<h3 id="truenamespaces"><a class="anchor" href="#truenamespaces"></a>5.7. Namespaces</h3>
 <div class="paragraph">
 <p>Hasta ahora, todos los objetos que hemos creado (pods, deployments, replicasets, services, configmaps y secrets) están en el mismo lugar, en el mismo espacio. Concretamente en el espacio <code>default</code>. Es lo que se conoce como <em>namespace</em>. Los namespaces se usan para organizar objetos en un cluster, proporcionando una forma de mantener separados los recursos en el cluster. De cara a dar nombres a los recursos, los nombres sólo tienen que ser únicos a nivel de namespace, pero no a nivel de cluster.</p>
 </div>
@@ -5146,7 +5150,7 @@ Percentage of the requests served within a certain time (ms)
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-11-26 14:07:47 CET
+Last updated 2019-11-28 14:29:01 CET
 </div>
 </div>
 </body>

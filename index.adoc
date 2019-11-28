@@ -65,7 +65,9 @@ Disponibles los repositorios usados en este seminario:
 
 La adopción de Docker sigue creciendo de forma imparable y cada vez más organizaciones lo usan en producción. Por tanto, se hace necesario contar con una plataforma de orquestación que permita administrar y escalar los contenedores.
 
-Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo _dónde debe ir un contenedor, cómo se monitorizan esos contenedores_ o _cómo se reinician cuando tengan un problema_.
+Supongamos que hemos comenzado a usar Docker y hemos hecho un despliegue de un par de servidores. De pronto, la aplicación comienza a tener un gran tráfico de entrada y hay que escalar a una gran cantidad de servidores para atender la demanda. Aquí es donde entra Kubernetes para hacer tareas del tipo _dónde debe ir un contenedor, cómo se monitorizan esos contenedores, cómo se reinician cuando tengan un problema, quiero escalar de forma automática de 1 a 20 réplicas en función de la carga_. Incluso, con componentes como Istio, podemos _derivar porcentajes de tráfico a distintas versiones desplegadas de una aplicación o servicio, derivar tráfico a las versiones en función de la red o IP desde la que se reciben las peticiones_ o _en función del usuario que realiza la petición_.
+
+Por funcionalidades como estas y otras más sorprendentes aún son por la que posiblemente te planteará que debes poner en tu vida un orquestador como Kubernetes ;-)
 
 ## Conceptos básicos
 
@@ -76,9 +78,8 @@ ____
 Kubernetes is a portable, extensible, open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a large, rapidly growing ecosystem. Kubernetes services, support, and tools are widely available.
 
 The name Kubernetes originates from Greek, meaning helmsman or pilot. Google open-sourced the Kubernetes project in 2014. Kubernetes builds upon a decade and a half of experience that Google has with running production workloads at scale, combined with best-of-breed ideas and practices from the community.
-
-
 ____
+
 Kubernetes ofrece una abstracción en la que permite el despliegue de aplicaciones en un cluster sin pensar en las máquinas que lo soportan. 
 
 ### Cluster de Kubernetes
@@ -404,7 +405,7 @@ Los pods son efímeros, por lo que su almacenamiento desaparece al eliminar el p
 
 Los pods, al igual que otros recursos de Kubernetes (ReplicaSets, volúmenes, ...) se pueden crear sobre la marcha con el CLI indicando la imagen a partir de la que se crean, o se pueden crear a partir de archivos de manifiesto. Estos archivos de manifiesto se escriben en sintaxis https://yaml.org/[YAML,window=_blank] y representan una forma declarativa de definir los recursos del cluster Kubernetes. En la sección <<Despliegue de aplicaciones mediante archivos YAML>> se trata este tema.
 
-Para ilustrar cómo crear un pod mediante una manifiesto YAML, veremos cómo crear uno sencillo para MongoDB. Para ir familiriarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs y redirección de puertos
+Para ilustrar cómo crear un pod mediante una manifiesto YAML, veremos cómo crear uno sencillo para MongoDB. Para ir familiarizándonos con Kubernetes, probaremos también con unos comandos básicos para mostrar información, mostrar los logs y redirección de puertos
 
 . Creación del manifiesto YAML 
 +
@@ -477,8 +478,8 @@ Para poder probar el comando anterior de la redirección de puertos necesitaremo
 $ kubectl delete -f mongodb-basico.yaml
 ----
 
-### Nodos
-
+.Nodos
+****
 Los pods se ejecutan en un Nodo. Un nodo es una máquina _worker_ (física o virtual) del cluster. Los nodos están gestionados por el Master. Un Nodo puede contener muchos pods.
 
 image::KubernetesNode.svg[]
@@ -487,6 +488,7 @@ Cada Nodo ejecuta al menos:
 
 * `Kubelet`, un proceso que se encarga de la comunicación entre el nodo y el Master. Gestiona los pods y los contenedores que se están ejecutando en el nodo.
 * Un motor de contenedores, como Docker, que se encarga de la descarga de imágenes de un registro y de ejecutar la aplicación.
+****
 
 ### Servicios
 
@@ -536,7 +538,7 @@ Al desplegar este deployment se crearán dos pods (`replicas: 2`), que quedarán
 $ kubectl apply -f ngnix.yaml
 ----
 
-Si ahora vemos los detalles del deployment en el dashboard de Minikube veremos que los dos pods de nginx creados están agrupados lógicamente en el deployment `ngnix`. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.
+Si ahora vemos los detalles del deployment en el dashboard de Minikube veremos que los dos pods de Nginx creados están agrupados lógicamente en el deployment `ngnix`. Esta información está realmente en el objeto ReplicaSet creado por el Deployment.
 
 image::ReplicaSetPods.png[]
 ****
